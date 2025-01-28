@@ -1,0 +1,386 @@
+----->>>>The distinction between Java's == and equals methods
+In Java, equals() is regarded as a method. It is mostly used for
+ comparing reference values and objects. It is used to compare the object's real content.
+ The == operator can be used with objects and primitives.
+ 
+ ------>>>>  Java, a catch block cannot exist without a corresponding try block. 
+ If you try to write a catch block without a try block, the code will not compile and will throw a syntax error.
+ In Java, a try block can exist without a catch block, 
+ but only if it is accompanied by a finally block.
+ This structure is useful when you need to ensure some code is executed regardless of whether an exception occurs or not, 
+ such as closing resources or cleaning up.
+ 
+ 
+ 
+ ------>>>>While try-catch is the most common way to handle exceptions, alternatives include:
+
+Propagating exceptions with throws.
+Validating inputs to prevent exceptions
+
+---->>>>
+Serialization and Deserialization in Java are processes used to convert objects into a 
+format that can be stored or transmitted and later reconstructed.
+
+
+---Serialization
+Serialization is the process of converting an object into a sequence of bytes. 
+This sequence of bytes can then be stored in a file, database, or transmitted over a network.
+ The primary use of serialization is to persist an object's state or to send it between Java Virtual Machines (JVMs).
+ 
+ --Deserialization
+Deserialization is the reverse process of serialization. It reconstructs an object from a sequence of bytes. This is useful for restoring the state of an object or for receiving objects over a network.
+
+Key Points
+Purpose: To recreate an object from its serialized state.
+
+
+--------->>>>>>Multithreading in Java is a feature that allows concurrent execution of two or more parts of a program,
+ known as threads. A thread is a lightweight, independent path of execution within a program. 
+ Multithreading is useful for performing multiple tasks simultaneously, improving the efficiency and performance of a program.
+ 
+ Key Concepts
+Thread:
+
+A single, sequential flow of control within a program.
+Every Java application has at least one thread, called the main thread, which runs the main() method.
+Multithreading:
+
+Enables a program to run multiple threads concurrently.
+Threads can share resources (like memory) within the same process, which is efficient compared to creating multiple processes.
+
+
+------->>>
+Garbage Collection (GC) in Java is a process by which the Java 
+Virtual Machine (JVM) automatically identifies and removes unused objects from memory, freeing up space and preventing memory leaks. 
+
+Stack Memory
+Purpose: Used for execution of threads and stores method calls, local variables, and function parameters.
+Heap Memory
+Purpose: Used to store objects and instance variables.
+
+
+
+
+------------------------**** Collection Java FrameWork  *****-----------------------------
+                                Interfaces
+List: Ordered, allows duplicate elements.
+Example: ArrayList, LinkedList, Vector.
+Usage: Storing test data in the order it is retrieved (e.g., list of web elements)
+
+Feature                	ArrayList	                                                                    LinkedList	                                                           
+Implementation	        ArrayList internally uses a dynamic array to store elements.	        LinkedList internally uses a doubly linked list to store elements,. or The LinkedList dynamically grows or shrinks as elements are added or removed.
+Performance          	Faster for random access (index-based access).	                        Faster for insertions/deletions (at non-end positions).	               
+Thread Safety	        Not synchronized (not thread-safe).	                                    Not synchronized (not thread-safe).	                                   
+Iteration	            Uses Iterator.	                                                        Uses Iterator.	
+ 
+                                                                                               Each element is stored in a Node object, which has references to both the next node and the previous node. 
+
+
+ArrayList								           
+*An ArrayList uses a dynamic array 		
+to store elements. 						
+*As the size of the list increases, 		
+the array is resized (usually doubled).
+*Useful for situations where read-heavy 	
+by index)are frequent.					
+*Less memory overhead (no extra pointers)	
+
+
+Linked List
+*A LinkedList is implemented using a doubly linked list, 
+where each element (node) contains a reference to the previous
+node and the next node in the list.This allows for bidirectional traversal.
+*Useful for situations where insertions/removals are frequent, operations (such as getting an element 
+and random access (getting an element by index) 
+is less important.
+*More memory overhead (needs pointers)																						   
+
+Set: Unordered, no duplicates.
+Example: HashSet, TreeSet, LinkedHashSet.
+Usage: Storing unique test data like unique dropdown values or test case IDs.
+
+Map: Key-value pairs, keys are unique.
+Example: HashMap, TreeMap, LinkedHashMap.
+Usage: Mapping test case IDs to expected results.
+
+Queue: Maintains FIFO order.
+Example: PriorityQueue, Deque.
+Usage: Handling test execution queues or task prioritization.
+ 
+   
+HashSet 				                        LinkedHashSet                                              TreeSet  
+Unordered									Insertion order maintained	                                Sorted (ascending by default, or custom comparator)
+Heterogenous data is accepted				Heterogenous data is accepted								Homogenous data is accepted as it wont be able to arrange heterogeneous data
+One null element is accepted				Allows only one null element								Donot allow null element
+Very fast for operations like add,			Slightly slower than HashSet								Slower than Linked HashSet and HashSet
+remove and contains                                                                                     if we set Heterogenous data and Callled this data throw excetipn name ==> classCastException 
+
+
+
+ConcurrentHashMap	 --->  Thread-safe,Does not allow null keys or values,High performance in concurrent scenarios.
+
+           
+                       HashMap                                              LinkedHashMap                                        TreeMap                                             
+Order of Keys	    No guaranteed order.	                      Maintains insertion order of keys.                        Sorted order (natural or custom comparator).	          
+Null Keys/Values	Allows one null key and multiple null val	 Allows one null key and multiple null values.              Does not allow null keys but allows multiple null values.
+Thread Safety	    Not synchronized (not thread-safe).	          Not synchronized (not thread-safe).                       Not synchronized (not thread-safe).	                      
+
+
+
+Immutable java Class --- String,Final,Private,LocalDate,LocalTime,LocalDateTime 
+
+
+
+TRY - RESOURCES ->
+
+The try-with-resources statement in Java is used to manage resources like files, sockets, or database connections automatically. 
+It ensures that resources are closed after their usage, eliminating the need for explicit finally blocks.
+
+
+Exception: Excpetion is unwanted and unexepected behavior of code.
+There are two types of Exception:
+
+Throwable ->> 
+A >>> Exception ---> We can handle by try-cathch and throw or Throws keyword use
+1. Compliletime exception/ Checked execption : IOException, SQLException, ClassNotFoundException in Java
+2. Runtime exception/ Unchecked exception : NullPointerException, ArithmeticException, IndexOutOfBoundException, NumberFormatException
+B. >>> Error ----> We can not handle by Java code 
+ex. Stackoverflow , VirtualMachineError , OutofMemeoryError
+
+How can we handle exception
+using try, catch, finally, and throw/throws.
+
+
+    throw--->
+	The throw keyword allows you to explicitly throw an exception at a specific point in your code. 
+	It does not handle exceptions, but rather creates and throws them.
+* The throw keyword is used to create and throw an exception from within a method or block of code.
+  You can use throw to trigger exceptions based on certain conditions in your code.
+  However, it’s important to note that throw does not handle exceptions; 
+  it only raises an exception. The exception still needs to be caught and handled using a try-catch block, or
+  it will propagate upwards through the call stack.
+  
+  public class Main {
+    public static void main(String[] args) {
+        try {
+            checkAge(15); 
+        } catch (IllegalArgumentException e) {
+            System.out.println("Caught exception: " + e.getMessage());
+        }
+    }
+
+  
+    static void checkAge(int age) {
+        if (age < 18) {
+           
+            throw new IllegalArgumentException("Age must be at least 18.");
+        }
+        System.out.println("Age is valid");
+    }
+}
+
+
+  finally --- >Requires manual resource cleanup. 
+               You must handle exceptions while closing resources.
+  
+  TRY - RESOURCES ->
+
+The try-with-resources statement in Java is used to manage resources like files, sockets, or database connections automatically. 
+It ensures that resources are closed after their usage, eliminating the need for explicit finally blocks.
+  
+  Try-resouce ---> Automatically manages resource cleanup.
+                   Only works with resources implementing AutoCloseable.
+				   
+				   try (BufferedReader reader = new BufferedReader(new FileReader("example.txt"))) {
+            System.out.println(reader.readLine());
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+
+         ********************            Difference between  equals() method and the == operator :  **************************
+                     
+                        == operator: 
+                     1) Compares references (memory locations) for objects and values for primitives.
+                     2) Works for both primitives and objects.	
+                     3) Checks if two references point to the same object.	
+                     4) Cannot be overridden.	
+                     
+                        equals() operator: 
+                     1) Compares the content of objects for equality, as defined in the implementation of the equals() method.
+                     2) Works only for objects.
+                     3) Default behavior (from Object class) is the same as ==.
+                     4) Can be overridden in user-defined classes.
+                     
+                     Example: 
+                       String s1 = "Hello";
+                       String s2 = "Hello";
+                       String s3 = new String("Hello");
+                       
+                       s1 == s2 --> true,				s1.equals(s2) --->true
+                       s1 == s3 --->false,				s1.equals(s3) --->true
+                       s2 == s3 ---> false				s2.equals(s3) --->true
+  
+  
+  
+                  OOPS- Object Oriented Programming Language Concept
+				  
+OOPS concept is a object oriented progran where we track the human behavior to the programming languauage by using diefferent approaches
+1) Abstraction
+2) Encapsulation
+3) Interface
+4) Polymorphism
+5) Inheritance
+
+Abstraction:
+Abstraction is notthing but hiding the essential information and highlighting or making visible only some set of services
+Whenever action is common but implementation is different then we use abstraction
+Abstract class contains atleast one abstract method
+We can't create object of abstract class (only those class which is extending the abstract class can create object)
+It constains both Abstract and Nonabstract method
+We cannot define abstract method as private as we won't be able to override it
+In abstract class we can create constructor
+
+Example in framework:
+Abstraction:
+In base class we initiailize the webdriver, Excel sheetread/write, config file property reading code 
+and tear down the application that kind of implementation abstract in base class 
+and before running any test invoke this unimplemented method by using extend keyword
+
+
+Interface:
+Interface is just like class which contains only abstract methods
+We can achieve 100% abstraction by using interface
+To achive interface we can use implements/Interface keyword
+In Interface by default variables are public + static +final and Methods are public and abstract
+Interface cannot have constructor and static method
+We can Object of class
+
+Example: 
+1) WebDriver driver= new ChromeDriver();
+2) We use Listener Class example we use ItestListener in which we use unimplemented methods such as OnTestSuccess, OnTestFailure
+
+Real time functional example:
+We have Partpayment method for which we have created interface class. This partpayment method we are using for different products as on the basis of part paymenyt chrages 
+hence we implemented and defined this method with respect to charges for that product 
+
+Encapsulation:
+Encapsulation is a mechanism through which we can bind data members and methods in single unit.
+We can say that every class in java has Encapsulation behavior
+
+
+Polymorphism:Poly means many and forms means behaviour which means we have same object with different behavior.
+We can achive polymorphism using two approaches
+1) Compile time polymorphism vs Static binding vs Method Overloding
+2) Run time polymorphism vs Dynamic binding Vs Methos Override
+
+Complie time polymorphism: polymorphism we exist at the time of compliation is called as compile time polymorphism/early binding
+Method overloading is example like when we have multiple methods we same name but different parameters and we call method from the main class on the basis of paramters
+example: Impilict wait is an example of method overloading where we use different timestamp second, minute, hour
+
+RunTime Polymorphism:Polymorphism which exist at the time of execution of program is called as RunTime polymorphism
+Whenever we write a method in super and subclass in such a way that method name and parameter  is same then we can achiev runtime polymorphism.
+We can call parent class method using Super keyword also if require we can call subclass method also by using this keywordg
+Example: Method overriding can be achieved by any webDriver method like FindElements method same as assertion we can override method like assert.true(actual,expected,message)
+
+Inheritance:
+By using inheritance we can acquire the propertoes of parent class in child class using extend keyword in such a way that we will be able to increase the code resuability
+We cannot achieve multiple inheritance injava using inheritance but it can only be achieve through interface
+Method overloading is only possible through Inheritanvce
+we cannot access private menmbers of class through inheritance, we can access protected members using inheritance.
+Types of inheritance:
+1. Simple Inheritance
+2. Multilevel inheritance
+3. Multiple inheritance
+
+Example: In base class we invoke all prequisite method and this methods we can utlize in subclass or all the test class using extend keyword
+
+Constructor: Construtor is a special type of method whose name is same as classname. Main purpose of constructor is to initialize the object
+every class has a default constructor
+Constructor do not have any return type incuding void
+Constructor is automatically called at the time of object creation
+Types of Constructor:
+1. Default Constructor 2. Paramterized Constructor  
+public class demo
+{
+demo(String example)
+{
+this.example=example;
+
+}
+}
+
+-----------------***************  Java Stream *********----------------------------------
+
+ Java Streams are part of the Java 8 Stream API, designed to simplify processing collections of
+ data using functional programming. Streams allow you to filter, map, and reduce data in a clean and readable way.
+ 
+ Ex-  >   In automation testing, Java Streams can be effectively used for various scenarios like processing lists of web elements, 
+          validating API responses, and handling test data.
+ 
+ Key-->
+filter: To filter data based on a condition.
+map: To transform data (e.g., extract text from web elements).
+collect: To collect the results into a collection like a List or Set.
+forEach: To perform an action for each element.
+anyMatch, allMatch: To validate conditions on elements.
+reduce: To aggregate data (e.g., sum or concatenate strings).
+
+
+*****************************Enum Class*********************
+
+is a special data type that represents a fixed set of constants.
+
+1.An enum can, just like a class , have attributes and methods. 
+2.The only difference is that enum constants are public , static and final (unchangeable - cannot be overridden). 
+3.An enum cannot be used to create objects, and it cannot extend other classes (but it can implement interfaces).
+4.Enum can have fields, constructors and methods
+5.Enum may implement many interfaces but cannot extend any class because it internally extends Enum class
+
+public Enum APIResources
+{
+AddPlaceAPI("/maps/api/place/add/json"),
+DeletePlaceAPI("/maps/api/place/delete/json"),
+getPlaceAPI("/maps/api/place/get/json"),
+
+private String resource;
+
+
+APIResources(String resource)
+{
+this.resource=resource;
+}
+
+public String getResource()
+{
+return resource;
+}
+
+ 
+***************************    Ternary operator       **************************************
+The ternary operator in Java is a shorthand for the if-else conditional statement. It is also known as the conditional operator.
+
+condition ? expression1 : expression2;
+condition: A boolean expression that evaluates to true or false.
+expression1: The value or statement executed if the condition is true.
+expression2: The value or statement executed if the condition is false.
+
+        int a = 10, b = 20;
+        int max = (a > b) ? a : b;
+		System.out.println("The maximum is: " + max);
+		
+		Ans --> 20 
+   
+   
+   *************** equals overriding hashcode****************
+Why Override Both Methods?
+When you override equals(), you are redefining how objects are compared for equality.
+If you don't also override hashCode(), the default implementation (from Object) may produce inconsistent behavior 
+in hashed collections,as it doesn't align with your custom equality logic.
+
+
+Modifier	Same Class	Same Package	Subclass (Other Package)	Other Package
+public	        ✔	       ✔	              ✔	                       ✔
+protected	    ✔	       ✔	              ✔ (via inheritance)	       ✖
+default	        ✔	       ✔	              ✖	                       ✖
+private	        ✔	       ✖	              ✖	                       ✖

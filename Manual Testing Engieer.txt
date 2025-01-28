@@ -1,0 +1,132 @@
+Manaul Testing 
+
+
+------>>>>>What is the difference between Test matrix and Traceability matrix?
+Test Matrix: Test matrix is used to capture actual quality, effort, the plan, resources and time required to capture all phases of software testing
+Traceability Matrix: Mapping between test cases and customer requirements is known as Traceability Matrix
+
+
+** What are the different stages of an Automation test ???
+Test Planning: Define the goals and scope of automation.
+Test Design: Design the structure and test cases.
+Test Development: Write the automation scripts.
+Test Execution: Run the automated tests.
+Test Reporting: Analyze the results and share reports.
+Test Maintenance: Update scripts based on changes in the application.
+Test Optimization: Improve the speed and effectiveness of tests.
+Test Analysis and Feedback: Evaluate and optimize the automation process.
+
+@* Test Stratergy Document -- This documentation for Organization level -- Give the overall Proccess of testing
+@* Test Plan --- Project Level Document
+
+Scope: Define in-scope and out-of-scope items.
+Objectives: Validate functional requirements.
+Test Types: Functional Testing.
+Test Environment:Test data preparation.
+Entry and Exit Criteria:
+Deliverables:
+Risks and Assumptions:
+Risks: Delayed builds, incomplete requirements.
+Assumptions: Stable test environments, timely documentation.
+Roles and Responsibilities:
+Schedule:
+Approval:
+Stakeholders sign off on the plan.
+These points ensure a concise and actionable test plan for manual testing. Let me know if you need help expanding any section!
+
+Static code analysis----->
+Static code analysis is a process of examining the source code of a 
+program without executing it to detect potential bugs, security vulnerabilities, 
+code smells, and ensure adherence to coding standards.
+
+Clean Code Principles (including SOLID and DRY)
+clean code principles to demonstrate how you write maintainable, readable, and efficient code. 
+These principles help create code that is easier to understand, modify, and extend over time. 
+
+
+Sprint Velocity in Agile:
+Sprint Velocity is a metric used in Agile project management to measure the amount of work a team can 
+complete during a single sprint. 
+
+************* SOLID Principles ***********************
+SOLID principles in Java are a set of design principles aimed at creating maintainable, scalable, and robust software.
+
+1. Single Responsibility Principle (SRP): Class should have one responsibility.
+A class with multiple responsibilities becomes hard to maintain and test because changes in one responsibility might affect others
+example:
+class UserService {
+    void createUser(String username) {
+        // Logic to create a user
+    }
+}
+
+class EmailService {
+    void sendEmail(String email) {
+        // Logic to send email
+    }
+}
+
+2.Open/Closed Principle (OCP)
+Definition: A class should be open for extension but closed for modification.
+
+Problem: Modifying existing code for new functionality can introduce bugs and requires retesting.
+Solution: Use abstractions like interfaces or inheritance to add new functionality without modifying existing code.
+
+3.Liskov Substitution Principle (LSP)
+This means that if a program is using a base class, you should be able to replace it with any subclass of that 
+base class without the program malfunctioning. The subclass must adhere to the expectations (behavioral contracts) set by the base class.
+
+4.Interface Segregation Principle (ISP)
+A class should not be forced to implement interfaces it doesn't use.
+
+Problem: A large interface with methods irrelevant to some implementing classes leads to unnecessary code and complexity.
+Solution: Break down large interfaces into smaller, more specific ones.
+
+5.Dependency Inversion Principle (DIP)
+Definition: High-level modules should not depend on low-level modules; both should depend on abstractions.
+
+Problem: Tight coupling between high-level and low-level modules makes the code harder to test and maintain.
+Solution: Use interfaces to decouple the modules.
+
+Benefits of SOLID Principles
+Maintainability: Code is easier to understand and modify.
+Scalability: New features can be added without modifying existing code.
+Testability: Decoupled and modular code is easier to test.
+Readability: Clean and organized code with clear responsibilities.
+
+Entry Criteria -> Conditions that must be met before a testing phase or process begins., ensures testing can start without interruptions.
+Exit  Criteria -> Conditions that must be satisfied to conclude a testing phase or process, objectives are met and results are acceptable for project delivery or the next phase.
+
+Manual Testing:
+Entry Criteria -> Requirements Clarity, Test Plan and Test Cases, Test Environment, Build Availability, Test Data,Defect Management Tool
+Exit  Criteria -> Test Case Execution, Defect Resolution,Test Results Documentation,Requirement Coverage,Sign-Off
+
+Automation Testing:
+Entry Criteria ->  Stable Application Build, Automation Framework ,Automation Tools ,Test Environment ,Script Readiness
+Exit  Criteria -> Script Execution Completion,Defect Verification,Test Coverage,Regression Results,Reports Generation,Framework Stability,Stakeholder Approval
+
+
+
+
+
+
+****************   How do you manage and track bugs through the testing lifecycle?  *********************
+
+
+New: A bug is identified and logged for the first time.
+Assigned: The bug is reviewed and assigned to a developer or a team for resolution.
+In Progress: The developer is actively working on resolving the bug.
+Resolved: The developer fixes the bug and marks it as resolved.
+Verified: The QA team retests the fix and verifies the resolution.
+Closed: The bug is marked as closed if the fix is verified successfully.
+Reopened (if applicable): If the issue persists or reoccurs, the bug is reopened and reentered into the lifecycle.
+
+Create a detailed bug ticket with the following details:
+1)Title
+2) Description
+3) Severity
+4) Priority
+5) Attachments
+Categorize and Prioritize Bugs
+
+

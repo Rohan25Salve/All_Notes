@@ -1,0 +1,396 @@
+******************  Design patterns in automation testing  ****************************
+1)Page Object Model (POM)---Each web page is represented as a class
+Benefits:
+Enhances code reusability and readability.
+
+2) Singleton Pattern ---Ensures a single instance of a class is created and shared.
+Commonly used for managing WebDriver instances to avoid creating multiple drivers.
+
+3) Factory Pattern  ---Provides a centralized way to create objects, such as WebDriver or PageObject.
+
+4) Observer Pattern
+Allows components (e.g., listeners) to be notified of changes in the system, such as test failures or execution events.
+
+          public interface TestObserver {
+    void update(String message);
+}
+
+public class TestSubject {
+    private List<TestObserver> observers = new ArrayList<>();
+
+    // Add observer
+    public void attach(TestObserver observer) {
+        observers.add(observer);
+    }
+
+    // Remove observer
+    public void detach(TestObserver observer) {
+        observers.remove(observer);
+    }
+
+    // Notify all observers
+    public void notifyObservers(String message) {
+        for (TestObserver observer : observers) {
+            observer.update(message);
+        }
+    }
+	
+	
+	public class ApiObserver implements TestObserver {
+    @Override
+    public void update(String message) {
+        System.out.println("API Observer received: " + message);
+        // Simulate API validation or response checking
+    }
+}
+
+public class ObserverPatternTest {
+    public static void main(String[] args) {
+        // Create subject
+        TestSubject subject = new TestSubject();
+
+        // Attach observers
+        ApiObserver apiObserver = new ApiObserver();
+        UiObserver uiObserver = new UiObserver();
+        subject.attach(apiObserver);
+        subject.attach(uiObserver);
+
+        // Simulate API response change and notify observers
+        subject.notifyObservers("Test Data from API");
+    }
+}
+
+
+5)Builder Design Pattern->
+design pattern that allows you to construct complex objects step by step. 
+It separates the construction process of an object from its representation
+
+*********** Difference between comparable and comparator ************************
+
+Comparable interface:
+The Comparable interface is used to compare objects of the same class.
+It is implemented by the class whose instances need to be compared.
+Purpose: Used to define a natural ordering of objects of a class.
+public int compareTo(T o);
+Less flexible (only one sort order)
+Limited to one sorting logic
+
+Comparator interface:
+The Comparator interface is used to compare objects of different classes or objects of the same class with a custom comparison logic.
+It is implemented in a separate class, often passed as an argument to methods that require comparison (e.g., Collections.sort()).
+Purpose: Used to define custom ordering for objects.
+public int compare(T o1, T o2);
+More flexible (can create multiple comparators)
+Can define multiple sorting logics
+
+Comparable example:
+
+class Person implements Comparable<Person> {
+    String name;
+    int age;
+    
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    @Override
+    public int compareTo(Person other) {
+        return Integer.compare(this.age, other.age); // Sort by age
+    }
+}
+
+Comparator example:
+
+class Person {
+    String name;
+    int age;
+    
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+
+class AgeComparator implements Comparator<Person> {
+    @Override
+    public int compare(Person p1, Person p2) {
+        return Integer.compare(p1.age, p2.age); // Sort by age
+    }
+}
+
+*************** Java Stream *****************
+Stream API is new feature available from Java 8,
+By using Stream we can perform various aggregate operator like filter, formatting data, collecting result and reduce code complexity
+
+Use lambda expression -> operator , left side specifies the parameter and right side specified the action
+
+example:  
+ArrayList<String> list = new ArrayList();
+list.add("amit");
+list.add("d");
+list.stream().filter(s -> s.startsWith("a")).forEach(System.out::println);
+
+***************** Java 8 functions **********************
+
+Lambda Expression, 
+Stream API: list.stream().filter(s -> s.startsWith("a")).forEach(System.out::println);
+Method Reference: list.forEach(System.out::println);  
+New Date and Time API,
+Collector
+*********************** Immutable Classes in Java *********************
+String: Once a String object is created, it cannot be changed.
+Wrapper Classes: Classes like Integer, Double,Private Fields, Final Fields, Final Class etc., are immutable.
+
+******************* Synchronization ***********************
+Synchronization in the context of test automation refers to ensuring that actions (like clicks or inputs) and assertions
+ (validating conditions) are executed in the correct order and timing. 
+ 
+********************  How to run failed Test cases **********************
+TestNg --->>>
+
+1.a testng-failed.xml file after running a test suite if there are failed tests.
+2.RetryAnalyzer
+
+Cucumber -- use rereun.txt file 
+@CucumberOptions(
+    plugin = {"pretty", "rerun:target/rerun.txt"}, // Failed scenarios stored in rerun.txt
+    features = "src/test/resources/features",
+    glue = "step_definitions"
+)
+public class TestRunner {
+}
+
+
+Jenkins --
+1.After a build, Jenkins marks failed tests.
+Use the testng-failed.xml (TestNG) or rerun JUnit rules in your next build to re-run the failed cases.
+2.Use the rerun plugin in your Cucumber setup and ensure that Jenkins is configured to execute the rerun class for failed scenarios.
+-------------------------**********************--------------------------------------------------
+******************  Design patterns in automation testing  ****************************
+1)Page Object Model (POM)---Each web page is represented as a class
+Benefits:
+Enhances code reusability and readability.
+
+2) Singleton Pattern ---Ensures a single instance of a class is created and shared.
+Commonly used for managing WebDriver instances to avoid creating multiple drivers.
+
+3) Factory Pattern  ---Provides a centralized way to create objects, such as WebDriver or PageObject.
+
+4) Observer Pattern
+Allows components (e.g., listeners) to be notified of changes in the system, such as test failures or execution events.
+
+*********** Difference between comparable and comparator ************************
+
+Comparable interface:
+The Comparable interface is used to compare objects of the same class.
+It is implemented by the class whose instances need to be compared.
+Purpose: Used to define a natural ordering of objects of a class.
+public int compareTo(T o);
+Less flexible (only one sort order)
+Limited to one sorting logic
+
+Comparator interface:
+The Comparator interface is used to compare objects of different classes or objects of the same class with a custom comparison logic.
+It is implemented in a separate class, often passed as an argument to methods that require comparison (e.g., Collections.sort()).
+Purpose: Used to define custom ordering for objects.
+public int compare(T o1, T o2);
+More flexible (can create multiple comparators)
+Can define multiple sorting logics
+
+Comparable example:
+
+class Person implements Comparable<Person> {
+    String name;
+    int age;
+    
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    @Override
+    public int compareTo(Person other) {
+        return Integer.compare(this.age, other.age); // Sort by age
+    }
+}
+
+Comparator example:
+
+class Person {
+    String name;
+    int age;
+    
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+
+class AgeComparator implements Comparator<Person> {
+    @Override
+    public int compare(Person p1, Person p2) {
+        return Integer.compare(p1.age, p2.age); // Sort by age
+    }
+}
+
+*************** Java Stream *****************
+Stream API is new feature available from Java 8,
+By using Stream we can perform various aggregate operator like filter, formatting data, collecting result and reduce code complexity
+
+Use lambda expression -> operator , left side specifies the parameter and right side specified the action
+
+example:  
+ArrayList<String> list = new ArrayList();
+list.add("amit");
+list.add("d");
+list.stream().filter(s -> s.startsWith("a")).forEach(System.out::println);
+
+***************** Java 8 functions **********************
+
+Lambda Expression, 
+Stream API: list.stream().filter(s -> s.startsWith("a")).forEach(System.out::println);
+Method Reference: list.forEach(System.out::println);  
+New Date and Time API,
+Collector
+
+********************* different types of collection ************************ 
+Feature	                                Non-Generic Collection	                                                          Generic Collection
+Type Safety							Not type-safe; allows any object type.											Type-safe; restricts to a specific type.
+Compile-Time Check	                No type checking at compile time.												Ensures type-checking during compilation.
+Typecasting						Required when retrieving elements.													Not required; eliminates ClassCastException.
+Code Readability				Less readable due to typecasting.													More readable and concise.
+Runtime Exceptions				High chance of ClassCastException.													Eliminates runtime type mismatch errors
+
+*********************** Immutable Classes in Java *********************
+String: Once a String object is created, it cannot be changed.
+Wrapper Classes: Classes like Integer, Double,Private Fields, Final Fields, Final Class etc., are immutable.
+
+********************** Test Runner ****************
+test runner is a tool or framework that automates the execution of tests in software development. 
+It manages the execution of test scripts, collects results, and reports the outcomes
+
+Features:
+Running Test Cases
+Managing Test Suites
+Generating Reports
+Handling Test Dependencies
+Integration
+
+Popular test runners include:
+
+JUnit (for Java)
+TestNG (for Java)
+cucumber
+
+******************* Synchronization ***********************
+Synchronization in the context of test automation refers to ensuring that actions (like clicks or inputs) and assertions
+ (validating conditions) are executed in the correct order and timing. 
+ 
+********************  How to run failed Test cases **********************
+TestNg --->>>
+
+1.a testng-failed.xml file after running a test suite if there are failed tests.
+2.RetryAnalyzer
+
+Cucumber -- use rereun.txt file 
+@CucumberOptions(
+    plugin = {"pretty", "rerun:target/rerun.txt"}, // Failed scenarios stored in rerun.txt
+    features = "src/test/resources/features",
+    glue = "step_definitions"
+)
+public class TestRunner {
+}
+
+
+Jenkins --
+1.After a build, Jenkins marks failed tests.
+Use the testng-failed.xml (TestNG) or rerun JUnit rules in your next build to re-run the failed cases.
+2.Use the rerun plugin in your Cucumber setup and ensure that Jenkins is configured to execute the rerun class for failed scenarios.
+
+****************** Concurrent hashmap ****************************
+ConcurrentHashMap is a thread-safe version of HashMap in Java, designed for concurrent access in multi-threaded environments. 
+
+************* SOLID Principles ***********************
+SOLID principles in Java are a set of design principles aimed at creating maintainable, scalable, and robust software.
+
+1. Single Responsibility Principle (SRP): Class should have one responsibility.
+A class with multiple responsibilities becomes hard to maintain and test because changes in one responsibility might affect others
+example:
+class UserService {
+    void createUser(String username) {
+        // Logic to create a user
+    }
+}
+
+class EmailService {
+    void sendEmail(String email) {
+        // Logic to send email
+    }
+}
+
+2. Open/Closed Principle (OCP)
+Definition: A class should be open for extension but closed for modification.
+
+Problem: Modifying existing code for new functionality can introduce bugs and requires retesting.
+Solution: Use abstractions like interfaces or inheritance to add new functionality without modifying existing code.
+
+3. Liskov Substitution Principle (LSP)
+This means that if a program is using a base class, you should be able to replace it with any subclass of that 
+base class without the program malfunctioning. The subclass must adhere to the expectations (behavioral contracts) set by the base class.
+
+4. Interface Segregation Principle (ISP)
+A class should not be forced to implement interfaces it doesn't use.
+
+Problem: A large interface with methods irrelevant to some implementing classes leads to unnecessary code and complexity.
+Solution: Break down large interfaces into smaller, more specific ones.
+
+5. Dependency Inversion Principle (DIP)
+Definition: High-level modules should not depend on low-level modules; both should depend on abstractions.
+
+Problem: Tight coupling between high-level and low-level modules makes the code harder to test and maintain.
+Solution: Use interfaces to decouple the modules.
+
+Benefits of SOLID Principles
+Maintainability: Code is easier to understand and modify.
+Scalability: New features can be added without modifying existing code.
+Testability: Decoupled and modular code is easier to test.
+Readability: Clean and organized code with clear responsibilities.
+
+**************** Risk Collision **************************
+A collision occurs when two different keys produce the same hash code, causing them to map to the same bucket 
+in the underlying array of the HashMap
+Java's HashMap handles collisions using a mechanism called Chaining
+1) Chaining with LinkedList:
+2) Tree-based Structure (Java 8+)
+
+************* try-with-resources in Java  *****************
+The try-with-resources statement in Java is a special form of try that is used to handle resources like files, 
+database connections, or network sockets, ensuring that these resources are closed automatically at the end of the try block. 
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class TryWithResourcesExample {
+    public static void main(String[] args) {
+        try (BufferedReader br = new BufferedReader(new FileReader("example.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+*************** Tools which we use for serialization and deserialization *****************
+Jackson
+Java Built-in Serialization
+JSON Libraries
+YAML Libraries
+XML Libraries
+
+
+
+

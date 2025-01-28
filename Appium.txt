@@ -1,0 +1,115 @@
+****************    What is Appium? **************
+Appium is an open-source tool for automating mobile applications
+Native -> Andriod app only
+Hybrid -> Andriod app with mobile web page application
+Mobile application -> Mobile web page application 
+
+on Android, iOS, and Windows platforms. 
+It uses the WebDriver protocol for communication between client libraries and the server. 
+Cross-platform support: Works on Android and iOS.
+Supports multiple languages via WebDriver.
+
+
+******* What are the main limitations of Appium? ********
+No support for image-based testing directly.
+Requires setting up emulators or real devices for testing.
+
+
+
+
+****************        Local path System my Computer **********************
+
+C:\Users\admin\AppData\Local\Android\Sdk
+
+____ How to install app on Application on Andriod Studio ____________
+
+go to this path C:\Users\admin\AppData\Local\Android\Sdk
+open Commond line 
+use this commond --> adb install path_of_file_\app_name.apk
+
+
+     ***************   Appium Inspector **********************
+
+Allows inspecting the application UI and identifying elements.
+UIAutomatorViewer (Android): A standalone tool for inspecting Android apps.
+Xcode Accessibility Inspector (iOS): For identifying UI elements in iOS apps.
+
+
+// Use X-path , id, name ,tagname ,linktext, partial linktext, css selector ,classname
+accessibility - > Specific to mobile apps; driver.findElement(MobileBy.AccessibilityId("loginButton")) , driver.findElement(AppiumBy.accessibilityId("Preference")).click();
+andriodUIAutomtore -> Android-specific locator to find elements  driver.findElement(MobileBy.AndroidUIAutomator("text(\"Sign In\")"))
+
+iOS Class Chain (iOS) -> iOS-specific locator for targeting elements , driver.findElement(MobileBy.iOSClassChain("**/XCUIElementTypeButton[label == 'OK']"))
+iOS Predicate String (iOS) -> Uses NSPredicate expressions to find iOS elements. , driver.findElement(MobileBy.iOSNsPredicateString("value == 'username'"))
+
+
+   ***************************   test hybrid apps using Appium? **************************
+    # switch between Native and WebView contexts
+	# Use getContextHandles() to list available contexts and context() to switch.
+	
+	           How can you handle WebView testing in Appium?
+                       Answer:
+                       Switch to the WebView context using:
+                       
+                       Set<String> contextNames = driver.getContextHandles();
+                       driver.context("WEBVIEW_com.example.app");
+                       Use standard Selenium methods to interact with WebView elements.
+                       
+Json Representation -->
+
+deviceName - can get using command   adb devices
+platformName - can get using command   appium driver list
+platformVersion -  can get using command   adb shell getprop ro.build.version.release
+If you have multiple devices connected first get the device id using adb devices then run command
+adb -s DEVICE_ID shell getprop ro.build.version.release
+
+{
+  "appium:automationName": "UiAutomator2",
+  "appium:platformName": "Android",
+  "appium:platformVersion": "14",
+  "appium:deviceName": "emulator-5554",
+  "appium:app":"/Users/admin/Downloads/APKFilestt/resources/ApiDemos-debug.apk"
+}
+
+
+
+ **  Strat Server ---> 
+  Use Commond --> Start appium appium --allow-cors 
+  
+  
+  
+ **  Android Studio --> 
+  Here We Start Our Mobile Application 
+  
+  // AndroidDriver 
+  // Appium-code --> Appium Server --> Mobile Application (Flow of how to run the application)
+  
+  
+  
+  
+  
+  
+  ************    Action perform on mobile Application ***********************
+  
+  
+  a) Long Press --->
+  b) Drag and Drop  --->
+  c) Scrolling swiping pincth
+ 
+ 
+ 
+ ************* IOS X-path find *****************************
+ 
+ 
+ 
+ 
+    ************       How do you handle gestures in Appium?  *************
+
+Appium supports gestures like swipe, scroll, pinch, and tap using the TouchAction class in Java.
+
+                          TouchAction action = new TouchAction(driver);
+                          action.press(PointOption.point(100, 500))
+                                .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(1)))
+                                .moveTo(PointOption.point(100, 200))
+                                .release()
+                                .perform();

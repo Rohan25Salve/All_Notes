@@ -1,0 +1,139 @@
+*Git --> Local Repository                                            
+GIT is a distributed version control system and source code management (SCM) 
+system with an emphasis to handle small and large projects with speed and efficiency.
+
+*GitHub --> Remote Repository
+Centralized repository or on Cloude.
+
+1.Why do we need a .gitignore file? 
+
+Prevent Unwanted Files in the Repository: Avoid committing sensitive, temporary, or irrelevant files like build artifacts, logs, or local configurations.
+Clean Repository:Ensures the repository only contains meaningful files.
+
+
+2.                  
+ following this link ---> https://www.youtube.com/watch?v=8vxBbGUUM2o&list=PLxLHu4An_uMNNV90g3MCJPl-xNHkiz-_I&index=20 
+
+ Git Revert   --> a.Creates a new commit to undo changes.
+                  b.Preserves history.
+				  c.always creates a new commit.
+				  
+				  git revert CommiteID
+           
+ Git Reset   --> a.Moving position of head pointer to previous commit or Moves HEAD to a previous commit.
+                 b.To clean up your commit history before pushing changes.
+                 c.To undo recent changes or commits entirely.
+                 d.Type of Mode--> --soft, --mixed, and --hard.
+				 
+				 git reset Head ~2
+				 
+3.Git Stash	---> When We are working on one Dev1 Brache so after some time immidiate or high priority  works comes , 
+So without no need to change or No Need to Commit If half work is done and need to change branch,We can use git stash	
+
+git stash is just like  temporary storage , we saved all temporary file on that storage
+
+   git  stash --all
+   git stash save
+   
+   use this link --> https://www.youtube.com/watch?v=POq8YS52_4o&list=PLxLHu4An_uMNNV90g3MCJPl-xNHkiz-_I&index=24
+   
+
+4.
+    Working Directory          Statging Area                         Local Repository         Remote Repository
+	              --->git Add              -->git Commit -m "message"                -->git push
+				  
+			<---------------------------------------------- git pull <----------------------------------- 
+			     <----------------------------------------git merge              <--    git fetch       <---
+			
+	
+
+5. Git rebase --> 
+               a.Reapply commits from one branch on top of another branch, rewriting the commit
+			   b.Moves the base of your branch to the tip of another branch, creating a linear history.
+			   c.Creates a cleaner, linear history, making it easier to read and review.
+			   
+ link --> https://www.youtube.com/watch?v=p4Cke4D4d1M&t=1s
+  
+    Squashing -->>
+    Squashing combines multiple commits into one .
+	command -->	git rebase -i <base-branch>
+ 
+6. git merge --> 
+               a. Combines changes from two branches by creating a new merge commit that ties their histories together.
+			   b. it preserves the history of both branches.
+			   c.Maintains a complete history of all commits,
+
+
+7. How can we add modified/updated/edited files to the staging area and commit then at the same time? 
+        # git commit -a -m "Do Something once more"
+
+create a branch?   --->   # git branch <branch_name>
+checkout to branch --->   # git checkout <branch_name>
+create branch while checkout ---> # git checkout -b <branch_name>
+difference between 2 branches  ---> # git diff <branch1>..<branch2 >
+
+How do you push the files to master branch in remote repo?
+                 #git push (you must be in master branch)
+How do you push files from local to particular branch in remote repo?
+                 #git push origin <branch_name>
+How do you pull a file from particular remote branch?
+                 # git pull origin <branch_name>
+				 
+				 
+branching strategy  --->
+				 
+		Master Brache --- > Only One 
+		Released Brache ---> More than One , With respect to Sprint or PI 
+		Feature Brache  ---> with respect to Sprint feature 
+
+
+ git commit --amend ->>
+
+ command is used to modify the most recent commit. 
+ This is useful when you want to change the commit message, 
+ add more changes to the commit, or correct mistakes in your last commit.
+ 
+ 
+ git cherry-pick --->
+if i want to add specific commit from other branche then i used cherry-pick,
+when you want to bring in a particular change without merging an entire branch.
+ 
+        git cherry-pick <commit-hash-ID>
+ 
+
+
+		 
+				 
+**** What is the difference between a fork and a clone in GitHub?
+
+Fork: Creates a copy of a repository under your GitHub account, typically for contributing to a project.
+Clone: Downloads a local copy of a repository to your machine for development.
+  
+  
+ *** What are Git hooks, and how can they be used in an automation testing project?
+
+         Git hooks are scripts triggered by specific Git events (e.g., commit, push).
+         Use pre-commit hooks to run linting or unit tests before committing changes.
+         Use post-merge hooks to run tests after merging a branch.
+
+**** You accidentally committed sensitive data (e.g., passwords) into your repository. How do you remove it from history?
+      Highlight using git filter-repo or git rebase to remove sensitive information.
+	  
+	  
+**** How do you handle a situation where a team member force-pushed and overwrote shared branch changes?
+
+Recover using git reflog to identify lost commits.
+Communicate and create a resolution plan with the team.
+
+
+
+**** How do you enforce code standards for automation scripts in a Git repository?
+
+Use pre-commit hooks for linting or formatting.
+Set up CI tools to fail builds if standards are not met.
+
+
+How do you ensure that no sensitive data (like API keys) is committed in test scripts?
+
+Use .gitignore for local sensitive files.
+Implement pre-commit hooks to scan for sensitive data.

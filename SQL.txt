@@ -1,0 +1,438 @@
+----------------------------Operator	Description -------------------------------------
+                              <	less than
+                              <=	less than or equal to
+                              >	greater than
+                              >=	greater than or equal to
+                              =	equal to
+                              <> or !=	not equal to
+---------------------------------------------------------------------------------------------
+-----------------     Where Condition -------------
+
+                 SELECT age, country
+                 FROM Customers
+                 WHERE country = 'USA';
+                 
+                 SELECT *
+                 FROM Customers
+                 WHERE NOT country = 'UK';
+                 
+                 SELECT name, email
+                 From Customers
+                 WHERE age >= 18 OR age < 25;
+                 
+                 SELECT name, email
+                 From Customers
+                 WHERE age > 18 AND age < 25;
+                 
+ ----------------------------------******************------------------------------------------------
+
+                  DISTINCT ------In this scenario, you may want to avoid including duplicate entries when presenting the results. 
+                  
+                  SELECT DISTINCT country
+                  FROM Customers;
+                 
+                 the result set contains a list of all the unique countries in the Customers table, without any duplicates.
+
+ ----------------------------------******************------------------------------------------------
+        SELECT first_name, country
+        FROM Customers
+        WHERE country = 'USA' OR country = 'UK';
+
+ ----------------------->>>>>>>>>>>>>>>>>>>      this above equetion is use equivalent 
+ 
+    SELECT first_name, country
+    FROM Customers
+    WHERE country IN ('USA', 'UK');
+	
+	
+	 
+	SELECT first_name, country
+    FROM Customers
+    WHERE country <> 'UK' AND country <> 'UAE';
+	
+	
+	SELECT first_name, country
+    FROM Customers
+    WHERE country NOT IN ('UK', 'UAE');
+	
+	
+	                                  ----------- BETWEEN --------------
+	
+                 SELECT *
+                 FROM Customers
+                 WHERE age BETWEEN 22 AND 27;
+
+
+                SELECT *
+                FROM Customers
+                WHERE age >= 22 AND age <= 27;
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                      
+                                      -- select everything from the Customers table
+                                      -- sort the results by the first_name column in ascending order ASC 
+                                       
+                                      SELECT *
+                                      FROM Customers
+                                      ORDER BY first_name ASC;
+                  
+                                        or With Where Condition
+                                        
+                                      SELECT first_name, age
+                                      FROM Customers
+                                      WHERE age > 23
+                                      ORDER BY age ASC;
+                                      
+                                      
+                                      SELECT *
+                                      FROM Customers
+                                      ORDER BY first_name DESC;
+                                      
+									  SELECT *
+                                      FROM Customers
+                                      ORDER BY first_name DESC, age ASC;
+									  
+									  
+									  SELECT name, quantity
+                                      FROM Products
+                                      ORDER BY quantity DESC, price DESC;
+                                      
+                                      
+ --------------------------------------------------------------------------------------------------------------------------------------------                                     
+                                      
+
+
+ 
+           -- select the first two rows
+ 
+            SELECT *
+            FROM Products
+            LIMIT 2;
+			
+			-- select products whose price is more than 100
+            -- then return the first two rows
+ 
+            SELECT *
+            FROM Products
+            WHERE price > 100
+            LIMIT 2;
+			
+			
+			-- skip first two rows using OFFSET 2
+            -- return only one row using LIMIT 1 
+ 
+                     SELECT name, price
+                     FROM Products
+                     LIMIT 1 OFFSET 2;
+					 
+					 
+					 Some databases, such as SQL Server and Oracle, use different syntax instead of LIMIT to limit the number of rows in the output. For example,
+					 -- select the first three rows
+
+                       SELECT TOP 3 *
+                       FROM Products;
+					 
+--------------------------------------------------------------------------------------------------------------------------------------------------			
+ 
+ 
+ Aggregate Functions    ----------->>>>>>>>>>>>>>>>>>>>
+ 
+MIN() - returns the minimum value in a column ---->>> SELECT MIN(age) FROM Employees;
+MAX() - returns the maximum value in a column  ---->>> SELECT MAX(age) FROM Employees;
+COUNT() - counts the number of rows in a column (Count the number of row) ----->>>>>> SELECT COUNT(first_name) FROM Employees; OR SELECT COUNT(*) FROM Employees;
+(Note ----->>>>>>>   SELECT COUNT(*) counts rows regardless of the NULL values.
+                     SELECT count(first_name) ignores the count of all the NULL values in the first_name column.
+					 )
+					 
+					 SELECT COUNT(DISTINCT country)FROM Customers;
+					 SELECT COUNT(DISTINCT country) AS distinct_country_count FROM Customers;
+
+
+SUM() - calculates the sum of values in a column ------>>>>>SELECT SUM(salary) FROM Employees;
+AVG() - calculates the average value of a column ------>>>>>SELECT AVG(age) AS average_age FROM Customers;
+
+
+The AS keyword assigns a temporary name—alias—to a column.  --|>
+Note: The AS keyword is also used to give an expression a temporary name, 
+
+SELECT MAX(age) AS max_age FROM Employees;     -------->>>>>>> AS keyword use for change colum name and assigns new colum name age to  max_age
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+                                                                   Filter Records
+																   
+                                                  <<<<---GROUP BY --->>>>>
+1.The GROUP BY clause in SQL is used to group a set of rows based on values in a column.	
+2.GROUP BY clause is almost always used in conjunction with aggregate functions such as SUM(), MIN(), MAX(),COUNT()
+																   
+																   
+Important Notes ---------->>>>  GROUP BY lets you use aggregate functions, like AVG, MAX, MIN, SUM, and COUNT. On the other hand DISTINCT just removes duplicates.	
+
+SELECT department, salary
+FROM Employees
+GROUP BY department;
+
+SELECT department, COUNT(*) AS number_of_employees
+FROM Employees
+GROUP BY department;
+
+
+SELECT department, MIN(salary) AS min_salary, MAX(salary) AS max_salary
+FROM Employees
+GROUP BY department;															   
+
+
+
+                                                    <<<<|---Having ---|>>>>>
+													
+													WHERE clause to filter rows.
+
+However, in the case of a GROUP BY clause containing aggregate functions, it is not possible to use the WHERE clause 
+this we not use for---->>>>>
+SELECT department, AVG(salary) AS average_salary
+FROM Employees
+GROUP BY department
+WHERE AVG(salary) > 4000;
+
+
+this is way we used ---->>>>
+SELECT department, AVG(salary) AS average_salary
+FROM Employees
+GROUP BY department
+HAVING AVG(salary) > 4000;
+
+SELECT department, AVG(salary) AS average_salary
+FROM Employees
+GROUP BY department
+HAVING average_salary > 3900;
+
+                                                              <<<<---Like --->>>>>
+															  
+ -- select customers who are from USA
+ SELECT *
+FROM Customers
+WHERE country = 'USA';
+
+
+-- select customers whose country starts with the letter 'U'
+ 
+SELECT *
+FROM Customers
+WHERE country LIKE 'U%';
+
+
+SELECT *FROM Customers WHERE country LIKE 'C%';             Select first_name ,country From Customers WHERE first_name LIKE '%e%' and country Like '%an%'; 
+
+SELECT * FROM Customers WHERE country NOT LIKE '%A';
+
+
+% Wildcard in SQL
+The % wildcard in SQL is used to represent zero or more characters. For example,
+
+SELECT first_name, age, country
+FROM Customers
+WHERE country LIKE 'C%i_';
+
+                                                   -------   New Case  -------
+												   
+	SELECT *,
+    CASE 
+        WHEN age >= 20 AND age <= 25 THEN '20-25'
+    END AS age_group ------->>>>>>>>>>>>>(Create new Column age_group and that column show true and false with range of 20-25)
+FROM Customers;
+
+customer_id	first_name	last_name	age	country	age_group
+ 1	         John	      Doe	    31	  USA	  other
+ 2	        Robert	     Luna	    22	  USA	  20-25
+
+
+SELECT *,
+    CASE 
+        WHEN age >= 18 AND age <= 19 THEN '18-19'
+        WHEN age >= 20 AND age <= 25 THEN '20-25'
+        WHEN age >= 26 AND age <= 30 THEN '26-30'
+        ELSE 'other' -------------->>>>>>>>>> We can add other as well
+    END AS age_group
+FROM Customers;
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Join
+ 1. Inner Join
+   INNER JOIN is used to combine rows from two or more tables based on a related column between them.
+                                    
+                                   SELECT Customers.name, Customers.city, Orders.product           
+                                   FROM Customers
+                                   INNER JOIN Orders
+                                   ON Customers.customer_id = Orders.customer_id;
+                                   
+								   Run Code  >>
+                                   Customers
+                                   customer_id	name	city
+                                   1	John	New York
+                                   2	Robert	Los Angeles
+                                   3	David	Chicago
+                                   4	Jane	New York
+                                   Orders
+                                   order_id	customer_id	product
+                                   1	1	Computer
+                                   3	2	Phone
+                                   4	1	Tablet
+                                   6	3	Phone
+                                   7	3	Computer
+                                   
+                                   SELECT c.name, c.city, o.product
+                                   FROM Customers AS c
+                                   INNER JOIN Orders AS o
+                                   ON c.customer_id = o.customer_id;
+                                   
+                                   SELECT *
+                                   FROM Customers c
+                                   INNER JOIN Orders o
+                                   ON c.customer_id = o.customer_id
+                                   WHERE o.product = 'Computer';
+                                   
+                                   Join more than two Column -------->>>>>>>>>
+                                   SELECT c.name, p.product, p.amount
+                                   FROM Customers c
+                                   JOIN Orders o
+                                   ON o.customer_id = c.customer_id
+                                   JOIN Products p
+                                   ON o.product_id = p.product_id;
+                                   
+                                   Left Join ---->>>
+                                   SELECT e.first_name, d.manager
+                                   FROM Employees e
+                                   LEFT JOIN Departments d
+                                   ON e.department = d.department_name;
+                                   
+                                   
+                                   A RIGHT JOIN is similar to a LEFT JOIN except that it selects all the rows from the right table and any matching rows from the left table.
+                                   You can use either the RIGHT JOIN or RIGHT OUTER JOIN statement to perform a right join. They are basically the same. For example,
+                                   
+                                   SELECT *
+                                   FROM Customers c
+                                   RIGHT JOIN Orders o
+                                   ON c.customer_id = o.customer_id;
+                                   
+                                   Full Join --- >>> A FULL JOIN combines the results of both a LEFT JOIN and a RIGHT JOIN.
+                                   
+                                   SELECT m.student_name, m.math_grade, h.student_name, h.history_grade
+                                   FROM math_grades m
+                                   FULL JOIN history_grades h
+                                   ON m.student_id = h.student_id;
+                                   
+                                    SELECT *
+                                   FROM math_grades m
+                                   FULL JOIN history_grades h
+                                   ON m.student_id = h.student_id;
+                                   
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                           SubQuary Test 
+														   
+														   
+SELECT * FROM Customers
+WHERE age = (
+  SELECT MIN(age)
+  FROM Customers
+); 
+
+SELECT 
+  (
+    SELECT name 
+    FROM Customers 
+    WHERE Customers.customer_id = Orders.customer_id
+  ) AS name, 
+  Orders.product 
+FROM Orders;
+Run Code  >>
+
+
+-- inner query returns a row if an employee is associated with the name column in the Departments table
+ 
+-- if the inner query returns one or more rows, the EXISTS clause returns TRUE
+ 
+-- the outer query returns the name of departments if the EXISTS clause returns TRUE
+ 
+                                                       SELECT Departments.name
+                                                       FROM Departments
+                                                       WHERE EXISTS (
+                                                         SELECT *
+                                                         FROM Employees
+                                                         WHERE Employees.department_name =   Departments.name
+                                                       );
+
+The NOT EXISTS operator is the opposite of the EXISTS operator.
+The NOT EXISTS operator returns TRUE if the subquery returns no rows, and FALSE if the subquery returns one or more rows.
+
+SELECT *
+FROM Customers
+WHERE age = (
+  SELECT MIN(age)
+  FROM Customers
+);
+
+
+Quetion ask _-------------------------------------------------->>>>>>>>>>>>>>>>
+SELECT MAX(amount) AS third_highest_amount
+FROM Orders
+WHERE amount NOT IN (
+    SELECT amount FROM Orders ORDER BY amount DESC LIMIT 2
+);
+
+
+Select MIN(amount) AS Second_minimum_Salary
+From Orders
+Where amount NOT IN (Select amount From Orders ORDER By amount ASC LIMIT 1)
+
+
+*******Cross Join:**********
+No ON condition is required.
+Typically generates a much larger dataset.
+SELECT a.id AS ID_A, b.id AS ID_B
+FROM TableA a
+CROSS JOIN TableB b;
+
+**********Inner Join:*************
+Requires a condition to match rows.
+Produces meaningful results for related datasets.
+SELECT a.id, b.name
+FROM TableA a
+INNER JOIN TableB b
+ON a.id = b.id;
+
+
+   *************************  Theory Quetion ************************
+   DELETE --->> removes single or multiple rows from an existing table based on condition but will not delete Schema, used to delete a row
+   TRUNCATE --->> deletes the whole contents of an existing table but will not delete Schema,used to remove all the rows from a table.
+   DROP ---->>  deletes the whole contents of an existing table with delete Schema/Structure
+   
+
+ 
+   Where --->>Where clause use befor GROUP BY Clause , Cannot Use Aggregate Functions
+   Have --->> Have Clause use after GROUP BY Clause , Having Clause containing Aggregate functions 
+   
+   
+   
+ ------------------------   ************************************* ----------------------------------
+
+
+SQL Databases : Also known as relational databases (RDBMS), they store data in structured tables with predefined schemas. 
+                They use SQL (Structured Query Language) for querying and manipulating data. Examples include MySQL, PostgreSQL, and Oracle.
+				
+NoSQL Databases : Non-relational databases that store data in various formats such as key-value pairs, documents, column families, or graphs.
+                  They are schema-less and designed for scalability and flexibility.
+				  Examples include MongoDB (document-based), Cassandra (column-family), Redis (key-value), and Neo4j (graph-based). 
+				  
+				  
+				  
+What is ACID in the context of databases?
+
+ACID stands for Atomicity, Consistency, Isolation, and Durability —four properties that guarantee reliable database transactions.
+
+Atomicity : Ensures that all operations within a transaction are completed successfully. If any operation fails, the entire transaction is rolled back.
+Consistency : Ensures that a transaction brings the database from one valid state to another, maintaining integrity constraints.
+Isolation : Ensures that concurrent transactions do not interfere with each other. Each transaction executes as if it were the only transaction running.
+Durability : Ensures that once a transaction is committed, it will remain so even in the event of a system failure.

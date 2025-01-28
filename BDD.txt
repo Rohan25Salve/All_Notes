@@ -1,0 +1,249 @@
+
+dryRun : It is used to verify that all steps of the feature file defined on step generator or glue code file or not. Syntax is : dryRun= true
+One thing keep in mind that when dryRun=true then entire code should not run only it checks that all the methods matched with feature file or not.  
+
+strict: It is used to verify that all steps of the feature file defined on step generator or glue code file or not.
+Syntax is : strict= true
+Difference between dryRun and strict is that strict run allow execute the code and report as fail if any steps not implemented on feature code.
+
+
+------->>>>>>  parallel Excecuation in Cucumber feature file
+  1. Add Dependncy J-unit 5  Use the cucumber-junit-platform-engine to run scenarios in parallel with JUnit 5
+  <dependency>
+    <groupId>io.cucumber</groupId>
+    <artifactId>cucumber-junit-platform-engine</artifactId>
+    <version>7.14.0</version>
+</dependency>
+
+
+@Suite
+@IncludeEngines("cucumber")
+@SelectClasspathResource("features")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "stepdefinitions")
+@ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
+@ConfigurationParameter(key = PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, value = "true")
+@ConfigurationParameter(key = PARALLEL_CONFIG_STRATEGY_PROPERTY_NAME, value = "fixed")
+@ConfigurationParameter(key = PARALLEL_CONFIG_FIXED_PARALLELISM_PROPERTY_NAME, value = "3")
+public class RunCucumberTest {
+}
+
+Key configuration parameters:
+
+PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME enables parallel execution.
+PARALLEL_CONFIG_STRATEGY_PROPERTY_NAME sets the parallelism strategy (fixed or dynamic).
+PARALLEL_CONFIG_FIXED_PARALLELISM_PROPERTY_NAME specifies the number of threads.
+
+Feature: Login functionality                                                             
+
+  Scenario Outline: Successful login
+    Given I am on the login page
+    When I enter username "<username>" and password "<password>"
+    Then I should see the dashboard
+
+    Examples:
+      | username | password |
+      | user1    | pass123  |
+      | user2    | pass456  |
+      | user3    | pass789  |
+	  
+	
+
+	public class LoginSteps {
+
+    @Given("I am on the login page")
+    public void i_am_on_the_login_page() {
+        System.out.println( Thread.currentThread().getName() + ": Navigating to login page");--------->>>>>>>>> this is way called Thread.currentThread
+    }
+	
+	
+	
+*****************************  Scenario Context in Cucumber *****************
+
+**Scenario Context is a mechanism in Cucumber that allows sharing data between steps in the same scenario.
+  It acts as a storage (key-value pair) for data that is relevant across multiple steps.
+**Definition: Share data between steps in the same scenario using key-value pairs.
+  Purpose: Avoid hardcoding and enable dynamic, reusable steps.  
+
+Feature: Login Feature
+Scenario: Successful Login
+    Given I am on the login page
+    When I login with username "testUser" and password "password123"
+    Then I should see the welcome message
+	
+	
+	public class ScenarioContext {
+    private Map<String, Object> context = new HashMap<>();
+
+    public void set(String key, Object value) {
+        context.put(key, value);
+    }
+
+    public Object get(String key) {
+        return context.get(key);
+    }
+}
+
+
+public class LoginSteps {
+    private ScenarioContext scenarioContext = new ScenarioContext();
+
+    @When("I login with username {string} and password {string}")
+    public void iLoginWithUsernameAndPassword(String username, String password) {
+        scenarioContext.set("Username", username);
+        scenarioContext.set("LoginStatus", "Success");
+        System.out.println("Logged in with username: " + username);
+    }
+
+    @Then("I should see the welcome message")
+    public void iShouldSeeTheWelcomeMessage() {
+        String loginStatus = (String) scenarioContext.get("LoginStatus");
+        Assert.assertEquals("Success", loginStatus);
+
+        String username = (String) scenarioContext.get("Username");
+        System.out.println("Welcome, " + username + "!");
+    }
+}
+
+
+------------------------****************************---------------------
+How do you use JUnit to handle exceptions?
+Answer:
+Using assertThrows:
+
+
+@Test
+void testException() {
+    assertThrows(IllegalArgumentException.class, () -> {
+      
+        throw new IllegalArgumentException("Invalid argument");
+    });
+}
+
+
+----------------********** Cucumber CLI *******--------------
+
+The Cucumber CLI is a powerful tool for running BDD tests written in Gherkin directly from the terminal, 
+and it provides various options to customize how tests are executed and reported. 
+It is often used in automation frameworks as part of Continuous Integration (CI) pipelines to run feature files automatically.
+
+TestRunner.java for JUnit:
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+    features = "src/test/resources/features", // Path to your feature files
+    glue = "stepdefinitions", // Package containing step definitions
+    plugin = {"pretty", "html:target/cucumber-report.html"}, // Reporting options
+	snippets = CAMELCASE,  // capitalized letters to separate words in a phrase, without spaces.
+   monochrome = true,  //This makes the output more readable.
+   tags="@dashboard_01"
+)
+
+
+TestRunner.java for TestNg:
+
+@CucumberOptions(
+    features = "src/test/resources/features",
+    glue = "stepdefinitions",
+    plugin = {"pretty", "html:target/cucumber-report.html"}
+)
+public class TestRunner extends AbstractTestNGCucumberTests {
+}
+
+
+Command -->
+
+cucumber --glue stepdefinitions --plugin pretty --format html --out target/cucumber-report.html src/test/resources/features
+cucumber --tags @regression --format html --out report.html
+cucumber features/login.feature(featureFile name )
+
+
+Maven Command -->
+mvn clean test
+
+    
+	
+    with Specific tag ----> 
+    mvn test -Dcucumber.filter.tags="@SmokeTest"
+
+
+
+**************************    How can you run Cucumber scenarios in parallel?   ****************************
+
+Use the Cucumber-JVM parallel plugin or a test runner like TestNG.
+Example with Maven Surefire plugin:
+Add the cucumber-jvm-parallel-plugin in pom.xml, then configure the parallel threads.
+  
+  
+  *************************   How do you integrate Cucumber reports with a test management tool like JIRA?  ********************
+
+Use plugins like cucumber-jvm with a reporting integration library.
+Generate reports in JSON format, then parse and push results to JIRA using REST API.
+
+
+**********************  How do you implement conditional execution of steps based on runtime data?  ****************************
+
+Use Assume or runtime checks in step definitions.
+
+@Given("I perform a task only if condition is true")  
+public void conditionalExecution() {
+    Assume.assumeTrue(someCondition());
+    System.out.println("Condition met. Performing task...");
+}
+
+
+*******************    Extract Data from One Step for Cucumber Feature File *****************
+
+  Scenario : 
+  Given     Logine Application with Username and Password 
+              |Username | Password |
+			  |rohan  | 1234  |
+			  |amit   | 23rfmk|
+			  |Nikhil | 1234  |
+			  
+			  
+			  @Given("Logine Application with Username and Password")
+			  public void addItemsToCart(DataTable dataTable) {
+              List<List<String>> items = dataTable.asLists();
+              String itemName = items.get(rowIndex).get(columnIndex);
+			  
+  	  }
+	  
+	  
+	  
+	  ------------- ********************------------------------------
+	  
+	  
+----> What is the use of transform in Cucumber?
+Answer: The transform feature (deprecated in recent versions) was used to convert test data to a desired format before passing it to the step definition.
+
+For newer versions, use ParameterTypes:
+
+@ParameterType(".*")
+public LocalDate date(String date) {
+    return LocalDate.parse(date);
+}
+
+
+---->> Dependency Injection (DI) with PicoContainer or Spring in Cucumber:
+Dependency Injection is a design pattern used to manage object dependencies and promote code reusability. 
+In Cucumber, DI is used to share state or variables across step definitions, hooks, and other classes during scenario execution.
+
+
+------------------------      ****************** --------------------------
+How do you use Regular Expressions in Cucumber to match dynamic parameters in steps?
+
+Answer: Regular expressions are used to match parameters dynamically in step definitions. 
+For example, a step like "Given I have entered 100 into the calculator" can be matched using a regular expression 
+in the stepnv definition like Given("^I have entered (\\d+) into the calculator$"). The value 100 will be passed to the step definition method as a parameter.
+
+
+
+---->>>> Role of Feature Files in Cucumber BDD
+Documentation: Define scenarios in plain language for non-technical stakeholders.
+Structure: Organizes test cases with Given-When-Then format.
+Traceability: Maps user requirements to test cases.
+Reusability: Allows sharing steps between scenarios.
+
+
+BDD ---> emphasizes communication and collaboration, focusing on the behavior of the system.
+TDD ---> focuses on writing tests before code and improving code quality through iterative development.

@@ -1,0 +1,1031 @@
+------>What are the four parameter you have to pass in Selenium?
+Four parameters that you have to pass in Selenium are
+
+Host
+Port Number
+Browser
+URL
+
+------>How you can use “submit” a form using Selenium?
+You can use “submit” method on element to submit form-
+
+element.submit () ;
+
+Alternatively you can use click method on the element which does form submission
+
+
+--------->Explain what is Datadriven framework and Keyword driven?
+Datadriven framework: In this framework, the test data is separated and kept outside the Test Scripts, while Test Case logic resides in Test Scripts. Test data is read from the external files ( Excel Files) and are loaded into the variables inside the Test Script. Variables are used for both for input values and for verification values.
+
+Keyworddriven framework: The keyword driven frameworks requires the development of data tables and keywords, independent of the test automation. In a keyword driven test, the functionality of the application under test is documented in a table as well as step by step instructions for each test.
+
+------->What is an Ajax?
+Ajax or Asynchronous JavaScript is used mostly to create quick and responsive web pages. 
+Let us take an example of a web page, where the user information updates on click of a button. 
+Suppose a user is updating his information quite frequently, because of that, the whole web page needs to be reloaded each time.
+However, on a web page which is built on Ajax, 
+only the part of user information which the user modified should be updated, rather than reloading the whole page.
+
+How we handle--- Thread.sleep , Implicit Wait, Explicite Waits
+
+
+------->Broken Links? 
+does not work i.e. does not redirect to the webpage it is meant to. 
+This usually occurs because the website or particular web page is down or does not exist
+A valid URL will have a 2xx HTTP status code.  Broken links, which are essentially invalid HTTP requests have 4xx and 5xx status codes.
+
+404 Page Not Found – The destination web page has been removed by the owner
+400 Bad Request – The server cannot process the HTTP request triggered by the link because the URL address requested is wrong
+ 
+ for link ------------->>>>>>>>>>>>>>
+*find <a ankel type webelements 
+*find url of the this webelements
+*Send HTTP request for the link
+*Verify the HTTP response code for the link
+
+for imange ------------->>>>>>>>>>>>>>>
+* find <image tag webelements  ex --- <img src=”assets/img/image.jpg” alt=”some text”>; 
+*find url of the this webelements
+*Send HTTP request for the link
+*Verify the HTTP response code for the link
+
+                        HttpURLConnection httpURLConnection = (HttpURLConnection) link.openConnection();
+                        httpURLConnection.setConnectTimeout(3000); // Set connection timeout to 3 seconds
+                        httpURLConnection.connect();
+                        if (httpURLConnection.getResponseCode() == 200) {
+                        System.out.println(url + " - " + httpURLConnection.getResponseMessage());
+                        } else {
+                        System.out.println(url + " - " + httpURLConnection.getResponseMessage() + " - " + "is a broken link");
+                        }
+                        } catch (Exception e) {
+                        System.out.println(url + " - " + "is a broken link");
+                        }
+						
+						
+						
+						
+---------Explain how you can handle colors in web driver?	
+Use getCssValue(arg0) function to get the colors by sending ‘color’ string as an argument
+
+
+----------- Which web driver implementation is fastest?
+HTMLUnit Driver implementation is fastest, HTMLUnitDriver does not execute tests on browser but plain http request, 
+which is far quick than launching a browser and executing tests
+
+					
+					
+---->>>> Explain using Webdriver how you can perform double click?
+You can perform double click by using
+
+Syntax- Actions act = new Actions (driver);
+act.doubleClick(webelement);
+
+
+----->>>>>Selenium tricky interview question and answer
+-----------------------------------------------------
+     How to handle iframes without using switchTo().frame()?
+This can be done using Explicit waits.
+CodeSnippet:-
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+wait.until(ExpectedConditions.frameTobeAvailableAndSwitchToIt(By.locator);
+Then you can interact with the element in the iframe using driver.findElement();
+
+
+-------->>>>Capture Full Page Screenshot with AShot API
+Add Dependency Pom.xml file AShot
+Screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(1000)).takeScreenshot(driver);
+ImageIO.write(screenshot.getImage(), "jpg", new File("c:\\ElementScreenshot.jpg"));
+
+Ashot API is a freeware from Yandex.
+It is a utility for taking a screenshot in Selenium.
+It helps you to take a screenshot of an individual WebElement on different platforms like desktop browsers, iOS Simulator Mobile Safari, Android Emulator Browser.
+It can take a page screenshot of a page bigger than screen size.
+This feature has been removed in selenium version 3, so Ashot API is a good option.
+It can decorate the screenshots.
+It provides a screenshot comparison.
+
+
+------>>>> How to handle SSL Certificate Error using Selenium Webdriver
+Suppose we have written some test scripts and while executing the script, we caught in the situation as “Untrusted Connection” 
+above then how do we handle the exception purely through automation.
+
+DesiredCapabilities handlSSLErr = DesiredCapabilities.chrome ()       
+handlSSLErr.setCapability (CapabilityType.ACCEPT_SSL_CERTS, true)
+WebDriver driver = new ChromeDriver (handlSSLErr);
+
+SSL (Secure Sockets Layer) is a standard security protocol for establishing secure connection between the server and the client
+Browser and the server use SSL Certificate mechanism to be able to establish a secure connection.
+SSL works through a combination of programs and encryption/decryption routine that exist on the web server computer and web server browser.
+When secure connection is not established between the server and client due to certificate SSL certificate error will occur
+
+
+-------->>>> How to Handle Cookies in Selenium WebDriver
+information about the user and their preferences. It stores information using a key-value pair. 
+It is a small piece of data sent from Web Application and stored in Web Browser,
+
+If cookies are not stored, you will need to perform login action every time before you execute above listed test scenarios. 
+This will increase your coding effort and execution time.
+
+Stored in text file 
+driver.manage().getCookies();
+
+NOTE: Use hard refresh in case you see the login page after executing the above script.
+
+
+----->>>>>How to Handle Proxy Authentication in Selenium Webdriver
+A proxy acts as an intermediary between clients sending requests and server responding. The primary use of a proxy is to 
+maintain privacy and encapsulation between multiple interactive systems.
+
+HTTP Proxy authentication with Selenium in Chrome can be handled using the following approaches
+
+Using the AutoIT tool
+Using Alerts
+
+
+---->>>>>>> JavaScriptExecutor? Use
+JavaScriptExecutor is an Interface that helps to execute JavaScript through Selenium Webdriver.
+JavaScriptExecutor provides two methods 
+JavascriptExecutor js = (JavascriptExecutor) driver;  
+js.executeScript(Script,Arguments);
+or
+js.executeAsyncScript(Script,Arguments);
+
+“executescript”  
+1.Click an Element using JavaScripExecutor --->js.executeScript("arguments[0].click();", button);
+2.Capture Scrape Data and Navigate to different pages using JavaScriptExecutor.
+3.Scroll Down using JavaScriptExecutor. -->>js.executeScript("window.scrollBy(0,600)");	
+4.Fetched URL, title, and domain name using JavaScriptExecutor.
+
+“executeAsyncScript” 
+1.sleep in the browser under test.
+js.executeAsyncScript("window.setTimeout(arguments[arguments.length - 1], 5000);");
+
+
+
+
+-------->>>>> Refresh Page using Selenium Webdriver different approaches
+*driver.navigate().refresh();
+*driver.get(driver.getCurrentURL());
+*driver.navigate.to(driver.getCurrentURL());
+*driver.findElement(By.id("username")).sendKeys(Keys.F5);vc
+
+--->>>Date Picker 
+* Use Select Class if Dropdown Date Picker
+* Use Normal Send Keys 
+*Use Select Year Month Date 
+
+
+----->>
+WebDriver: Use when testing locally on the same machine where the test code is running.
+RemoteWebDriver: Use when:
+Running tests on a remote Selenium server or grid.
+Distributing tests across multiple environments or machines.
+
+------------------*******  Serenity Locator *********-------------------
+
+public static Target String nameOfLocater = Target.the("this locater use for click on button").located(Byshodow.cssSelector("target","ShadowHost"));
+
+
+public static Target String nameOfLocater = Target.the("this locater use for click on button").located(By.cssSelector("---------"));
+
+Public static final Target ClickOnButton(String textOfBUtton){
+String  locator = String.formate("");
+return Target.the("this locater use for click on button").locatedBy(loacter);
+}
+
+--------------- ********* ------------------------------------
+
+                ***     Code ****
+                      TakesScreenshot interface: driver must be cast to TakesScreenshot because it provides the getScreenshotAs() method.
+					  OutputType.FILE: The method getScreenshotAs(OutputType.FILE) returns a File object, which represents the screenshot image in binary format.
+
+            TakesScreenshot screenshot = (TakesScreenshot) driver;
+            File srcFile = screenshot.getScreenshotAs(OutputType.FILE);
+            File destFile = new File("screenshot.png");
+            FileHandler.copy(srcFile, destFile);
+--------------------------------------------------------------------------------------------------------------
+
+  ----------************             find the Broken link               *************--------------- 
+
+            List<WebElement> links = driver.findElements(By.tagName("a"));
+               for (WebElement link : links) {
+                String url = link.getAttribute("href");
+            
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("HEAD");
+            connection.connect();
+            int responseCode = connection.getResponseCode();
+            if (responseCode >= 400) {
+                System.out.println(url + " is a broken link. Response Code: " + responseCode);
+            } else {
+                System.out.println(url + " is valid. Response Code: " + responseCode);
+            }
+	}
+			
+       
+ --------------------------------------------------------------------------------------------------------------------  
+ 
+          ******    How do you optimize Selenium tests for performance?    ******
+
+Use explicit waits instead of implicit waits.
+Avoid unnecessary Thread.sleep().
+Utilize Page Object Model for reusability.
+Run tests in headless mode using ChromeOptions or FirefoxOptions.
+Use parallel execution to save time.
+
+
+
+************ How do you test web applications that require multi-factor authentication (MFA)? ******
+
+Testing MFA can be challenging. Here’s how you can approach it:
+
+Mock Authentication: Bypass MFA for test accounts on staging environments.
+External OTP Retrieval: Integrate APIs to retrieve OTP sent to email or SMS.
+String otp = getOTPFromAPI();
+driver.findElement(By.id("otpField")).sendKeys(otp);
+
+
+Bypass Authentication Using Cookies:
+Cookie authCookie = new Cookie("auth", "validAuthToken");
+driver.manage().addCookie(authCookie);
+driver.navigate().refresh();
+
+
+
+********** How do you test browser notifications in Selenium? *************
+
+Disable Browser Notifications:
+
+1.ChromeOptions options = new ChromeOptions();
+options.addArguments("--disable-notifications");
+WebDriver driver = new ChromeDriver(options);
+
+2.Use JavaScript to interact with notifications (third-party tools like AutoIT or Sikuli can help).
+
+
+
+
+******************** How do you validate a tooltip in Selenium? *************
+
+Tooltips are often implemented using the title attribute.
+
+Get Attribute Value:
+WebElement element = driver.findElement(By.id("tooltipElement"));
+String tooltipText = element.getAttribute("title");
+System.out.println("Tooltip: " + tooltipText);
+
+
+
+
+Hover Action Validation:
+Actions actions = new Actions(driver);
+WebElement element = driver.findElement(By.id("tooltipElement"));
+actions.moveToElement(element).perform();
+String tooltipText = driver.findElement(By.cssSelector(".tooltip-class")).getText();
+
+    and if we want to pause 
+	pause(): Introduce a delay between actions.
+-----***** Run testNg.xml file , through maven commend ******---------
+
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M5</version> <!-- Use the latest version -->
+            <configuration>
+                <!-- Specify the TestNG XML file -->
+                <suiteXmlFiles>
+                    <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+                </suiteXmlFiles>
+
+                <!-- Configure retrying failed tests -->
+                <testFailureIgnore>false</testFailureIgnore> <!-- Fail the build on test failure -->
+                <parallel>tests</parallel> <!-- Run tests in parallel (optional) -->
+                <threadCount>4</threadCount> <!-- Specify the number of threads for parallel execution -->
+
+                <!-- Configure retrying failed tests -->
+                <retryCount>2</retryCount> <!-- Retry failed tests up to 2 times -->
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+
+
+-----------------------------        TestNG               ------------------------
+
+TestNG is a  testing framework and is the advance version of Junit. designed to make it easier to write and manage tests in Java
+Usage:TestNG uses annotations to define test methods and configure the testing process. Common annotations include:
+
+Advantages of TestNG:
+1) Grouping
+2) Parallel Test Execution
+3) Assertions
+4) Data-Driven Testing
+5) DependsOnMethods
+6) we can skip test using enabled=false
+7) timeOut
+8) @Factory 
+9) Listeners
+10) we can run pack through testNG.xml file
+11) HTML, XML testNg report
+12)Annoatation  --> @Test ,@BeforeMethod ,@AfterMethod,@BeforeClass,@AfterClass,@BeforeSuite / @AfterSuite
+
+Difference between @Factory and @DataProvider
+Feature	                                        @Factory	                                                                 @DataProvider
+Purpose	                     Creates multiple instances of the test class.	                                   Provides multiple sets of data for a test method.
+How It Works	         Returns an array of objects (test class instances).	                              Returns a 2D array or Iterator<Object[]> (data sets).
+Scope	                 Creates instances of entire test classes.	                                          Provides data for individual test methods.
+When to Use	             When you need to run tests with different configurations.	                      When you need to run the same test with multiple data inputs.
+Execution	              TestNG runs test methods for each test class 	                                    TestNG runs the test method for each data set provided 
+                            instance created by the factory.                                                              by the data provider.
+							
+							
+							
+ **************************** testNg.xml file ***********************************************
+ <?xml version="1.0" encoding="UTF-8"?>
+<suite name="Test Suite" parallel="tests" thread-count="4">
+    <test name="Test Group A" >
+        <groups>
+            <run>
+                <include name="groupA"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.example.TestClassA"/>
+			<class name="com.example.TestClassB"/>
+        </classes>
+    </test>
+
+
+</suite>
+
+******************** testNG Listeners****************
+
+listeners are used to track the execution of tests and perform actions based on the results
+
+ITestListener:  Listens to test method execution events (start, success, failure, skip).
+
+public class TestListener implements ITestListener {
+
+    @Override
+    public void onTestStart(ITestResult result) {
+        System.out.println("Test Started: " + result.getName());
+    }
+
+    @Override
+    public void onTestSuccess(ITestResult result) {
+        System.out.println("Test Passed: " + result.getName());
+    }
+
+    @Override
+    public void onTestFailure(ITestResult result) {
+        System.out.println("Test Failed: " + result.getName());
+    }
+
+}
+
+************* IRetryAnalyzer ********************
+
+IRetryAnalyzer is an interface in TestNG that allows you to specify retry logic for test methods that fail.
+
+
+public class RetryAnalyzer implements IRetryAnalyzer {
+
+    private int retryCount = 0;
+    private static final int maxRetryCount = 3;  // Max retry attempts
+
+    @Override
+    public boolean retry(ITestResult result) 
+	{
+        if (retryCount < maxRetryCount) 
+		{
+            retryCount++;
+            System.out.println("Retrying test " + result.getName() + " for the " + retryCount + " time(s).");
+            return true;  
+        }
+        return false; 
+    }
+}
+
+************** ISuiteListerner ************************
+Listens to suite execution events (suite start, suite finish).
+
+<suite name="Test Suite">
+    <listeners>
+        <listener class="com.example.MyTestListener"/>
+    </listeners>
+    <test name="Test">
+        <classes>
+            <class name="com.example.TestClass"/>
+        </classes>
+    </test>
+</suite>
+
+							
+---------------------  *****   Property File read  *******----------------------------
+   
+
+public Properties getproperty(String key) throws IO Exception
+{  
+FileInputStream fis=new FileInputStream("");
+Properties prop=new Properties();
+prop.load(fis);
+prop.getproperty(key);
+return prop;
+}
+
+
+
+*******************ExcelReading******************
+FileInputStream fis=new FileInputStream("path of the file");
+
+XSSFWorkbook workbook=new XSSFWorkbook(fis);
+int totalsheets=workbook.getNumberOfSheets();
+
+
+for(int i=0;i<totalsheets;i++)
+{
+if(workbook.getSheetName(i).equalsIgnoreCase("testdata"))
+{
+XSSFSheet sheet=workbook.getsheetAt(i);
+
+Iterator<Row> rows=sheet.iterator();
+Row firstrow=rows.next();
+
+Iterator<Cell>ce=firstrow.cellIterator();
+while(ce.hasNext())
+{
+Cell value=ce.next();
+if(value.getStringCellValue().equalsIgnoreCase("Testcases"))
+{
+//desired column
+}
+
+}
+
+
+
+
+********************** Take Screenshot code *********************
+
+File src=((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+FileUtils.copyFile(src,new File("C:\\Users\\example.png"));
+
+***************** SSL Certification ******************************
+
+Selenium:
+         ChromeOptions options = new ChromeOptions();
+         options.setAcceptInsecureCerts(true); 
+API:
+		given().RelaxedHTTPSValidation();
+		
+******************** Extent Report ***************************
+
+
+        ExtentSparkReporter sparkReporter = new ExtentSparkReporter("extentSparkReport.html");
+        sparkReporter.config().setReportName("My Automation Test Report");
+        sparkReporter.config().setDocumentTitle("Test Execution Report");
+        ExtentReports extent = new ExtentReports();
+        extent.attachReporter(sparkReporter);
+        ExtentTest test = extent.createTest("Sample Test", "This is a sample test for Spark Report");
+
+       test.pass("Successfully navigated to the website");
+       test.fail("Test failed due to: " + e.getMessage());
+      
+       extent.flush();
+
+
+****************** Broken Link program **********************************
+
+     List<WebElement> links = driver.findElements(By.tagName("a"));
+        
+    for (WebElement link : links) 
+	{
+		String url = link.getAttribute("href");
+   
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("HEAD");
+            connection.connect();
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode >= 400) 
+			{
+                System.out.println(url + " is a broken link. Response Code: " + responseCode);
+            } else 
+			{
+                System.out.println(url + " is valid. Response Code: " + responseCode);
+            }      
+    }
+
+
+*************************** WireMock Code *******************************
+
+Category: HTTP Mock Server
+Purpose: Used for mocking and stubbing HTTP services in integration or system tests.
+Use Case: Simulating external HTTP APIs to test how a system interacts with them.
+
+Key Features:
+Acts as a standalone mock server that can mimic API responses.
+Records and replays HTTP interactions.
+Supports a wide range of HTTP protocols and behaviors (e.g., delays, timeouts).
+Can simulate real-world scenarios like service unavailability or slow responses.
+
+Common Use Cases:
+Testing microservices that rely on external APIs.
+Simulating API failures or latency.
+Testing systems in environments where external APIs are unavailable or costly to call.
+
+@BeforClass
+{ 
+                WireMockServer server = new WireMockServer(Port_Number);
+                server.start();
+                WireMock.configureFor(HOST,PORT_Number); 
+				
+           ResponseDefinitionBuilder mockeResponse = new ResponseDefinitionBuilder();
+           mockeResponse.withStatus(200);
+           mockeResponse.withStatusMessage("Hello mam");
+           mockeResponse.withHeader("Content-Type","Json");  
+           mockeResponse.withBody("text to put in the body");
+		   
+           WireMock.stubFor(WireMock.get("Resources")).willReturn(mockeResponse);
+}
+
+Simulating HTTP services (external APIs, microservices)., Mocking
+HTTP request/response mocking.
+@Test
+{
+Response response = given().log().all().when().get(" ").then().statusCode(201).extract().response();
+Assert.assertEquals(response.getHeader("token"),"1111")
+Assert.assertEquals(response.getBody().asString(),"this code looks Good ,Thank you")
+}
+
+@AfterClass
+{
+if(server.isRunning() && null !=server)
+server.shutdown();
+}
+
+    WireMock Code  ---> Simulating HTTP services (external APIs, microservices)., Mocking HTTP request/response mocking., Interacts with external systems via HTTP.,Useful when you need to simulate external HTTP services without hitting them.
+                        Use
+	Mockito   ---> Mocking dependencies in unit tests ,Unit testing (verifying logic of individual classes or methods).,Mocking Object/method-level mocking ,Generally simpler setup for mocking objects and method calls.,
+                   	
+						
+
+******************** Database Connection ************************
+connection con= Drivermanager.getconnection( url, " username""password");
+
+URL Jdbc : mySql" :// + host +": " + port +" / datbasename" ; Jdbc : mysql://"+localhost +"+" 3306 +"/databasename";
+
+statement s = con.Createstatement ();
+
+Result rs = S.executequery ( "Enter query for Finding value");
+
+while (rS. next ()) {
+
+System out.println( rs. getstring (" username");
+}
+
+
+************************ Hibernate ******************************
+           Maps Java objects (classes) to database tables and Java data types to SQL data types.
+           Eliminates the need for manual mapping and SQL query writing.
+		   
+		   
+1. Add dependency 
+   a)hibernate-core b)mysql-connector-java
+   
+  2. Create hibernate.cfg.xml --> to set URL and Username , password for Data Base
+ 
+  3. Create Data Entity Class for represent Data base Table 
+     with few annotation like @Entity @Table(name='Username')
+	 
+	 public user {
+	 @cloumn(name='email')
+	 private String email;
+	 public String getEmail(){
+	  return email;
+	 }	 
+	  public void setEmail(String email){
+	    this email= email;
+	 } 
+   }
+	 
+
+  4. Create RestAssured Test Class
+       
+        Session session = HibernateUtil.getSession();
+        User user = session.get(User.class, 1);
+        HibernateUtil.closeSession(session);
+
+        Response response = RestAssured.given()
+                .baseUri("http://localhost:8080/api")
+                .get("/users/1").then().statusCode(200)
+                .body("email", equalTo(user.getEmail()));
+
+
+
+
+
+**************** Waits *************
+There are tow types of waits:
+1) Conditional Waits
+Implicit Wait: It’s applied globally for all elements and remains active until the session ends.
+
+WebDriver driver = new ChromeDriver();
+driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));	
+
+Exception: NoSuchElementException
+Defaulttimeout: 0sec
+
+Explicit Wait: 
+The Explicit Wait is used when you want to wait for a specific condition to occur (e.g., element visibility, element clickability, etc.). 
+It is only applied to specific elements.
+
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+WebElement clickableElement = wait.until(ExpectedConditions.elementToBeClickable(By.id("submitButton")));	
+
+Exception: TimeOutException
+
+Fluent Wait: 
+Fluent Wait is an advanced version of explicit wait where you can specify the maximum time to wait, 
+the polling interval, and the conditions to ignore (like NoSuchElementException).
+
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        wait.pollingEvery(Duration.ofMillis(500));         
+		wait.ignoring(Exception.class);
+WebElement visibleElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("welcomeText")));	
+
+Exception: StaleElementReferenceException, NoSuchElementException, TimeoutException	
+
+2) Unconditional Waits
+Thread.sleep();
+
+**************** Exceptions in selenium *******************************
+
+1) NoSuchElementException:  
+This exception is thrown when WebDriver cannot find an element using the specified locator (e.g., findElement()).
+Solution: Explicit Waits
+
+2)ElementNotInteractableException OR ElementClickInterceptedException
+The element is present in the DOM but not interactable/clickable (e.g., hidden or disabled).
+Solution: Explicit Waits ,
+((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+
+3) StaleElementReferenceException  
+The element reference is no longer valid, typically because the DOM has changed after the element was located.
+Solution: Explicit Wait, Retry Analayzer , Refresh the page and Try and catch method
+
+4) TimeoutException  
+The wait condition did not succeed within the specified time.
+Solution: Adjust the timeout duration as needed.
+
+5) ElementNotVisibleException: 
+when an element is present in the DOM but not visible on the screen.
+Solution: Explicit Wait, JavascriptExecutor
+
+*********** Get and Navigate Method ***********
+get(): 
+It loads a web page in the browser and waits for the page to load completely.
+It does not allow you to go back or forward to other pages.
+It is blocking, meaning the script will not continue until the page is completely loaded.
+Syntax: driver.get("https://www.example.com");
+
+navigate():
+Allows for more advanced navigation (back, forward, refresh, load a URL).
+Non-blocking for navigation tasks (can proceed with other actions).
+Does not block and can be used for navigating to pages, refreshing, or going back.
+Syntax: driver.navigate().to("https://www.example.com"); 
+        driver.navigate().back();  
+        driver.navigate().refresh(); 
+		
+**************** Locators in selenium *****************
+locators are used to identify and interact with elements on a web page.
+All these locators are present in a class called By, which is an abstract class. 
+
+1. id(String)
+2. name(String)
+3. className(String)
+4. tagName(String)
+5. linkText(String)
+6. partialLinkText(String)
+7. cssSelector(String)
+8. xpath(String)
+
+*********** Differences Between findElement() and findElements() *****************
+findElement()	                                                     findElements()
+Finds a single element                                            Finds multiple elements.
+Returns a single WebElement                                        Returns a List<WebElement>.
+Throws NoSuchElementException if not found.	               Returns an empty list if no elements are found.
+Used when you expect one matching element	              Used when you expect multiple elements or don't know if any element will be found.
+WebElement element =                                       List<WebElement> elements = driver.findElements(By.className("button"));
+driver.findElement(By.id("elementId"));
+
+
+************* JavascriptExecutor Code *********************
+JavaScriptExecutor is an Interface that helps to execute JavaScript through Selenium Webdriver.
+
+JavaScriptExecutor provides two methods 
+JavascriptExecutor js = (JavascriptExecutor) driver;  
+js.executeScript(Script,Arguments);
+or
+js.executeAsyncScript(Script,Arguments);
+
+“executescript”  
+1.Click an Element using JavaScripExecutor 
+Code: ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);;
+
+2.Enter key using JavaScripExecutor
+Code: ((JavascriptExecutor) driver).executeScript("arguments[0].value='myValue';", inputField); 
+
+3.Scroll Down using JavaScriptExecutor
+Code: ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);	
+
+4.Refresh the page
+Code: ((JavascriptExecutor) driver).executeScript("history.go(0);");
+
+5. Handling Disabled Elements
+Code: WebElement element = driver.findElement(By.id("disabledField"));
+      ((JavascriptExecutor) driver).executeScript("arguments[0].removeAttribute('disabled');", element);
+	  	  
+*************** Window handles ******************
+Set<String> allWindowId = driver.getWindowHandles()
+Iterator <String> it = allWindowId.iterator();
+String parentWindowId = it.next();
+String child = it.next();
+
+for (String x : allWindowId) {
+if (!parentWindowId.equals(x)) {
+driver.switchTo().window(x);
+--- **Automation Code **---
+
+driver.switchTo().defaultContent(); or driver.switchTo().window(parentWindowId); 
+}
+}
+************** Static dropdown handling using Select class ***************
+                    
+					Select s=new Select(w);
+                        List<WebElement> o = s.getOptions();
+                        for (WebElement x:o) {
+                        System.out.println(x.getText());
+                           }
+                        }
+                        s.selectByIndex(3);
+                        s.selectByValue("gfg");
+                        s.selectByVisibleText("ggffd");
+
+
+************* Actions class ***************
+Actions class is used to handle the mouse movements, keyboard actions, drag-and-drop, hover, and more.
+
+                   Actions a=new Actions(driver);
+                   a.moveToElement(courses).perform();
+                   a.dragAndDrop(source, des).perform();
+                        or
+                   a.clickAndHold(src).moveToElement(target).release().perform();
+
+*************** Alerts Handling ************
+
+Alert alert = driver.switchTo().alert();
+alert.accept();
+alert.dismiss(); 
+alert.getText(); 
+alert.sendKeys("Hello, this is a test!");
+
+********** Block popup window *************************
+1) Blocking JavaScript Pop-ups (Alerts, Confirm, and Prompt)
+
+ChromeOptions options = new ChromeOptions();
+options.addArguments("--disable-popup-blocking");
+WebDriver driver = new ChromeDriver(options);
+
+2) Using Browser Extensions or Ad-Blockers 
+
+ChromeOptions options = new ChromeOptions();
+options.addExtensions(new File("/path/to/extension.crx"));
+WebDriver driver = new ChromeDriver(options);
+
+************* Proxy validation and addition ******************
+
+
+Proxy proxy = new Proxy();
+proxy.setHttpProxy("localhost:8080");  
+
+DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+capabilities.setCapability("proxy", proxy);
+ChromeDriver driver = new ChromeDriver(capabilities);
+
+*************** Cookies validation in selenium
+1) Add cookie:
+
+ChromeDriver driver = new ChromeDriver();
+
+Cookie cookie = new Cookie("sessionID", "12345");
+driver.manage().addCookie(cookie);
+
+driver.get("https://www.example.com");
+
+2) get Cookies
+
+ChromeDriver driver = new ChromeDriver();
+Set<Cookie> cookies = driver.manage().getCookies();
+
+for (Cookie cookie : cookies) {
+    System.out.println("Name: " + cookie.getName() + ", Value: " + cookie.getValue());
+}
+3) get specific cookie
+
+
+ChromeDriver driver = new ChromeDriver();
+Cookie cookie = driver.manage().getCookieNamed("sessionID");
+
+if (cookie != null) 
+{
+    System.out.println("Cookie Name: " + cookie.getName());
+    System.out.println("Cookie Value: " + cookie.getValue());
+} else 
+{
+    System.out.println("Cookie not found!");
+}
+
+4) Deleting a specific cookie
+
+ChromeDriver driver = new ChromeDriver();
+driver.manage().deleteCookieNamed("sessionID");
+
+5) Deleting all cookies
+ChromeDriver driver = new ChromeDriver();
+driver.manage().deleteAllCookies();
+
+************* SSL Certification *******************
+ChromeOptions options = new ChromeOptions();
+options.addArguments("--ignore-certificate-errors");
+ChromeDriver driver = new ChromeDriver(options);
+driver.get("https://example.com");
+
+OR
+
+ChromeOptions options = new ChromeOptions();
+options.setAcceptInsecureCerts(true);
+ChromeDriver driver = new ChromeDriver(options);
+driver.get("https://example.com");
+
+************* Xpaths with cssSelector **************************************
+
+XPath is used to locate elements on a web page for automation. 
+XPath expressions are widely used to find elements in an HTML document based on attributes, text, position, and more.
+
+There are two types of XPath:
+
+Absolute XPath: This is a complete path from the root of the document to the element.
+Relative XPath: This is a more flexible path that starts from any point in the document (not necessarily the root).
+
+1) Finding Elements by Tag Name:  //button
+2) Finding Elements by Attribute:  //input[@id='username']
+3) Finding Elements by Text:  //button[text()='Submit']         //a[text()='Login']
+4) Using Contains() to Match Substring: 
+   //button[contains(@class, 'submit')]
+   //input[contains(@name, 'user')]
+  //a[contains(text(), 'Log')]
+5) Using Starts-with() 
+to Match Start of Attribute:    //input[starts-with(@id, 'user')]
+6) Using OR and AND Conditions:
+//input[@id='username' and @name='user']
+//input[@id='username' or @name='user']
+7) Finding Parent, Child, and Sibling Elements:
+    /parent:: ,/child:: , /following-sibling:: /precceding-sibling:: , /ancestor:: , /descendant::
+	
+	//div[normalize-space(text())='Example Text']  --->  remove leading and trailing whitespace and replace sequences of whitespace characters 
+
+	
+	css - > 
+	starts-with  //tagName[attribute^ = 'value' ]
+	end-with     //tagName[attribute$='value']
+	subString    //tagName[attribute*='value']
+	following-sibling   //tagName[attribute*='value']~tagName
+	nth-child  //tagName[attribute*='value']:nth-child(index)
+	                                         first-child(index)
+											 last-child(index)
+   :first-of-type
+   :last-of-child
+   
+   
+   
+-----------***************-------------------------------
+
+Action -->  represents a single, user-interaction action (e.g., mouse movement, click, or keypress)
+
+        Actions builder = new Actions(driver);
+        Action clickAction = builder.click(locator).build();
+        clickAction.perform();
+
+
+Actions->Used for chaining multiple actions together. 
+like -->build and execute complex user interactions like drag-and-drop, mouse hover, double-click, and keyboard events.
+
+Actions actions = new Actions(driver);
+        actions.moveToElement(Locator1).moveToElement(Locator2).click().perform();
+		
+		---------*********-------------------
+		Password Protected URL selenium java 	
+		Using URL with Credentials (Basic Authentication)
+	  String url = "https://username:password@yourwebsite.com";
+	  
+  _______________________________******_______________________________******
+  
+ *********************************  Selenium Archestruter ***************
+  
+  SearchContext (Interface)
+   |
+   +--> WebDriver (Extends SearchContext)
+           |
+           +--> RemoteWebDriver (Implements WebDriver)
+                    |
+                    +--> ChromeDriver
+                    +--> FirefoxDriver
+                    +--> EdgeDriver
+   |
+   +--> TakesScreenshot (Separate Interface)
+   +--> JavascriptExecutor (Separate Interface)
+-------------------------------********************************************************
+How do you manage browser sessions in a parallel test execution environment?
+Answer:
+
+Use WebDriverFactory Pattern: Create a factory to manage WebDriver instances for each test.
+ThreadLocal WebDriver: Isolate WebDriver instances for each thread.
+java
+Copy code
+private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
+public static WebDriver getDriver() {
+    if (driver.get() == null) {
+        driver.set(new ChromeDriver());
+    }
+    return driver.get();
+}
+Selenium Grid: Execute tests in parallel using a distributed setup.
+Cloud Services: Use platforms like BrowserStack or Sauce Labs for parallel execution.
+
+_______________________________******_______________________________******
+
+How would you handle file uploads and downloads in Selenium?
+Answer:
+
+File Upload: Use sendKeys() or third-party tools like AutoIt for non-input elements.
+driver.findElement(By.id("fileInput")).sendKeys("/path/to/file.txt");
+
+
+
+File Download: Set browser preferences to download files automatically.
+Example for Chrome:
+
+
+HashMap<String, Object> prefs = new HashMap<>();
+prefs.put("download.default_directory", "/path/to/downloads");
+
+ChromeOptions options = new ChromeOptions();
+options.setExperimentalOption("prefs", prefs);
+WebDriver driver = new ChromeDriver(options);
+
+----------*************************---------------------------------
+
+               Challenges in Testing Dynamic Websites
+Frequent UI Changes: Element locators may break due to changes in structure.
+Scenario: Locators for a search bar changing due to website redesign.
+Dynamic IDs: IDs or classes of elements generated dynamically.
+Solution: Use XPath or CSS selectors based on relative properties.
+Page Load Timing: Synchronizing tests with content rendering.
+Scenario: AJAX calls loading content after a delay.
+Responsive Design Testing: Adapting tests for multiple viewports.
+
+
+--------------****************************-----------------------
+Challenges in Running Tests on Multiple Browsers Using Selenium Grid
+Compatibility Issues: Different browsers may interpret elements differently.
+Environment Setup: Proper configuration of hub and nodes.
+Synchronization: Dynamic loading and delays require handling timeouts effectively.
+Resource Management: High resource usage on servers when running parallel tests.
+Browser-Specific Bugs: Tests passing on one browser but failing on another.
+
+-------------************---------------------------------------------------
+ How do you validate that a web application is responsive?
+Answer:
+              Use browser developer tools to simulate various screen sizes.
+              Automate using Selenium or Cypress with different viewport sizes:
+              java
+              Copy code
+              driver.manage().window().setSize(new Dimension(375, 667));
+			  
+	*************** Shadow DOM **********************
+The Shadow DOM is a web standard that enables developers to encapsulate a component's structure 
+keeping it separate from the rest of the document's DOM.
+
+Shadow DOM elements are not part of the main DOM tree, so standard locators (like XPath or CSS selectors) cannot access them directly.
+Simple Dom --> one Host with one root
+Nested Showdom -->one Host with multiple root
+
+How to find Using selenium --> JavaScripExecut
+How to locate --> 1. use Css Selector 
+                  2. Go to Console and Write document.querySelector('Host').Shadowdom.querySelector('root')		  
+			  

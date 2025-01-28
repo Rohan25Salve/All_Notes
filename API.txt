@@ -1,0 +1,1024 @@
+
+----->>>>How to validate more than one possible status code using Rest Assured?
+using the Hamcrest Matcher framework’s anyOf() method we can validate more than one possible status code
+
+given().baseUri("https://restful-booker.herokuapp.com/").when().get('/author').then()
+ .statusCode(anyOf(is(STATUS_CODE_OK),is(STATUS_CODE_NOT_FOUND))); 
+ 
+ -------->>> How to check if a specific field is present or not in the JSON response?
+ Using Hamcrest Matcher
+
+    when().get("/author/123").then()
+    .body("$", hasKey("lastname"))
+    .body("$", not(hasKey("age")));
+	
+	
+---->>>> What are the best practices for developing a maintainable Rest Assured Framework?
+1)Separate test data, test logic, and assertions using a modular approach.
+2)Reduce code duplication by implementing reusable helper methods or classes.
+3)Variable and method names should be meaningful and descriptive.
+4)To make troubleshooting easier, implement effective error handlinuj API to another API)?
+
+We can pass data using the ITestContext interface of TestNG.This interface provides context or information about the execution of a test suite. This interface has 2 very useful methods getAttribute () and setAttribute(). With the help of these methods, we can set and get the values that will be used in API chaining.
+@Test
+public void createBooking(ITestContext context)
+{
+	int bookingId = RestAssured
+	.given()
+		.log()
+		.all()
+		.baseUri("https://restful-booker.herokuapp.com/")
+		.basePath("booking")
+		.contentType(ContentType.JSON)
+		.body("booking.json")
+		.when()
+		.post()
+		.then()
+		.log()
+		.all()
+		.extract()
+		.jsonPath()
+		.get("bookingid");
+		// Storing data in a context to use for other tests
+		context.setAttribute("bookingId", bookingId);
+	}
+@Test
+public void updateBooking(ITestContext context)
+{
+  int bookingId = (int) context.getAttribute("bookingId");
+  RestAssured.given().log().all()
+  .baseUri("https://restful-booker.herokuapp.com/")
+  .basePath("booking/"+bookingId)
+  .header("Authorization","Your token").contentType(ContentType.JSON)
+  .body("booking.json").when().put().then().log().all();
+  }
+  
+  
+  Method -
+  HEAD:
+  The Head method is similar to the Get method, 
+  but it retrieves only the header data and not the entire response body.
+  Moreover, 
+  we use it when you need to check the document's file size without downloading the document.
+  
+  
+  How does REST handle statelessness in web services?
+Ans:
+REST treats each request as an independent transaction without relying on previous interactions.
+It doesn’t store the client state on the server between requests.
+Clients include all necessary information, such as authentication tokens or session data, with each request.
+Stateless communication simplifies server implementation and improves scalability.
+
+ --->>> How would you validate an API that requires multipart/form-data? and Download alos
+
+Answer:
+Use RestAssured’s multiPart method:
+java
+Copy code
+given()
+    .multiPart("file", new File("path/to/file"))
+    .post("/upload");
+	
+	
+	Download File --->>
+	File downloadedFile = response.as(File.class);
+	File Download Example:
+     Response response = given()
+                        .when()
+                        .get("/download/file")
+                        .then()
+                        .statusCode(200)
+                        .extract()
+                        .response();
+byte[] fileContent = response.asByteArray();
+Files.write(Paths.get("downloadedFile.txt"), fileContent);
+	
+	
+	Response response = given()
+    .when()
+    .get("/download");
+
+InputStream downloadedFile = response.asInputStream();
+Files.copy(downloadedFile, Paths.get("downloaded_file.txt"), StandardCopyOption.REPLACE_EXISTING);
+Explanation:
+
+multiPart for file uploads.
+Use InputStream for handling downloaded files.
+
+
+
+	
+----->>>> "How do you handle scenarios where the API response is delayed or times out?"
+Answer: Explain implementing retries or configuring RestAssured with timeout settings:
+java
+
+RestAssured.config = RestAssured.config()
+    .httpClient(HttpClientConfig.httpClientConfig()
+    .setParam("http.connection.timeout", 5000));
+	
+	
+	1. Set Timeout Configurations
+API testing frameworks allow you to configure timeouts to handle delayed responses effectively. This ensures that tests do not hang indefinitely.
+
+Example with RestAssured:
+java
+
+RestAssured.config = RestAssured.config()
+        .httpClient(HttpClientConfig.httpClientConfig()
+        .setParam("http.socket.timeout", 5000) // 5 seconds timeout
+        .setParam("http.connection.timeout", 5000));
+		
+		
+In this example:
+http.socket.timeout: The timeout for waiting for data.
+http.connection.timeout: The timeout for establishing a connection.
+
+
+
+---->>>>What steps would you take if your test execution is slow?
+Answer:
+Identify bottlenecks using logs.
+Run tests in parallel.
+Reduce redundant validations.
+
+
+---->>>>>>>
+RequestSpecification ===allows you to reuse common settings like base URI, 
+                                    headers, and authentication across multiple tests.
+									
+----->>>>>>
+How do you test API rate-limiting using RestAssured?
+
+Answer: Send multiple requests in a short period and validate the response for a 429 Too Many Requests status.
+java
+Copy code
+for (int i = 0; i < 20; i++) {
+    Response response = given().get("/rate-limited-endpoint");
+    if (i > 10) {
+        assertEquals(429, response.getStatusCode());
+    }
+}
+
+------>>>>>If an API returns paginated responses, how would you validate all the results?
+
+Iterate through all pages, accumulating the results, and validate them collectively.
+
+
+                          int page = 1;
+                          List<String> allItems = new ArrayList<>();
+                          while (true) {
+                              Response response = given().queryParam("page", page).get("/items");
+                              List<String> items = response.jsonPath().getList("data.items");
+                          	
+                              if (items.isEmpty()) break;
+                              allItems.addAll(items);
+                              page++;
+                          }
+                          assertThat(allItems.size(), greaterThan(0));	
+						  
+						  
+						  How do you validate Pagination, Cursors? ●  
+ Endpoints  that  support  pagination,  and  cursors  need  to  be  verified  with  supported  parameters separately and in combinations. 
+ Use boundary values, equality partitioning, and pairwise testing. ●  
+ For negative tests try to use a limit more than max one, offset out of bounds, incorrect values 
+ http://example.com/api/products?limit=20&offset=100 
+
+------>>>>>>>
+log().all(): Logs the request and response details for all requests.
+log().ifError(): Logs details only when the response status code indicates an error (4xx or 5xx).	
+
+----->>>>>
+How would you validate API response time using RestAssured?
+Answer: Use the time() method or a custom assertion with Matchers.
+
+
+given()
+.when()
+    .get("/endpoint")
+.then()
+    .time(lessThan(2000L)); // 2 seconds		
+
+---------->>>>>
+How would you test an API that requires OAuth2 authentication using RestAssured?
+Answer:Use auth().oauth2("token") method to set the Bearer token for authentication in RestAssured.
+java
+
+given()
+    .auth()
+    .oauth2("yourAccessToken")
+.when()
+    .get("/secure-endpoint")
+.then()
+    .statusCode(200);	
+	
+	
+------->>>>>>What are the different ways to validate cookies in RestAssured?
+
+Answer: Use the cookie() method to validate specific cookies in the response.
+
+                      given().when() .get("/login") .then().cookie("sessionId", notNullValue())
+                          .cookie("secureCookie", "true");	
+                      	
+	
+----->>>>>>>>>>>
+How do you test APIs with delayed responses (long polling or async)?
+
+Hint: Use timeouts and polling intervals to validate delayed responses.
+-------------------------*--------------------------------
+Awaitility.await()
+    .atMost(30, TimeUnit.SECONDS)
+    .pollInterval(1, TimeUnit.SECONDS)
+    .until(() -> given().get("/long-poll-endpoint").getStatusCode() == 200);
+	Awaitility.await().atMost(30,SECONDS).until(()-> isStatus(expected));
+	
+	
+---->>>>WebSocket API
+is a communication protocol that provides two-way communication between a client and a server over a single, long-lived connection.
+
+
+* Logistics live tracking updates.
+* Live sports scores or stock price updates.
+* Chat Applications:Two-way messaging between users in real-time. 
+
+                                                  OkHttpClient client = new OkHttpClient();
+												  CountDownLatch latch = new CountDownLatch(1);			  
+												  Request request = new Request.Builder().url(BASE_SOCKET_URL).build();
+                                                  WebSocket webSocket = client.newWebSocket(request, listener);
+												  latch.await();
+                                                  client.dispatcher().executorService().shutdown();
+												  
+WebSocket and Rest APIs are separate protocols. 
+You'll typically use RestAssured for REST API testing and another library for WebSocket interactions.												  
+												  
+												  
+----> RestAssured sends a single HTTP request, waits for the response, and only after processing the 
+response does the test proceed to send the next request (if any). 
+This behavior follows the typical request-response model of HTTP.
+In REST APIs, each request-response cycle is synchronous by default.
+
+
+----> WebSockets enable real-time, full-duplex communication, meaning both the client and server can send and receive messages
+independently at any time. Unlike REST APIs, WebSockets do not operate in a strict "request-wait-response-then-next-request" sequence.
+In WebSockets, communication is asynchronous and real-time, allowing multiple messages to be sent and received without waiting for responses.
+				
+
+---->>>>  WebSockets and REST APIs are used together:
+
+Use REST APIs for:
+Authentication, fetching initial data, and performing CRUD operations.
+
+Use WebSockets for:
+Streaming updates, notifications, and real-time interactions.		
+
+Connect to the WebSocket Endpoint:
+
+Test if the client can establish a connection with the WebSocket server.
+Validate that the server responds with a successful handshake (101 Switching Protocols).
+Send and Receive Messages:
+
+Verify that messages can be sent from the client to the server.
+Validate the server processes the message and sends the correct response.
+Close the Connection:
+
+Test if the WebSocket connection can be gracefully closed by both the client and server.		
+												  
+												  -----------***************-------------
+												  
+What are some configurations available in RestAssured?
+Answer:
+Logging: You can configure logging to print the request/response details.
+Timeouts: Set timeouts for the requests.
+Proxy: Set a proxy server
+
+What is the purpose of RestAssured.config()?
+Answer:
+It allows you to configure various settings for the RestAssured instance (e.g., timeouts, logging, retry logic).
+These questions cover a broad range of RestAssured features, including basics, file uploads, response handling, assertions, and more.
+
+Options() method in restassured
+Answer:
+In RestAssured, the options() method is used to make an OPTIONS request to an API endpoint. 
+The OPTIONS HTTP method is used to request information about the communication options available for the target resource. 
+The response to an OPTIONS request contains the allowed methods 
+(e.g., GET, POST, PUT, DELETE) that can be used on a specific resource.
+ ---------------------------**************************---------------------------------------------
+
+Testing Delayed Responses ------>>>>>>>>
+
+a) Dealy Response ----->>>
+
+-->>.then()
+  .time(Matchers.greaterThan(2000L));  // Expect the response time to be greater than 2 seconds
+
+-->>.time(lessThan(5000L));  // Ensure response time is under 5 seconds
+
+--->> Awaitility.await()
+            .atMost(60, TimeUnit.SECONDS)  // Wait at most 60 seconds
+            .until(() -> {
+                // Make a GET request to check if the task is done
+                String status = RestAssured.get("https://api.example.com/task-status")
+                                           .jsonPath().getString("status");
+
+
+b) Handling Timeouts
+
+-->>RestAssured.given()
+  .config(RestAssured.config().httpClient(HttpClientConfig.httpClientConfig()
+      .setParam("http.connection.timeout", 5000)  // Connection timeout
+      .setParam("http.socket.timeout", 10000)))  // Read timeout
+
+--->> Retry Mechanisum
+int retries = 3;
+while (retries > 0) {
+    try {
+        RestAssured.given().get("https://api.example.com/slow-endpoint");
+        break;
+    } catch (Exception e) {
+        retries--;
+        if (retries == 0) {
+            throw new RuntimeException("API request failed after 3 retries");
+        }
+    }
+
+
+
+** Awaitility is focused on waiting for specific conditions (like asynchronous operations) to complete within a timeout period.
+** HttpClientConfig is used for fine-tuning HTTP client settings like timeouts, retries, and connection management.
+------------------------------------------------------------******------------------------------------
+
+RestAssured , Jaskson Lib , Hamcrest Matcher  This  lib Add on Pom.xml file
+
+------------------*********************--------------------------------------------------------------------
+What is the content type in oAuth2.0 
+ Ans --->> Content-Type: application/x-www-form-urlencoded:->  when exchanging an authorization code for an access token or when refreshing an access token.
+           Content-Type: application/json :-> OAuth 2.0 token requests when the authorization server supports JSON-formatted data.
+		   multipart/form-data:-> it may be used in certain scenarios like uploading files or images as part of an OAuth flow.
+ 
+                Authorization Flows                                                                Token Types
+ oAuth1.0  -->  Single flow                                                                        Request token and access token    More complex (signing, token exchange) --->consumerkey, consumersecret,accesstoken,tokensecret
+ oAuth2.0  -->  Multiple flows (authorization code, implicit, password, client credentials)        Access token, refresh token       Simpler (bearer tokens, flexible flows) ----> clientid, clientpassword
+ 
+ ---------------------------------******************************---------------------------------------------
+ 
+ Put we Can use as a POST 
+ But --> 1. Put use as a Creates or replaces the resource. 
+         2. Put use as a Updating or creating a resource with a known identifier.
+		 3. Put use a post 
+		 4. PUT is idempotent. Repeating the same PUT request results in the same resource state.
+		 
+		 
+RequestSpecification ---->
+A RequestSpecification defines the common configuration for requests, like headers, 
+query parameters, authentication, body, etc
+
+RequestSpecification requestSpec = RestAssured.given()
+                                 .baseUri("https://api.example.com")
+                                 .basePath("/v1/users")
+                                 .header("Authorization", "Bearer your_token")
+                                 .param("limit", "10");
+								 
+								 String response = RestAssured.given()
+                                     .spec(requestSpec)  // Apply the requestSpec
+                                     .when()
+                                     .get()
+                                     .then()
+                                     .statusCode(200)
+                                     .extract()
+                                     .asString();
+									 
+RequestSpecification --> 
+*is a ready-made object that contains all the details for a request,
+ and it’s best used when the configuration remains constant.
+ *Good for when the request settings don't change often.
+
+
+RequestSpecBuilder --> 
+*is used to construct a RequestSpecification step by step, 
+which is useful for dynamic or conditionally changing request configurations.
+*which is useful when you need to change parts of the request depending on the situation 
+*RequestSpecBuilder when you need to dynamically build the request configuration.
+
+
+Key point: RequestSpecBuilder is used to build the RequestSpecification step by step and is useful when the 
+request needs to be dynamically created.									 
+									 
+  ------------------*************** Split Payload *****************--------------------------------------
+ String jsonString ="{\"data\": [{\"id\": 1, \"name\": \"Item 1\"}, {\"id\": 2, \"name\": \"Item 2\"}, {\"id\": 3, \"name\":
+ \"Item 3\"}, {\"id\": 4, \"name\": \"Item 4\"}, {\"id\": 5, \"name\": \"Item 5\"}, {\"id\": 6, \"name\": \"Item 6\"}, 
+ {\"id\": 7, \"name\": \"Item 7\"}, 
+ {\"id\": 8, \"name\": \"Item 8\"} ]}";
+   
+        JSONObject jsonObject = new JSONObject(jsonString);
+        JSONArray dataArray = jsonObject.getJSONArray("data");
+        int chunkSize = 3;
+
+        List<List<JSONObject>> chunks = splitPayload(dataArray, chunkSize);
+
+        RestAssured.baseURI = "https://your-api.com"; 
+
+        for (List<JSONObject> chunk : chunks) {
+            
+            JSONObject chunkPayload = new JSONObject();
+            chunkPayload.put("data", chunk);
+
+          
+            Response response = given()
+                    .header("Content-Type", "application/json")
+                    .body(chunkPayload.toString())  // Convert JSON to string
+                    .when()
+                    .post("/your-api-endpoint")  // Replace with actual endpoint
+                    .then()
+                    .statusCode(200)  // Ensure the response status code is as expected
+                    .extract()
+                    .response();
+
+            System.out.println("Response: " + response.getBody().asString());
+        }
+    }
+
+    public static List<List<JSONObject>> splitPayload(JSONArray dataArray, int chunkSize) {
+        List<List<JSONObject>> chunks = new ArrayList<>();
+        List<JSONObject> currentChunk = new ArrayList<>();
+
+        for (int i = 0; i < dataArray.length(); i++) {
+            currentChunk.add(dataArray.getJSONObject(i));
+            if (currentChunk.size() == chunkSize || i == dataArray.length() - 1) {
+                chunks.add(new ArrayList<>(currentChunk));
+                currentChunk.clear();
+            }
+        }
+        return chunks;
+    }
+}
+
+----------------------------************************---------------------------------
+
+*************** Tools which we use for serialization and deserialization *****************
+Jackson
+Java Built-in Serialization
+JSON Libraries
+YAML Libraries
+XML Libraries
+
+
+
+---------------   *****************  postman tool ********  ---------------------------
+************** How to set variable in PostMan ***************
+
+1) Local Environment Variable  
+    pm.variables.set("variable_name", "value");
+
+2) Collection Variables 
+    pm.collectionVariables.set("variable_name", "value");
+
+3)  Environment Variables 
+    pm.environment.set("variable_name", "value");
+	
+4) Global Variables  
+    pm.globals.set("variable_name", "value");	
+	
+************  How to set Random Variable *****************
+	
+const code = pm.globals.get("company_code")
+const val = pm.variables.replaceIn('{{$randomInt}}')
+pm.collectionVariables.set("isbn",val + code)
+
+
+*********** How to read CSV file in PostMan ****************  
+  pm.collectionVariables.set("book_name",pm.iterationData.get("BookName"));
+  
+*********** How to validate status code in PostMan ********* 
+pm.test("Validated Status code is 200", function () {
+    pm.response.to.have.status(200);
+   });
+
+*********** How to validate Headers and Response Type ************
+
+pm.test("Header cookies responsetime validation", function () {
+    pm.response.to.have.header("Content-Type");
+    pm.expect(pm.response.headers.get("Content-Type")).to.eql("application/json;charset=UTF-8");});
+
+pm.test("Response time is less than 1500ms", () => {
+  pm.expect(pm.response.responseTime).to.be.below(1500);
+});
+
+************* How to parse Json response in PostMan ***************
+
+ const jsonData = pm.response.json();
+ pm.expect(jsonData).to.have.property("Msg");
+ pm.expect(jsonData.Msg).to.eql("successfully added");
+
+***********  How to validate scheema response *************
+const schema = {
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "book_name": {
+        "type": "string"
+      },
+      "isbn": {
+        "type": "string"
+      },
+      "aisle": {
+        "type": "string"
+      },
+      "author": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "book_name",
+      "isbn",
+      "aisle",
+      "author"
+    ]
+  }
+};
+
+
+pm.test("Validated the json response Schema code",function()
+{
+pm.response.to.have.status(200);
+pm.response.to.have.jsonSchema(schema);
+}
+);
+
+******* index base json array validation ************
+
+const getBookResponse = pm.response.json();
+
+pm.test("validated the JSON response logic",function()
+{console.log(getBookResponse)
+pm.expect(getBookResponse[0].author).to.eql(pm.collectionVariables.get("author_name"))
+       console.log(getBookResponse[0].author)
+});
+
+*****************  How do you automate API tests in Postman? ****************
+
+Create tests in Postman, export the collection, and run it using Newman or integrate it into CI/CD pipelines (e.g., Jenkins).
+
+**************  How do you test file uploads using Postman? ***************
+In the Body section, choose the form-data radio button -> in that add key value pair 
+File Key: The key expected by the API for the file upload (e.g., file, image).
+File Value: Click the "Select Files" button in the Value column and choose the file you want to upload from your system.
+
+**************  What will you do if a response has dynamic values like timestamps or unique IDs? *************
+pm.test("Validate timestamp", function () 
+{
+    pm.expect(pm.response.json().timestamp).to.match(/^\d+$/);
+});
+
+
+---------------------------------------------------------------------------------------------------------------------
+
+
+****************** Oauth access token *****************
+String response=given().formParam("client_id","692183103107-p0m7ent2hk7suguv4vq22hjcfhcr43pj.apps.googleusercontent.com")
+               .formParam("client_secret", "erZOWM9g3UtwNRj340YYaK_W")
+               .formParam("grant_type","client_credentials")
+               .formParam("scope","trust")
+               .when().log().all()
+               .post("https://rahulshettyacademy.com/oauthapi/oauth2/resourceOwner/token").asString();
+
+        System.out.println(response);
+        JsonPath js=new JsonPath(response);
+        String accesstoken=js.getString("access_token");
+
+        System.out.println(accesstoken);
+        GetCourses gc=given().queryParams("access_token",accesstoken).when()
+                .get("https://rahulshettyacademy.com/oauthapi/getCourseDetails").then().extract().response()
+                .as(GetCourses.class);
+--------------------*******************************------------------------------------
+
+************************** Generic API ****************************************
+Post:
+		RestAssured.baseURI = "https://jsonplaceholder.typicode.com";
+		String response=given().log().all().queryParam("","").header("","").contentType("application/json").body("").when()
+                .post("/posts").then().assertThat().statusCode(200).extract().response().asString();
+				
+Get:
+        RestAssured.BaseURI="";
+		String response=given().log().all().queryParam("","").header("","").when()
+                .get("/get").then().assertThat().statusCode(200).extract().response().asString();	
+				
+				
+ RestAssured.baseURI = "https://jsonplaceholder.typicode.com";
+ Response response = RestAssured
+                .given()
+                .get("/users")
+                .then()
+                .assertThat()
+                .statusCode(200) // Assert that the response status is 200
+                .extract()
+                .response();
+String firstUserName = response.jsonPath().getString("[0].name");
+
+**************************** Multipart ***********************************
+String response = given()
+                .baseUri(baseUrl)  
+                .multiPart("file", fileToUpload)
+                .when()
+                .post("") 
+                .then()
+                .statusCode(200)
+                .body("message", equalTo("File uploaded successfully"))  
+                .extract().response().asString(); 				
+
+
+****************** POJO class ***************************
+public class User {
+    
+    private String email;
+
+     public String getEmail() 
+	{
+        return email;
+    }
+
+    public void setEmail(String name) 
+	{
+        this.email = email;
+    }
+}
+
+
+  public static void main(String[] args){
+  User newUser = new User();
+  newUser.setEmail("rohansalve.com@gmail.com");
+
+        RestAssured.given()
+            .contentType(ContentType.JSON)
+            .body(newUser)
+            .post("https://api.example.com/user")
+            .then()
+            .statusCode(200);
+String email = response.jsonPath().getString("email");
+Assert.assertEquals(email,"actualemailAddress");
+}
+
+
+***************** Timeout in API testing *************************************
+Testing Delayed Responses ------.>>>>>>>>
+
+a) Dealy Response ----->>>
+
+-->>.then()
+  .time(Matchers.greaterThan(2000L));  // Expect the response time to be greater than 2 seconds
+
+-->>.time(lessThan(5000L));  // Ensure response time is under 5 seconds
+
+--->> Awaitility.await()
+            .atMost(60, TimeUnit.SECONDS)  // Wait at most 60 seconds
+            .until(() -> {
+                // Make a GET request to check if the task is done
+                String status = RestAssured.get("https://api.example.com/task-status")
+                                           .jsonPath().getString("status");
+
+
+b) Handling Timeouts
+
+-->>RestAssured.given()
+  .config(RestAssured.config().httpClient(HttpClientConfig.httpClientConfig()
+      .setParam("http.connection.timeout", 5000)  // Connection timeout
+      .setParam("http.socket.timeout", 10000)))  // Read timeout
+
+--->> Retry Mechanisum
+int retries = 3;
+while (retries > 0) {
+    try {
+        RestAssured.given().get("https://api.example.com/slow-endpoint");
+        break;
+    } catch (Exception e) {
+        retries--;
+        if (retries == 0) {
+            throw new RuntimeException("API request failed after 3 retries");
+        }
+    }
+
+
+
+** Awaitility is focused on waiting for specific conditions (like asynchronous operations) to complete within a timeout period.
+** HttpClientConfig is used for fine-tuning HTTP client settings like timeouts, retries, and connection management.
+
+
+
+---------------------*************************************--------------------------------
+
+**************  Spec Builder   ********
+RequestSpecification reqspec=new RequestSpecBuilder().setbaseuri().addQueryParam("key","qaclick123").setContentType(ContentType.Json
+).build();
+
+given().spec(reqspec).body().when().post().then().assertThat().spec(response).extract().response().asString();
+
+ResponseSpecification response=new ResponseSpecBuilder().expectStatusCode(200).expectContentType().build();
+
+
+--------------- Diff .Response vs .asString vs .toString  --------------------
+
+
+.response()	--> Full Response object ,Includes->Status, headers, cookies, body , Use Case - Accessing full details	
+
+.asString() --> Response body as a String , Only the response body	,Use Case - Extracting the body directly
+
+.toString() --> String representation of object ,Depends on toString() implementation ,Quick object summary
+
+.prettyPrint() --> method is used to format and print the response body in a human-readable, pretty format.
+
+
+                        ----------->> how We can Handle Authotication token  <<-----------
+* handle authentication tokens by adding the token to the request header or request body, depending on the type of authentication required. 
+* If you need to reuse the same token in multiple requests, it's efficient to create a RequestSpecification with the token included.
+
+           Changing or refreshing a token in an API typically involves requesting a new token using some sort of refresh mechanism,
+	
+ Refresh Token Flow --> exchange the refresh token for a new access token when the current one expires.
+                        You send a POST request to the token endpoint with the refresh_token, client_id, client_secret, and grant_type=refresh_token.
+						
+ Handling Expired Tokens --> handle expired tokens dynamically by catching the expiration error and then automatically refreshing the token.
+     
+	 String refreshToken = "your-refresh-token";
+        String accessToken = "initial-access-token"; // Start with the initial token
+
+        Response apiResponse = sendApiRequest(accessToken);
+        if (apiResponse.statusCode() == 401) { // Unauthorized (Token Expired)
+            System.out.println("Token expired, refreshing...");
+            accessToken = refreshAccessToken(refreshToken); // Refresh token
+            apiResponse = sendApiRequest(accessToken); // Retry API request with new token
+        }
+
+        System.out.println("API Response: " + apiResponse.getBody().asString());
+    }
+	
+	public static String refreshAccessToken(String refreshToken) {
+        Response refreshResponse = RestAssured.given()
+                .formParam("grant_type", "refresh_token")
+                .formParam("refresh_token", refreshToken)
+                .post("https://api.example.com/oauth2/token");
+
+        return refreshResponse.jsonPath().getString("access_token");
+    }
+	
+  ---->	If the token has expired (status code 401), the refreshAccessToken() method is called to get a new token.
+						
+						
+Access Tokens are typically short-lived and expire after a certain period.
+Refresh Tokens are long-lived and are used to get new access tokens once they expire.
+
+
+              ******************** Status Code ****************
+			  
+200	OK	                            Request succeeded.	                                    No action needed.
+201	Created	                        Resource was successfully created.	                    Ensure the resource creation logic.
+204	No Content	                    Request succeeded, no content to return.	            Ensure the behavior matches expectations.
+HTTP 202 Accepted status code  --->   server has received and understood the request
+400	Bad Request	                    Invalid request syntax or parameters.	                Verify request payload, headers, and parameters.
+401	Unauthorized	                Missing or invalid authentication token.	            Check and provide valid credentials.
+403	Forbidden	                    Client lacks permissions.	                            Ensure correct permissions and roles.
+404	Not Found	                    Resource not found on the server.	                    Verify the endpoint or resource ID.
+429	Too Many Requests	            Client has exceeded request limits.	                    Implement retry logic or reduce request frequency.
+405 Method not allow
+409 conflict
+
+500	Internal Server Error	        Unexpected server error.	                            Check server logs and debug backend logic.
+502	Bad Gateway	                    Invalid response from an upstream server.	            Ensure upstream servers are functional.
+503	Unavailable Service             Unavailable	Server is overloaded or under maintenance.	Retry after some time or check server status.
+504	Gateway Timeout	                Upstream server didn't respond in time.	Optimize server performance or increase timeout.
+501 Not Implemente
+
+
+** What is the difference between 401 and 403?
+
+      401 Unauthorized means the client hasn't provided valid authentication, 
+      while 403 Forbidden means authentication was provided, but the client lacks sufficient permissions.
+	  
+	  
+POST: Creating Resources
+201 Created: Resource successfully created.
+400 Bad Request: Invalid input data.
+409 Conflict: Duplicate resource or other conflict.
+
+PUT: -> Idempotent,  Full Updates or Creating Resources
+200 OK: Resource updated successfully.
+201 Created: Resource created (if it didn’t exist).
+400 Bad Request: Invalid input or URI.
+409 Conflict: Update conflict.
+
+PATCH:Partial Updates
+200 OK: Resource updated successfully.
+204 No Content: Update successful, no response body.
+409 Conflict: Conflict during partial update.
+
+DELETE: -> Idempotent,Removing Resources
+200 OK: Resource deleted.
+204 No Content: Resource deleted, no response body.
+404 Not Found: Resource doesn’t exist.
+
+GET: -> Idempotent,Fetching Data
+
+HEAD Method: -> Fetch Metadata
+
+OPTIONS Method: -> Retrieve Allowed Actions Method
+
+
+
+How does OPTIONS differ from other methods, and when is it used?
+Answer:
+Purpose:
+OPTIONS is used to determine the communication options available for a resource or server. 
+It’s commonly used for CORS (Cross-Origin Resource Sharing) preflight requests in browsers.
+Example Response Headers:
+HTTP/1.1 204 No Content
+Allow: GET, POST, PUT, DELETE, OPTIONS
+Access-Control-Allow-Methods: GET, POST, OPTIONS
+Use Case:
+Before sending a POST request to a cross-origin API, the browser sends an OPTIONS request to check if the method and headers are allowed.
+
+Can PUT be used to create a resource?
+Answer:
+Yes, PUT can be used to create a resource if the client specifies a new resource URI, and the server creates it at that location.
+
+Example:
+http
+Copy code
+PUT /api/resource/123
+{
+  "name": "Test Resource"
+}
+
+
+Case 1: POST for Non-RESTful Batch Operations
+Example: Deleting multiple users.
+
+
+
+
+Q2: How would you structure an API endpoint to retrieve user orders filtered by status (e.g., pending, completed)?
+Answer:
+
+Use query parameters for filtering:
+Example endpoint: /orders?status=pending
+This approach follows RESTful principles by keeping the URL structure clean while 
+allowing flexibility for multiple filters (e.g., /orders?status=completed&date=2023-01-01).
+
+
+**************   What do you understand by server-side validation?  **************
+Validation performed on the server to ensure data integrity and security (e.g., input sanitization, mandatory fields).
+ ***************************************************************************************************************************
+
+     Stateless Communication -->
+     server does not retain any information about the client or its previous interactions
+     Each request is processed independently.
+     The server does not maintain any session or state.
+ 
+ ---> Highly Scalable, Simpler Design
+  example --> HTTP,DNS ,REST APIs
+  
+  Stateful Communication --> 
+  The server maintains information about the client and its interactions during a session.
+  Each request is dependent on the state created by previous requests.
+  
+  Session-Dependent: The server stores the state or session information for the client.
+  Example -->  FTP(File Transfer Protocol),WebSockets
+  
+  
+  
+  *************** Caching in API Testing ****************
+  
+Caching in API testing refers to the practice of storing the results of API responses for future use, to
+reduce the need for repeated requests to the same resource. This is done to improve performance, 
+reduce server load, and ensure that testing scenarios reflect real-world conditions where APIs might cache data.
+Cached data allows repeated requests to be served quickly without reprocessing the same data on the server.
+ 
+  Type of Caching --> 
+  
+  Server-Side Caching:  headers like Cache-Control, ETag, Last-Modified 
+  
+  Client-Side Validation:  headers like (If-None-Match, If-Modified-Since).
+  
+  
+   Response response = given()
+            .when()
+            .get("/resource");
+
+        String eTag = response.header("ETag");
+        String lastModified = response.header("Last-Modified");
+		
+        given()
+            .header("If-None-Match", eTag)
+            .when()
+            .get("/resource")
+            .then()
+            .statusCode(304); 
+			
+			given()
+            .header("If-Modified-Since", lastModified)
+            .when()
+            .get("/resource")
+            .then()
+            .statusCode(304);
+			
+			
+			
+			
+			************************  How to handle respone and request on API **************************
+			
+			For Requests:
+Direct JSON string -> String jsonBody = "{ \"name\": \"John\", \"age\": 30 }";
+Map to JSON -> Convert a Map into JSON and send it as a request body.
+Map<String, Object> requestData = new HashMap<>();
+requestData.put("name", "John");
+requestData.put("age", 30);
+
+
+POJO serialization -> erialize a Java object into JSON and pass it in the request.
+JSON from file -> 
+File jsonFile = new File("path/to/request.json");
+
+Dynamic JSON creation ->
+JSONObject jsonObject = new JSONObject();
+jsonObject.put("name", "John");
+jsonObject.put("age", 30);
+
+given()
+    .header("Content-Type", "application/json")
+    .body(jsonObject.toString()   or jsonFile or requestData or jsonBody )
+    .when()
+    .post("/endpoint")
+    .then()
+    .statusCode(200);
+
+
+
+For Responses:
+Extract as String ->
+
+Parse as JSON object ->
+JSONObject jsonObject = new JSONObject(responseBody);
+String name = jsonObject.getString("name");
+
+Map to Java object (POJO) ->
+Deserialize JSON into a Java object using libraries like Jackson or Gson.
+
+Convert to Map
+
+ap<String, Object> responseMap = given()
+    .when()
+    .get("/endpoint")
+    .then()
+    .extract()
+    .as(Map.class);
+
+System.out.println(responseMap.get("name"));
+
+
+JSONPath for validation --> Use JSONPath for assertions in the response body.
+
+given()
+    .when()
+    .get("/endpoint")
+    .then()
+    .body("name", equalTo("John"))
+    .body("age", equalTo(30));
+
+
+
+
+Key Libraries:
+Jackson: Serialization/deserialization.
+Gson: Lightweight JSON handling.
+org.json: Manual JSON construction and parsing.
+JsonPath: Advanced JSON querying.
+Let me know if you'd like to explore any of these approaches further!
+
+
+*************************************************   Set Cookies in RestAssured ******************    
+                                Authenticate once, and use the session ID in subsequent requests.
+
+
+                                    Response response = given()
+                                        .formParam("username", "user")
+                                        .formParam("password", "pass")
+                                        .post("/login");
+                                    
+                                    String sessionId = response.getCookie("JSESSIONID");
+                                    
+                                    given()
+                                        .cookie("JSESSIONID", sessionId)
+                                        .when()
+                                        .get("/endpoint")
+                                        .then()
+                                        .statusCode(200);
+										
+	***********************     Security Testing for API ************************************
+	
+	Security Testing: Check for vulnerabilities such as SQL injection, XSS, or unauthorized access by testing with incorrect tokens or permissions.
+	
+	SQL Injection Testing -->  Ensure that the API is not vulnerable to SQL injection attacks by injecting malicious SQL queries into input fields.
+	Unauthorized Access Testing --> Ensure the API enforces proper authentication and authorization for each endpoint.
+	Invalid Input Handling --> Test how the API handles malicious or malformed inputs in various parameters.
+	Rate Limiting and Brute Force Attack Testing -->  Ensure the API implements rate-limiting to prevent brute force attacks.
+
+
+
+									
