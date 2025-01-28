@@ -962,7 +962,7 @@ Deserialize JSON into a Java object using libraries like Jackson or Gson.
 
 Convert to Map
 
-ap<String, Object> responseMap = given()
+Map<String, Object> responseMap = given()
     .when()
     .get("/endpoint")
     .then()
@@ -994,8 +994,6 @@ Let me know if you'd like to explore any of these approaches further!
 
 *************************************************   Set Cookies in RestAssured ******************    
                                 Authenticate once, and use the session ID in subsequent requests.
-
-
                                     Response response = given()
                                         .formParam("username", "user")
                                         .formParam("password", "pass")
