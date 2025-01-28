@@ -29,9 +29,7 @@
                     expected when integrated with external systems like databases or third-party APIs.
 					
 					
-					********************************
-					
-					
+					********************************				
 					 Scenario Base 
 1 . Scenario: Testing Real-Time Price Updates
             Use WebSocket testing tools (e.g., websocket-client or Postman).
@@ -54,3 +52,12 @@
 	  Test scenarios like margin calls, stop-loss execution, and maximum leverage limits.
       Validate user account balances and positions after a trade.
       Use automated scripts to simulate trades that breach risk limits and verify system behavior (e.g., rejecting trades).
+
+******************************* Why you want to joint ***********************
+
+"I’m excited about the opportunity to work with a dynamic and innovative company like yours, especially in the FinTech space. I’m passionate about leveraging automation to deliver high-quality solutions and contributing to the growth of a global brand. The role aligns perfectly with my skills and career goals."
+
+
+
+
+
