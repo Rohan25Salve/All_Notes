@@ -33,24 +33,24 @@
 					
 					
 					 Scenario Base 
-	1 . Scenario: Testing Real-Time Price Updates
+1 . Scenario: Testing Real-Time Price Updates
             Use WebSocket testing tools (e.g., websocket-client or Postman).
             Verify prices update as per market conditions without delays.
             Validate data integrity and accuracy by cross-checking with an external market feed.	
-    2.  Scenario: Order Execution Testing	
+2.  Scenario: Order Execution Testing	
          Place test orders (buy/sell, market, and limit orders) and verify execution.
          Test edge cases such as insufficient balance, invalid order parameters, or placing orders during non-trading hours.
          Validate order status updates via API and UI using automated scripts (Selenium for UI, Rest Assured for API).		 
-	3. Scenario: Trade Lifecycle Validation
+3. Scenario: Trade Lifecycle Validation
         Simulate order placement, confirmation, partial fills, and settlement.
         Validate backend database updates for trade records.
         Test cancellation/modification of active orders and verify expected outcomes.	
-	4. Scenario: Performance Testing of Trade Execution	
+4. Scenario: Performance Testing of Trade Execution	
 	   Simulate high trade volumes using load testing tools like k6 or JMeter.
        Monitor response times, throughput, and error rates during peak load.
        Validate that the platform handles spikes without degrading performance.
        Use monitoring tools like Grafana to analyze bottlenecks in real-time.	   
-	 5.Scenario: Testing Risk Management Rules  
+ 5.Scenario: Testing Risk Management Rules  
 	  Test scenarios like margin calls, stop-loss execution, and maximum leverage limits.
       Validate user account balances and positions after a trade.
       Use automated scripts to simulate trades that breach risk limits and verify system behavior (e.g., rejecting trades).
