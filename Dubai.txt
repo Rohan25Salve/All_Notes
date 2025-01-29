@@ -2,9 +2,6 @@
 Exinity is a trading and investment company that provides financial services, including forex 
 (FX), CFDs, and stock trading. They focus on empowering traders with advanced trading platforms, real-time market data, risk management tools, and educational resources.
 
-
-
-
    ***********************   End to End Test **********************  
    In end-to-end testing, I focus on testing the application as a whole, simulating real-user scenarios. 
    I first identify critical workflows (e.g., user registration, login, trading actions) and then ensure that data flows seamlessly across the front-end, back-end, and database. 
