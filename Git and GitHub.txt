@@ -16,7 +16,7 @@ Clean Repository:Ensures the repository only contains meaningful files.
 
  Git Revert   --> a.Creates a new commit to undo changes.
                   b.Preserves history.
-				  c.always creates a new commit.
+		  c.always creates a new commit.
 				  
 				  git revert CommiteID
            
@@ -48,7 +48,7 @@ git stash is just like  temporary storage , we saved all temporary file on that 
 	
 
 5. Git rebase --> 
-               a.Reapply commits from one branch on top of another branch, rewriting the commit
+                           a.Reapply commits from one branch on top of another branch, rewriting the commit
 			   b.Moves the base of your branch to the tip of another branch, creating a linear history.
 			   c.Creates a cleaner, linear history, making it easier to read and review.
 			   
