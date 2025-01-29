@@ -9,15 +9,18 @@ It uses the WebDriver protocol for communication between client libraries and th
 Cross-platform support: Works on Android and iOS.
 Supports multiple languages via WebDriver.
 
+****************  What are the Appium drivers for mobile testing? **************** 
+
+UIAutomator2 (for Android 5.0 and above).
+Espresso (for Android UI testing, mainly used for white-box testing).
+XCUITest (for iOS automation).
+Windows Driver (for Windows desktop applications).
 
 ******* What are the main limitations of Appium? ********
 No support for image-based testing directly.
 Requires setting up emulators or real devices for testing.
 
-
-
-
-****************        Local path System my Computer **********************
+****************  Local path System my Computer **********************
 
 C:\Users\admin\AppData\Local\Android\Sdk
 
