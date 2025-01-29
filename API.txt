@@ -241,10 +241,10 @@ is a communication protocol that provides two-way communication between a client
 * Chat Applications:Two-way messaging between users in real-time. 
 
                                                   OkHttpClient client = new OkHttpClient();
-												  CountDownLatch latch = new CountDownLatch(1);			  
-												  Request request = new Request.Builder().url(BASE_SOCKET_URL).build();
+						 CountDownLatch latch = new CountDownLatch(1);			  
+		                                  Request request = new Request.Builder().url(BASE_SOCKET_URL).build();
                                                   WebSocket webSocket = client.newWebSocket(request, listener);
-												  latch.await();
+				                  latch.await();
                                                   client.dispatcher().executorService().shutdown();
 												  
 WebSocket and Rest APIs are separate protocols. 
