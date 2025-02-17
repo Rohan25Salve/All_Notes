@@ -73,8 +73,7 @@ Stateless communication simplifies server implementation and improves scalabilit
 
 Answer:
 Use RestAssured’s multiPart method:
-java
-Copy code
+
 given()
     .multiPart("file", new File("path/to/file"))
     .post("/upload");
@@ -121,7 +120,7 @@ RestAssured.config = RestAssured.config()
 API testing frameworks allow you to configure timeouts to handle delayed responses effectively. This ensures that tests do not hang indefinitely.
 
 Example with RestAssured:
-java
+
 
 RestAssured.config = RestAssured.config()
         .httpClient(HttpClientConfig.httpClientConfig()
@@ -701,11 +700,9 @@ while (retries > 0) {
 ** Awaitility is focused on waiting for specific conditions (like asynchronous operations) to complete within a timeout period.
 ** HttpClientConfig is used for fine-tuning HTTP client settings like timeouts, retries, and connection management.
 
-
-
 ---------------------*************************************--------------------------------
 
-**************  Spec Builder   ********
+                                      **************  Spec Builder   ****************
 RequestSpecification reqspec=new RequestSpecBuilder().setbaseuri().addQueryParam("key","qaclick123").setContentType(ContentType.Json
 ).build();
 
@@ -880,9 +877,7 @@ Validation performed on the server to ensure data integrity and security (e.g., 
   
   Session-Dependent: The server stores the state or session information for the client.
   Example -->  FTP(File Transfer Protocol),WebSockets
-  
-  
-  
+   
   *************** Caching in API Testing ****************
   
 Caching in API testing refers to the practice of storing the results of API responses for future use, to
@@ -893,7 +888,6 @@ Cached data allows repeated requests to be served quickly without reprocessing t
   Type of Caching --> 
   
   Server-Side Caching:  headers like Cache-Control, ETag, Last-Modified 
-  
   Client-Side Validation:  headers like (If-None-Match, If-Modified-Since).
   
   
@@ -991,10 +985,9 @@ org.json: Manual JSON construction and parsing.
 JsonPath: Advanced JSON querying.
 Let me know if you'd like to explore any of these approaches further!
 
-
 *************************************************   Set Cookies in RestAssured ******************    
-                                Authenticate once, and use the session ID in subsequent requests.
-                                    Response response = given()
+                                      Authenticate once, and use the session ID in subsequent requests.
+                                      Response response = given()
                                         .formParam("username", "user")
                                         .formParam("password", "pass")
                                         .post("/login");
