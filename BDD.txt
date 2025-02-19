@@ -247,3 +247,15 @@ Reusability: Allows sharing steps between scenarios.
 
 BDD ---> emphasizes communication and collaboration, focusing on the behavior of the system.
 TDD ---> focuses on writing tests before code and improving code quality through iterative development.
+
+
+**************** What is dependency injection in cucumber ********************
+Dependency injection(like PicoContainer) allows sharing objects between step definitions.
+
+*************** What is the use of Cucumber Expressions ********************
+Cucumber expressions are a simpler way to define step definitions without complex regular expressions.
+
+**************** what are the limitations of cucumber *******************
+Not ideal for complex logic testing
+slower execution compared to other testing frameworks.
+Requires extra effort for non-technical users to understand automation scripts.
