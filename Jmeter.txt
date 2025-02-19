@@ -228,8 +228,47 @@ Parameterize Requests – Use dynamic data to avoid caching effects.
 Use Assertions – Verify response correctness, not just response time.
 Run Tests in Non-Prod Environments – Avoid impacting real users.
 
+************    Controllers ***************
+Controllers help define the logic of execution within a test plan. They determine how and when requests are executed.
+
+Samplers Controllers (Execution Controllers) -> These directly send requests (like HTTP, FTP, JDBC, SOAP, etc.).
+Logic Controllers -> These control the execution flow and structure of test elements.
+
+Repeating requests? → Loop Controller
+Executing only under certain conditions? → If Controller / While Controller
+Randomized execution? → Random Controller
+Grouping requests logically? → Simple Controller
+Measuring total transaction time? → Transaction Controller
 
 
+*********************   Config Element **************
+
+Config Element	                             Purpose
+CSV Data Set Config	                     Reads test data from a CSV file (e.g., usernames, passwords).
+HTTP Request Defaults	                     Sets default values for HTTP requests (e.g., Base URL).
+User Defined Variables	                     Stores reusable variables for test execution.
+Random Variable	Generates                    random numbers (e.g., for dynamic IDs).
+BeanShell PreProcessor	                     Runs custom Java code before a request executes.
+DNS Cache Manager	                     Manages DNS resolution to simulate different network environments.
+Counter                                      generates an incrementing (or looping) number, Provide unique values for requests,Simulate iterations with dynamic 
+                                              values.
+
+***************  Sampler JMeter ***************
+
+JSR223 Sampler --> powerful scripting sampler in JMeter that allows you to write custom scripts using languages like
+✅ Groovy (Recommended)
+✅ JavaScript
+✅ Java
+✅ BeanShell
+* Perform custom calculations or logic during a test  * Dynamically modify requests or responses.
+
+✅ Testing APIs? → HTTP Request Sampler
+✅ Database Testing? → JDBC Request Sampler
+✅ Message Queue Testing? → JMS Sampler
+✅ Email Functionality? → SMTP Sampler
+✅ File Uploads? → FTP Sampler
+✅ Custom Logic? ( Executes custom Java code during the test.) → JSR223 or BeanShell Sampler
+✅ Prints all JMeter variables & properties in the log for debugging → Debug Sampler
 
 
 
