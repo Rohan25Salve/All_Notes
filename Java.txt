@@ -299,6 +299,8 @@ Constructor: Construtor is a special type of method whose name is same as classn
 every class has a default constructor
 Constructor do not have any return type incuding void
 Constructor is automatically called at the time of object creation
+ constructors cannot be overridden like methods
+
 Types of Constructor:
 1. Default Constructor 2. Paramterized Constructor  
 public class demo
