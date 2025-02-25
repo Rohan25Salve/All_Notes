@@ -254,7 +254,7 @@ We can achieve 100% abstraction by using interface
 To achive interface we can use implements/Interface keyword
 In Interface by default variables are public + static +final and Methods are public and abstract
 Interface cannot have constructor and static method
-We can Object of class
+We can't crate of Object of class
 
 Example: 
 1) WebDriver driver= new ChromeDriver();
