@@ -426,7 +426,10 @@ NoSQL Databases : Non-relational databases that store data in various formats su
                   They are schema-less and designed for scalability and flexibility.
 				  Examples include MongoDB (document-based), Cassandra (column-family), Redis (key-value), and Neo4j (graph-based). 
 				  
-				  
+Feature             SQL	                                                PL/SQL
+Type	        Query language	                                 Procedural extension of SQL
+Execution	Executes one query at a time	                 Executes multiple SQL statements
+Use Case	Fetching data	                                 Writing business logic in DB
 				  
 What is ACID in the context of databases?
 
