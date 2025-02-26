@@ -1,0 +1,119 @@
+<-- Introduction add on this Scripte -->
+   
+	 My expertise lies in designing and implementing automated test cases using tools like TestMaster, Selenium, RestAssured ,
+	 I’ve worked extensively on banking applications, including the Avaloq Core Platform,
+	 where I’ve automated functional, integration, and end-to-end test scenarios.
+	 I’m also familiar with database validation using SQL and PL/SQL.
+	 
+	              <--  What is Avaloq  --> 
+		Avaloq Core Platform is a banking system that provides core banking functionalities such as transactions, wealth management,
+		and regulatory compliance. It is widely used in private banking and wealth management institutions
+		
+		✅ Portfolio Management – Handles client portfolios, investments.
+        ✅ Order Management System (OMS) – Manages trade orders.
+        ✅ Corporate Actions – Handles dividends, stock splits.
+        ✅ Payments & Settlements – Executes fund transfers.
+        ✅ Regulatory Compliance – Ensures adherence to financial regulations.
+		
+		TestMaster ->
+		 TestMaster is Avaloq's built-in test automation tool, used to automate UI workflows in Smart Client and validate banking transactions.
+			
+		Automation Testing Components of the Framework -->
+		               Cucumber → BDD layer for test scenarios  (calling TestMaster scripts inside step definitions.)
+                       TestMaster – UI automation for Avaloq Smart Client (TestMaster directly interacts with the Avaloq database, business logic, 
+					                                                        and transactions, ensuring that core banking functions work correctly.)
+                       Selenium WebDriver – Web UI testing (Smart Client, Web interactions)
+                       RestAssured – API automation for Avaloq services(external banking services, APIs, and third-party platforms.)
+                       PL/SQL Queries – Database validation (Oracle DB)
+                       TestNG/JUnit – Test execution & reporting
+                       Maven/Gradle – Build management
+                       Git/Jenkins – CI/CD integration					 
+           ✅ End-to-End Coverage → TestMaster (Smart Client) + Selenium (Web) + API + DB
+           	
+       
+          Challenges in Using TestMaster -->
+          Limited to Avaloq Smart Client – cannot test web applications.
+		  Cannot handle complex API automation – We need use Postman/RestAssured instead.
+		  
+		                  
+						  Use of TestMaster ->
+               Automates UI-based tests for Avaloq Smart Client.
+               Supports parameter-driven testing, reducing manual effort.
+               Ensures banking transactions work as expected after system updates.
+               Supports integration with Avaloq APIs and databases for end-to-end validation.
+			   Execution Logging & Reporting – Provides detailed execution logs.
+               Supports Regression Testing – Helps test Avaloq updates efficiently.
+			   
+			   	   
+			   When Would UI Automation Be Needed?
+              *If there are manual processes in Avaloq Smart Client that require frequent UI interactions, 
+			  then desktop automation tools like TestComplete, Ranorex, or AutoIt may be needed.
+              *However, majority of Avaloq testing is backend-driven, so TestMaster is preferred.
+					   
+					   
+					   
+					   TestMaster Test Scripte -->
+					                                                                                               
+					   LaunchApplication("Avaloq Smart Client")
+                       EnterText("username_field", "test_user")
+                       EnterText("password_field", "secure_password")
+                       ClickButton("Login")
+                       ClickMenu("Fund Transfer")
+                       EnterText("Sender_Account", "A12345")
+                       EnterText("Receiver_Account", "B67890")
+                       EnterText("Amount", "10000")
+                       ClickButton("Submit_Transfer")
+                       VerifyText("Success_Message", "Transfer Completed Successfully")
+					   
+					   
+					   
+					   About Domain Workflow key modules of a Core Banking System ->
+                                        Customer Management – Manages customer profiles, KYC, and authentication.
+                                        Accounts Management – Handles savings, current, fixed deposits, and credit accounts.
+                                        Loan Management – Processes loans, EMI calculations, and interest application.
+                                        Payments & Transfers – Includes RTGS, NEFT, IMPS, UPI, and SWIFT transactions.
+                                        Treasury & Risk Management – Monitors liquidity, interest rates, and compliance.
+                                        General Ledger – Tracks all financial transactions within the bank.
+					   
+					   
+					   Explananation --> 	   
+					   🔹 LaunchApplication("Avaloq Smart Client") → Opens Avaloq Smart Client.
+                       🔹 EnterText("username_field", "test_user") → Logs in using test credentials.
+                       🔹 ClickMenu("Banking") → ClickMenu("Fund Transfer") → Navigates to Fund Transfer.
+                       🔹 EnterText() and SelectDropdown() → Fills in the transfer details.
+                       🔹 ClickButton("Submit_Transfer") → Submits the transaction.
+                       🔹 VerifyText() → Confirms the success message.
+                       🔹 ExecuteSQL() and VerifySQLResult() → Checks if the transaction was recorded correctly in the database.
+
+		
+                            		         ***** Loan Processing Flow  *******
+							🔹 Overview
+                            Loan processing includes loan application, credit risk assessment, disbursal, and EMI payments.
+                            
+                            🔹 Steps in Loan Processing
+                            Loan Application
+                            
+                           * Customer applies for a loan (Home Loan, Personal Loan, Car Loan).
+                            Bank collects documents (Income proof, CIBIL Score, ID Proof).
+                            Creditworthiness Check
+                            
+                           * Fetch Credit Score (CIBIL, Experian).
+                            Validate income, debt-to-income ratio, and repayment history.
+                            Loan Approval & Offer Generation
+                            
+                           * Bank offers loan based on eligibility.
+                            Customer reviews and accepts the offer.
+                            Loan Disbursal
+                            
+                            *Funds transferred to customer’s account or vendor.
+                             Repayment & EMI Processing
+                            
+                           * Monthly EMI auto-debited.
+                            Interest & principal components adjusted in CBS
+							
+                            TestMaster → Automate loan application process in Avaloq
+                            Selenium + Java → Validate web loan application forms
+                            RestAssured → Test API for Loan approval and disbursal
+                            PL/SQL Queries → Verify EMI schedules in CBS
+							
+							
