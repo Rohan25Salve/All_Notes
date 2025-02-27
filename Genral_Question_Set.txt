@@ -356,6 +356,30 @@ Validate message throughput and latency in Kafka.
 Test the API Gateway's ability to handle a high volume of concurrent requests.
 
 
+  *********  Issues Faced During Parallel Testing  ************
+                                   <-- Functinal Side -->
+Data Collision & Test Data Dependency->If multiple tests read/write the same database records, conflicts may arise.
+Solution:Use separate test data for each test.
+
+Session Management Issues-> Some applications do not support multiple active sessions per user.
+Solution:Use different test users for each parallel test.
+
+Order Dependency -> Some test cases depend on the execution of previous tests (e.g., creating an order before validating the checkout).
+Solution:Make test cases independent.
+
+                                      <-- Technical Issues --> 
+Infrastructure->Running multiple tests in parallel consumes high CPU, RAM, and network bandwidth.
+Solution:Use cloud-based test grids (e.g., Selenium Grid, BrowserStack, Sauce Labs).
+
+Automation Framework ->
+1.In Selenium parallel execution, multiple WebDriver instances may conflict with each other if not handled properly.
+ Solution : Use ThreadLocal WebDriver for thread safety.
+
+2.When multiple tests query or update the same database tables, database locks can slow down execution or cause deadlocks.
+  Solution : Implement retry mechanisms for deadlocks.
+
+3.If tests are dependent on asynchronous operations (e.g., waiting for an email, API response), they may fail due to timing mismatches.
+ Solution : Use explicit waits and polling mechanisms instead of fixed delays.
 
 
 
