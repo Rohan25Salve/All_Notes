@@ -380,6 +380,7 @@ Automation Framework ->
 
 3.If tests are dependent on asynchronous operations (e.g., waiting for an email, API response), they may fail due to timing mismatches.
  Solution : Use explicit waits and polling mechanisms instead of fixed delays.
+            Implement retries for flaky tests.
 
 
 
