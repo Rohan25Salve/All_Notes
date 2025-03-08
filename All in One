@@ -1,0 +1,4629 @@
+
+----->>>>How to validate more than one possible status code using Rest Assured?
+using the Hamcrest Matcher framework’s anyOf() method we can validate more than one possible status code
+
+given().baseUri("https://restful-booker.herokuapp.com/").when().get('/author').then()
+ .statusCode(anyOf(is(STATUS_CODE_OK),is(STATUS_CODE_NOT_FOUND))); 
+ 
+ -------->>> How to check if a specific field is present or not in the JSON response?
+ Using Hamcrest Matcher
+
+    when().get("/author/123").then()
+    .body("$", hasKey("lastname"))
+    .body("$", not(hasKey("age")));
+	
+	
+---->>>> What are the best practices for developing a maintainable Rest Assured Framework?
+1)Separate test data, test logic, and assertions using a modular approach.
+2)Reduce code duplication by implementing reusable helper methods or classes.
+3)Variable and method names should be meaningful and descriptive.
+4)To make troubleshooting easier, implement effective error handlinuj API to another API)?
+
+We can pass data using the ITestContext interface of TestNG.This interface provides context or information about the execution of a test suite. This interface has 2 very useful methods getAttribute () and setAttribute(). With the help of these methods, we can set and get the values that will be used in API chaining.
+@Test
+public void createBooking(ITestContext context)
+{
+	int bookingId = RestAssured
+	.given()
+		.log()
+		.all()
+		.baseUri("https://restful-booker.herokuapp.com/")
+		.basePath("booking")
+		.contentType(ContentType.JSON)
+		.body("booking.json")
+		.when()
+		.post()
+		.then()
+		.log()
+		.all()
+		.extract()
+		.jsonPath()
+		.get("bookingid");
+		// Storing data in a context to use for other tests
+		context.setAttribute("bookingId", bookingId);
+	}
+@Test
+public void updateBooking(ITestContext context)
+{
+  int bookingId = (int) context.getAttribute("bookingId");
+  RestAssured.given().log().all()
+  .baseUri("https://restful-booker.herokuapp.com/")
+  .basePath("booking/"+bookingId)
+  .header("Authorization","Your token").contentType(ContentType.JSON)
+  .body("booking.json").when().put().then().log().all();
+  }
+  
+  
+  Method -
+  HEAD:
+  The Head method is similar to the Get method, 
+  but it retrieves only the header data and not the entire response body.
+  Moreover, 
+  we use it when you need to check the document's file size without downloading the document.
+  
+  
+  How does REST handle statelessness in web services?
+Ans:
+REST treats each request as an independent transaction without relying on previous interactions.
+It doesn’t store the client state on the server between requests.
+Clients include all necessary information, such as authentication tokens or session data, with each request.
+Stateless communication simplifies server implementation and improves scalability.
+
+ --->>> How would you validate an API that requires multipart/form-data? and Download alos
+
+Answer:
+Use RestAssured’s multiPart method:
+
+given()
+    .multiPart("file", new File("path/to/file"))
+    .post("/upload");
+	
+	
+	Download File --->>
+	File downloadedFile = response.as(File.class);
+	File Download Example:
+     Response response = given()
+                        .when()
+                        .get("/download/file")
+                        .then()
+                        .statusCode(200)
+                        .extract()
+                        .response();
+byte[] fileContent = response.asByteArray();
+Files.write(Paths.get("downloadedFile.txt"), fileContent);
+	
+	
+	Response response = given()
+    .when()
+    .get("/download");
+
+InputStream downloadedFile = response.asInputStream();
+Files.copy(downloadedFile, Paths.get("downloaded_file.txt"), StandardCopyOption.REPLACE_EXISTING);
+Explanation:
+
+multiPart for file uploads.
+Use InputStream for handling downloaded files.
+
+
+
+	
+----->>>> "How do you handle scenarios where the API response is delayed or times out?"
+Answer: Explain implementing retries or configuring RestAssured with timeout settings:
+java
+
+RestAssured.config = RestAssured.config()
+    .httpClient(HttpClientConfig.httpClientConfig()
+    .setParam("http.connection.timeout", 5000));
+	
+	
+	1. Set Timeout Configurations
+API testing frameworks allow you to configure timeouts to handle delayed responses effectively. This ensures that tests do not hang indefinitely.
+
+Example with RestAssured:
+
+
+RestAssured.config = RestAssured.config()
+        .httpClient(HttpClientConfig.httpClientConfig()
+        .setParam("http.socket.timeout", 5000) // 5 seconds timeout
+        .setParam("http.connection.timeout", 5000));
+		
+		
+In this example:
+http.socket.timeout: The timeout for waiting for data.
+http.connection.timeout: The timeout for establishing a connection.
+
+
+
+---->>>>What steps would you take if your test execution is slow?
+Answer:
+Identify bottlenecks using logs.
+Run tests in parallel.
+Reduce redundant validations.
+
+
+---->>>>>>>
+RequestSpecification ===allows you to reuse common settings like base URI, 
+                                    headers, and authentication across multiple tests.
+									
+----->>>>>>
+How do you test API rate-limiting using RestAssured?
+
+Answer: Send multiple requests in a short period and validate the response for a 429 Too Many Requests status.
+java
+Copy code
+for (int i = 0; i < 20; i++) {
+    Response response = given().get("/rate-limited-endpoint");
+    if (i > 10) {
+        assertEquals(429, response.getStatusCode());
+    }
+}
+
+------>>>>>If an API returns paginated responses, how would you validate all the results?
+
+Iterate through all pages, accumulating the results, and validate them collectively.
+
+
+                          int page = 1;
+                          List<String> allItems = new ArrayList<>();
+                          while (true) {
+                              Response response = given().queryParam("page", page).get("/items");
+                              List<String> items = response.jsonPath().getList("data.items");
+                          	
+                              if (items.isEmpty()) break;
+                              allItems.addAll(items);
+                              page++;
+                          }
+                          assertThat(allItems.size(), greaterThan(0));	
+						  
+						  
+						  How do you validate Pagination, Cursors? ●  
+ Endpoints  that  support  pagination,  and  cursors  need  to  be  verified  with  supported  parameters separately and in combinations. 
+ Use boundary values, equality partitioning, and pairwise testing. ●  
+ For negative tests try to use a limit more than max one, offset out of bounds, incorrect values 
+ http://example.com/api/products?limit=20&offset=100 
+
+------>>>>>>>
+log().all(): Logs the request and response details for all requests.
+log().ifError(): Logs details only when the response status code indicates an error (4xx or 5xx).	
+
+----->>>>>
+How would you validate API response time using RestAssured?
+Answer: Use the time() method or a custom assertion with Matchers.
+
+
+given()
+.when()
+    .get("/endpoint")
+.then()
+    .time(lessThan(2000L)); // 2 seconds		
+
+---------->>>>>
+How would you test an API that requires OAuth2 authentication using RestAssured?
+Answer:Use auth().oauth2("token") method to set the Bearer token for authentication in RestAssured.
+java
+
+given()
+    .auth()
+    .oauth2("yourAccessToken")
+.when()
+    .get("/secure-endpoint")
+.then()
+    .statusCode(200);	
+	
+	
+------->>>>>>What are the different ways to validate cookies in RestAssured?
+
+Answer: Use the cookie() method to validate specific cookies in the response.
+
+                      given().when() .get("/login") .then().cookie("sessionId", notNullValue())
+                          .cookie("secureCookie", "true");	
+                      	
+	
+----->>>>>>>>>>>
+How do you test APIs with delayed responses (long polling or async)?
+
+Hint: Use timeouts and polling intervals to validate delayed responses.
+-------------------------*--------------------------------
+Awaitility.await()
+    .atMost(30, TimeUnit.SECONDS)
+    .pollInterval(1, TimeUnit.SECONDS)
+    .until(() -> given().get("/long-poll-endpoint").getStatusCode() == 200);
+	Awaitility.await().atMost(30,SECONDS).until(()-> isStatus(expected));
+	
+	
+---->>>>WebSocket API
+is a communication protocol that provides two-way communication between a client and a server over a single, long-lived connection.
+
+
+* Logistics live tracking updates.
+* Live sports scores or stock price updates.
+* Chat Applications:Two-way messaging between users in real-time. 
+
+                                                  OkHttpClient client = new OkHttpClient();
+						 CountDownLatch latch = new CountDownLatch(1);			  
+		                                  Request request = new Request.Builder().url(BASE_SOCKET_URL).build();
+                                                  WebSocket webSocket = client.newWebSocket(request, listener);
+				                  latch.await();
+                                                  client.dispatcher().executorService().shutdown();
+												  
+WebSocket and Rest APIs are separate protocols. 
+You'll typically use RestAssured for REST API testing and another library for WebSocket interactions.												  
+												  
+												  
+----> RestAssured sends a single HTTP request, waits for the response, and only after processing the 
+response does the test proceed to send the next request (if any). 
+This behavior follows the typical request-response model of HTTP.
+In REST APIs, each request-response cycle is synchronous by default.
+
+
+----> WebSockets enable real-time, full-duplex communication, meaning both the client and server can send and receive messages
+independently at any time. Unlike REST APIs, WebSockets do not operate in a strict "request-wait-response-then-next-request" sequence.
+In WebSockets, communication is asynchronous and real-time, allowing multiple messages to be sent and received without waiting for responses.
+				
+
+---->>>>  WebSockets and REST APIs are used together:
+
+Use REST APIs for:
+Authentication, fetching initial data, and performing CRUD operations.
+
+Use WebSockets for:
+Streaming updates, notifications, and real-time interactions.		
+
+Connect to the WebSocket Endpoint:
+
+Test if the client can establish a connection with the WebSocket server.
+Validate that the server responds with a successful handshake (101 Switching Protocols).
+Send and Receive Messages:
+
+Verify that messages can be sent from the client to the server.
+Validate the server processes the message and sends the correct response.
+Close the Connection:
+
+Test if the WebSocket connection can be gracefully closed by both the client and server.		
+												  
+												  -----------***************-------------
+												  
+What are some configurations available in RestAssured?
+Answer:
+Logging: You can configure logging to print the request/response details.
+Timeouts: Set timeouts for the requests.
+Proxy: Set a proxy server
+
+What is the purpose of RestAssured.config()?
+Answer:
+It allows you to configure various settings for the RestAssured instance (e.g., timeouts, logging, retry logic).
+These questions cover a broad range of RestAssured features, including basics, file uploads, response handling, assertions, and more.
+
+Options() method in restassured
+Answer:
+In RestAssured, the options() method is used to make an OPTIONS request to an API endpoint. 
+The OPTIONS HTTP method is used to request information about the communication options available for the target resource. 
+The response to an OPTIONS request contains the allowed methods 
+(e.g., GET, POST, PUT, DELETE) that can be used on a specific resource.
+ ---------------------------**************************---------------------------------------------
+
+Testing Delayed Responses ------>>>>>>>>
+
+a) Dealy Response ----->>>
+
+-->>.then()
+  .time(Matchers.greaterThan(2000L));  // Expect the response time to be greater than 2 seconds
+
+-->>.time(lessThan(5000L));  // Ensure response time is under 5 seconds
+
+--->> Awaitility.await()
+            .atMost(60, TimeUnit.SECONDS)  // Wait at most 60 seconds
+            .until(() -> {
+                // Make a GET request to check if the task is done
+                String status = RestAssured.get("https://api.example.com/task-status")
+                                           .jsonPath().getString("status");
+
+
+b) Handling Timeouts
+
+-->>RestAssured.given()
+  .config(RestAssured.config().httpClient(HttpClientConfig.httpClientConfig()
+      .setParam("http.connection.timeout", 5000)  // Connection timeout
+      .setParam("http.socket.timeout", 10000)))  // Read timeout
+
+--->> Retry Mechanisum
+int retries = 3;
+while (retries > 0) {
+    try {
+        RestAssured.given().get("https://api.example.com/slow-endpoint");
+        break;
+    } catch (Exception e) {
+        retries--;
+        if (retries == 0) {
+            throw new RuntimeException("API request failed after 3 retries");
+        }
+    }
+
+
+
+** Awaitility is focused on waiting for specific conditions (like asynchronous operations) to complete within a timeout period.
+** HttpClientConfig is used for fine-tuning HTTP client settings like timeouts, retries, and connection management.
+------------------------------------------------------------******------------------------------------
+
+RestAssured , Jaskson Lib , Hamcrest Matcher  This  lib Add on Pom.xml file
+
+------------------*********************--------------------------------------------------------------------
+What is the content type in oAuth2.0 
+ Ans --->> Content-Type: application/x-www-form-urlencoded:->  when exchanging an authorization code for an access token or when refreshing an access token.
+           Content-Type: application/json :-> OAuth 2.0 token requests when the authorization server supports JSON-formatted data.
+		   multipart/form-data:-> it may be used in certain scenarios like uploading files or images as part of an OAuth flow.
+ 
+                Authorization Flows                                                                Token Types
+ oAuth1.0  -->  Single flow                                                                        Request token and access token    More complex (signing, token exchange) --->consumerkey, consumersecret,accesstoken,tokensecret
+ oAuth2.0  -->  Multiple flows (authorization code, implicit, password, client credentials)        Access token, refresh token       Simpler (bearer tokens, flexible flows) ----> clientid, clientpassword
+ 
+ ---------------------------------******************************---------------------------------------------
+ 
+ Put we Can use as a POST 
+ But --> 1. Put use as a Creates or replaces the resource. 
+         2. Put use as a Updating or creating a resource with a known identifier.
+		 3. Put use a post 
+		 4. PUT is idempotent. Repeating the same PUT request results in the same resource state.
+		 
+		 
+RequestSpecification ---->
+A RequestSpecification defines the common configuration for requests, like headers, 
+query parameters, authentication, body, etc
+
+RequestSpecification requestSpec = RestAssured.given()
+                                 .baseUri("https://api.example.com")
+                                 .basePath("/v1/users")
+                                 .header("Authorization", "Bearer your_token")
+                                 .param("limit", "10");
+								 
+								 String response = RestAssured.given()
+                                     .spec(requestSpec)  // Apply the requestSpec
+                                     .when()
+                                     .get()
+                                     .then()
+                                     .statusCode(200)
+                                     .extract()
+                                     .asString();
+									 
+RequestSpecification --> 
+*is a ready-made object that contains all the details for a request,
+ and it’s best used when the configuration remains constant.
+ *Good for when the request settings don't change often.
+
+
+RequestSpecBuilder --> 
+*is used to construct a RequestSpecification step by step, 
+which is useful for dynamic or conditionally changing request configurations.
+*which is useful when you need to change parts of the request depending on the situation 
+*RequestSpecBuilder when you need to dynamically build the request configuration.
+
+
+Key point: RequestSpecBuilder is used to build the RequestSpecification step by step and is useful when the 
+request needs to be dynamically created.									 
+									 
+  ------------------*************** Split Payload *****************--------------------------------------
+ String jsonString ="{\"data\": [{\"id\": 1, \"name\": \"Item 1\"}, {\"id\": 2, \"name\": \"Item 2\"}, {\"id\": 3, \"name\":
+ \"Item 3\"}, {\"id\": 4, \"name\": \"Item 4\"}, {\"id\": 5, \"name\": \"Item 5\"}, {\"id\": 6, \"name\": \"Item 6\"}, 
+ {\"id\": 7, \"name\": \"Item 7\"}, 
+ {\"id\": 8, \"name\": \"Item 8\"} ]}";
+   
+        JSONObject jsonObject = new JSONObject(jsonString);
+        JSONArray dataArray = jsonObject.getJSONArray("data");
+        int chunkSize = 3;
+
+        List<List<JSONObject>> chunks = splitPayload(dataArray, chunkSize);
+
+        RestAssured.baseURI = "https://your-api.com"; 
+
+        for (List<JSONObject> chunk : chunks) {
+            
+            JSONObject chunkPayload = new JSONObject();
+            chunkPayload.put("data", chunk);
+
+          
+            Response response = given()
+                    .header("Content-Type", "application/json")
+                    .body(chunkPayload.toString())  // Convert JSON to string
+                    .when()
+                    .post("/your-api-endpoint")  // Replace with actual endpoint
+                    .then()
+                    .statusCode(200)  // Ensure the response status code is as expected
+                    .extract()
+                    .response();
+
+            System.out.println("Response: " + response.getBody().asString());
+        }
+    }
+
+    public static List<List<JSONObject>> splitPayload(JSONArray dataArray, int chunkSize) {
+        List<List<JSONObject>> chunks = new ArrayList<>();
+        List<JSONObject> currentChunk = new ArrayList<>();
+
+        for (int i = 0; i < dataArray.length(); i++) {
+            currentChunk.add(dataArray.getJSONObject(i));
+            if (currentChunk.size() == chunkSize || i == dataArray.length() - 1) {
+                chunks.add(new ArrayList<>(currentChunk));
+                currentChunk.clear();
+            }
+        }
+        return chunks;
+    }
+}
+
+----------------------------************************---------------------------------
+
+*************** Tools which we use for serialization and deserialization *****************
+Jackson
+Java Built-in Serialization
+JSON Libraries
+YAML Libraries
+XML Libraries
+
+
+
+---------------   *****************  postman tool ********  ---------------------------
+************** How to set variable in PostMan ***************
+
+1) Local Environment Variable  
+    pm.variables.set("variable_name", "value");
+
+2) Collection Variables 
+    pm.collectionVariables.set("variable_name", "value");
+
+3)  Environment Variables 
+    pm.environment.set("variable_name", "value");
+	
+4) Global Variables  
+    pm.globals.set("variable_name", "value");	
+	
+************  How to set Random Variable *****************
+	
+const code = pm.globals.get("company_code")
+const val = pm.variables.replaceIn('{{$randomInt}}')
+pm.collectionVariables.set("isbn",val + code)
+
+
+*********** How to read CSV file in PostMan ****************  
+  pm.collectionVariables.set("book_name",pm.iterationData.get("BookName"));
+  
+*********** How to validate status code in PostMan ********* 
+pm.test("Validated Status code is 200", function () {
+    pm.response.to.have.status(200);
+   });
+
+*********** How to validate Headers and Response Type ************
+
+pm.test("Header cookies responsetime validation", function () {
+    pm.response.to.have.header("Content-Type");
+    pm.expect(pm.response.headers.get("Content-Type")).to.eql("application/json;charset=UTF-8");});
+
+pm.test("Response time is less than 1500ms", () => {
+  pm.expect(pm.response.responseTime).to.be.below(1500);
+});
+
+************* How to parse Json response in PostMan ***************
+
+ const jsonData = pm.response.json();
+ pm.expect(jsonData).to.have.property("Msg");
+ pm.expect(jsonData.Msg).to.eql("successfully added");
+
+***********  How to validate scheema response *************
+const schema = {
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "book_name": {
+        "type": "string"
+      },
+      "isbn": {
+        "type": "string"
+      },
+      "aisle": {
+        "type": "string"
+      },
+      "author": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "book_name",
+      "isbn",
+      "aisle",
+      "author"
+    ]
+  }
+};
+
+
+pm.test("Validated the json response Schema code",function()
+{
+pm.response.to.have.status(200);
+pm.response.to.have.jsonSchema(schema);
+}
+);
+
+******* index base json array validation ************
+
+const getBookResponse = pm.response.json();
+
+pm.test("validated the JSON response logic",function()
+{console.log(getBookResponse)
+pm.expect(getBookResponse[0].author).to.eql(pm.collectionVariables.get("author_name"))
+       console.log(getBookResponse[0].author)
+});
+
+*****************  How do you automate API tests in Postman? ****************
+
+Create tests in Postman, export the collection, and run it using Newman or integrate it into CI/CD pipelines (e.g., Jenkins).
+
+**************  How do you test file uploads using Postman? ***************
+In the Body section, choose the form-data radio button -> in that add key value pair 
+File Key: The key expected by the API for the file upload (e.g., file, image).
+File Value: Click the "Select Files" button in the Value column and choose the file you want to upload from your system.
+
+**************  What will you do if a response has dynamic values like timestamps or unique IDs? *************
+pm.test("Validate timestamp", function () 
+{
+    pm.expect(pm.response.json().timestamp).to.match(/^\d+$/);
+});
+
+
+---------------------------------------------------------------------------------------------------------------------
+
+
+****************** Oauth access token *****************
+String response=given().formParam("client_id","692183103107-p0m7ent2hk7suguv4vq22hjcfhcr43pj.apps.googleusercontent.com")
+               .formParam("client_secret", "erZOWM9g3UtwNRj340YYaK_W")
+               .formParam("grant_type","client_credentials")
+               .formParam("scope","trust")
+               .when().log().all()
+               .post("https://rahulshettyacademy.com/oauthapi/oauth2/resourceOwner/token").asString();
+
+        System.out.println(response);
+        JsonPath js=new JsonPath(response);
+        String accesstoken=js.getString("access_token");
+
+        System.out.println(accesstoken);
+        GetCourses gc=given().queryParams("access_token",accesstoken).when()
+                .get("https://rahulshettyacademy.com/oauthapi/getCourseDetails").then().extract().response()
+                .as(GetCourses.class);
+--------------------*******************************------------------------------------
+
+************************** Generic API ****************************************
+Post:
+		RestAssured.baseURI = "https://jsonplaceholder.typicode.com";
+		String response=given().log().all().queryParam("","").header("","").contentType("application/json").body("").when()
+                .post("/posts").then().assertThat().statusCode(200).extract().response().asString();
+				
+Get:
+        RestAssured.BaseURI="";
+		String response=given().log().all().queryParam("","").header("","").when()
+                .get("/get").then().assertThat().statusCode(200).extract().response().asString();	
+				
+				
+ RestAssured.baseURI = "https://jsonplaceholder.typicode.com";
+ Response response = RestAssured
+                .given()
+                .get("/users")
+                .then()
+                .assertThat()
+                .statusCode(200) // Assert that the response status is 200
+                .extract()
+                .response();
+String firstUserName = response.jsonPath().getString("[0].name");
+
+**************************** Multipart ***********************************
+String response = given()
+                .baseUri(baseUrl)  
+                .multiPart("file", fileToUpload)
+                .when()
+                .post("") 
+                .then()
+                .statusCode(200)
+                .body("message", equalTo("File uploaded successfully"))  
+                .extract().response().asString(); 				
+
+
+****************** POJO class ***************************
+public class User {
+    
+    private String email;
+
+     public String getEmail() 
+	{
+        return email;
+    }
+
+    public void setEmail(String name) 
+	{
+        this.email = email;
+    }
+}
+
+
+  public static void main(String[] args){
+  User newUser = new User();
+  newUser.setEmail("rohansalve.com@gmail.com");
+
+        RestAssured.given()
+            .contentType(ContentType.JSON)
+            .body(newUser)
+            .post("https://api.example.com/user")
+            .then()
+            .statusCode(200);
+String email = response.jsonPath().getString("email");
+Assert.assertEquals(email,"actualemailAddress");
+}
+
+
+***************** Timeout in API testing *************************************
+Testing Delayed Responses ------.>>>>>>>>
+
+a) Dealy Response ----->>>
+
+-->>.then()
+  .time(Matchers.greaterThan(2000L));  // Expect the response time to be greater than 2 seconds
+
+-->>.time(lessThan(5000L));  // Ensure response time is under 5 seconds
+
+--->> Awaitility.await()
+            .atMost(60, TimeUnit.SECONDS)  // Wait at most 60 seconds
+            .until(() -> {
+                // Make a GET request to check if the task is done
+                String status = RestAssured.get("https://api.example.com/task-status")
+                                           .jsonPath().getString("status");
+
+
+b) Handling Timeouts
+
+-->>RestAssured.given()
+  .config(RestAssured.config().httpClient(HttpClientConfig.httpClientConfig()
+      .setParam("http.connection.timeout", 5000)  // Connection timeout
+      .setParam("http.socket.timeout", 10000)))  // Read timeout
+
+--->> Retry Mechanisum
+int retries = 3;
+while (retries > 0) {
+    try {
+        RestAssured.given().get("https://api.example.com/slow-endpoint");
+        break;
+    } catch (Exception e) {
+        retries--;
+        if (retries == 0) {
+            throw new RuntimeException("API request failed after 3 retries");
+        }
+    }
+
+
+
+** Awaitility is focused on waiting for specific conditions (like asynchronous operations) to complete within a timeout period.
+** HttpClientConfig is used for fine-tuning HTTP client settings like timeouts, retries, and connection management.
+
+---------------------*************************************--------------------------------
+
+                                      **************  Spec Builder   ****************
+RequestSpecification reqspec=new RequestSpecBuilder().setbaseuri().addQueryParam("key","qaclick123").setContentType(ContentType.Json
+).build();
+
+given().spec(reqspec).body().when().post().then().assertThat().spec(response).extract().response().asString();
+
+ResponseSpecification response=new ResponseSpecBuilder().expectStatusCode(200).expectContentType().build();
+
+
+--------------- Diff .Response vs .asString vs .toString  --------------------
+
+
+.response()	--> Full Response object ,Includes->Status, headers, cookies, body , Use Case - Accessing full details	
+
+.asString() --> Response body as a String , Only the response body	,Use Case - Extracting the body directly
+
+.toString() --> String representation of object ,Depends on toString() implementation ,Quick object summary
+
+.prettyPrint() --> method is used to format and print the response body in a human-readable, pretty format.
+
+
+                        ----------->> how We can Handle Authotication token  <<-----------
+* handle authentication tokens by adding the token to the request header or request body, depending on the type of authentication required. 
+* If you need to reuse the same token in multiple requests, it's efficient to create a RequestSpecification with the token included.
+
+           Changing or refreshing a token in an API typically involves requesting a new token using some sort of refresh mechanism,
+	
+ Refresh Token Flow --> exchange the refresh token for a new access token when the current one expires.
+                        You send a POST request to the token endpoint with the refresh_token, client_id, client_secret, and grant_type=refresh_token.
+						
+ Handling Expired Tokens --> handle expired tokens dynamically by catching the expiration error and then automatically refreshing the token.
+     
+	 String refreshToken = "your-refresh-token";
+        String accessToken = "initial-access-token"; // Start with the initial token
+
+        Response apiResponse = sendApiRequest(accessToken);
+        if (apiResponse.statusCode() == 401) { // Unauthorized (Token Expired)
+            System.out.println("Token expired, refreshing...");
+            accessToken = refreshAccessToken(refreshToken); // Refresh token
+            apiResponse = sendApiRequest(accessToken); // Retry API request with new token
+        }
+
+        System.out.println("API Response: " + apiResponse.getBody().asString());
+    }
+	
+	public static String refreshAccessToken(String refreshToken) {
+        Response refreshResponse = RestAssured.given()
+                .formParam("grant_type", "refresh_token")
+                .formParam("refresh_token", refreshToken)
+                .post("https://api.example.com/oauth2/token");
+
+        return refreshResponse.jsonPath().getString("access_token");
+    }
+	
+  ---->	If the token has expired (status code 401), the refreshAccessToken() method is called to get a new token.
+						
+						
+Access Tokens are typically short-lived and expire after a certain period.
+Refresh Tokens are long-lived and are used to get new access tokens once they expire.
+
+
+              ******************** Status Code ****************
+			  
+200	OK	                            Request succeeded.	                                    No action needed.
+201	Created	                        Resource was successfully created.	                    Ensure the resource creation logic.
+204	No Content	                    Request succeeded, no content to return.	            Ensure the behavior matches expectations.
+HTTP 202 Accepted status code  --->   server has received and understood the request
+400	Bad Request	                    Invalid request syntax or parameters.	                Verify request payload, headers, and parameters.
+401	Unauthorized	                Missing or invalid authentication token.	            Check and provide valid credentials.
+403	Forbidden	                    Client lacks permissions.	                            Ensure correct permissions and roles.
+404	Not Found	                    Resource not found on the server.	                    Verify the endpoint or resource ID.
+429	Too Many Requests	            Client has exceeded request limits.	                    Implement retry logic or reduce request frequency.
+405 Method not allow
+409 conflict
+
+500	Internal Server Error	        Unexpected server error.	                            Check server logs and debug backend logic.
+502	Bad Gateway	                    Invalid response from an upstream server.	            Ensure upstream servers are functional.
+503	Unavailable Service             Unavailable	Server is overloaded or under maintenance.	Retry after some time or check server status.
+504	Gateway Timeout	                Upstream server didn't respond in time.	Optimize server performance or increase timeout.
+501 Not Implemente
+
+
+** What is the difference between 401 and 403?
+
+      401 Unauthorized means the client hasn't provided valid authentication, 
+      while 403 Forbidden means authentication was provided, but the client lacks sufficient permissions.
+	  
+	  
+POST: Creating Resources
+201 Created: Resource successfully created.
+400 Bad Request: Invalid input data.
+409 Conflict: Duplicate resource or other conflict.
+
+PUT: -> Idempotent,  Full Updates or Creating Resources
+200 OK: Resource updated successfully.
+201 Created: Resource created (if it didn’t exist).
+400 Bad Request: Invalid input or URI.
+409 Conflict: Update conflict.
+
+PATCH:Partial Updates
+200 OK: Resource updated successfully.
+204 No Content: Update successful, no response body.
+409 Conflict: Conflict during partial update.
+
+DELETE: -> Idempotent,Removing Resources
+200 OK: Resource deleted.
+204 No Content: Resource deleted, no response body.
+404 Not Found: Resource doesn’t exist.
+
+GET: -> Idempotent,Fetching Data
+
+HEAD Method: -> Fetch Metadata
+
+OPTIONS Method: -> Retrieve Allowed Actions Method
+
+
+
+How does OPTIONS differ from other methods, and when is it used?
+Answer:
+Purpose:
+OPTIONS is used to determine the communication options available for a resource or server. 
+It’s commonly used for CORS (Cross-Origin Resource Sharing) preflight requests in browsers.
+Example Response Headers:
+HTTP/1.1 204 No Content
+Allow: GET, POST, PUT, DELETE, OPTIONS
+Access-Control-Allow-Methods: GET, POST, OPTIONS
+Use Case:
+Before sending a POST request to a cross-origin API, the browser sends an OPTIONS request to check if the method and headers are allowed.
+
+Can PUT be used to create a resource?
+Answer:
+Yes, PUT can be used to create a resource if the client specifies a new resource URI, and the server creates it at that location.
+
+Example:
+http
+Copy code
+PUT /api/resource/123
+{
+  "name": "Test Resource"
+}
+
+
+Case 1: POST for Non-RESTful Batch Operations
+Example: Deleting multiple users.
+
+
+
+
+Q2: How would you structure an API endpoint to retrieve user orders filtered by status (e.g., pending, completed)?
+Answer:
+
+Use query parameters for filtering:
+Example endpoint: /orders?status=pending
+This approach follows RESTful principles by keeping the URL structure clean while 
+allowing flexibility for multiple filters (e.g., /orders?status=completed&date=2023-01-01).
+
+
+**************   What do you understand by server-side validation?  **************
+Validation performed on the server to ensure data integrity and security (e.g., input sanitization, mandatory fields).
+ ***************************************************************************************************************************
+
+     Stateless Communication -->
+     server does not retain any information about the client or its previous interactions
+     Each request is processed independently.
+     The server does not maintain any session or state.
+ 
+ ---> Highly Scalable, Simpler Design
+  example --> HTTP,DNS ,REST APIs
+  
+  Stateful Communication --> 
+  The server maintains information about the client and its interactions during a session.
+  Each request is dependent on the state created by previous requests.
+  
+  Session-Dependent: The server stores the state or session information for the client.
+  Example -->  FTP(File Transfer Protocol),WebSockets
+   
+  *************** Caching in API Testing ****************
+  
+Caching in API testing refers to the practice of storing the results of API responses for future use, to
+reduce the need for repeated requests to the same resource. This is done to improve performance, 
+reduce server load, and ensure that testing scenarios reflect real-world conditions where APIs might cache data.
+Cached data allows repeated requests to be served quickly without reprocessing the same data on the server.
+ 
+  Type of Caching --> 
+  
+  Server-Side Caching:  headers like Cache-Control, ETag, Last-Modified 
+  Client-Side Validation:  headers like (If-None-Match, If-Modified-Since).
+  
+  
+   Response response = given()
+            .when()
+            .get("/resource");
+
+        String eTag = response.header("ETag");
+        String lastModified = response.header("Last-Modified");
+		
+        given()
+            .header("If-None-Match", eTag)
+            .when()
+            .get("/resource")
+            .then()
+            .statusCode(304); 
+			
+			given()
+            .header("If-Modified-Since", lastModified)
+            .when()
+            .get("/resource")
+            .then()
+            .statusCode(304);
+			
+			
+			
+			
+			************************  How to handle respone and request on API **************************
+			
+			For Requests:
+Direct JSON string -> String jsonBody = "{ \"name\": \"John\", \"age\": 30 }";
+Map to JSON -> Convert a Map into JSON and send it as a request body.
+Map<String, Object> requestData = new HashMap<>();
+requestData.put("name", "John");
+requestData.put("age", 30);
+
+
+POJO serialization -> erialize a Java object into JSON and pass it in the request.
+JSON from file -> 
+File jsonFile = new File("path/to/request.json");
+
+Dynamic JSON creation ->
+JSONObject jsonObject = new JSONObject();
+jsonObject.put("name", "John");
+jsonObject.put("age", 30);
+
+given()
+    .header("Content-Type", "application/json")
+    .body(jsonObject.toString()   or jsonFile or requestData or jsonBody )
+    .when()
+    .post("/endpoint")
+    .then()
+    .statusCode(200);
+
+
+
+For Responses:
+Extract as String ->
+
+Parse as JSON object ->
+JSONObject jsonObject = new JSONObject(responseBody);
+String name = jsonObject.getString("name");
+
+Map to Java object (POJO) ->
+Deserialize JSON into a Java object using libraries like Jackson or Gson.
+
+Convert to Map
+
+Map<String, Object> responseMap = given()
+    .when()
+    .get("/endpoint")
+    .then()
+    .extract()
+    .as(Map.class);
+
+System.out.println(responseMap.get("name"));
+
+
+JSONPath for validation --> Use JSONPath for assertions in the response body.
+
+given()
+    .when()
+    .get("/endpoint")
+    .then()
+    .body("name", equalTo("John"))
+    .body("age", equalTo(30));
+
+
+
+
+Key Libraries:
+Jackson: Serialization/deserialization.
+Gson: Lightweight JSON handling.
+org.json: Manual JSON construction and parsing.
+JsonPath: Advanced JSON querying.
+Let me know if you'd like to explore any of these approaches further!
+
+*************************************************   Set Cookies in RestAssured ******************    
+                                      Authenticate once, and use the session ID in subsequent requests.
+                                      Response response = given()
+                                        .formParam("username", "user")
+                                        .formParam("password", "pass")
+                                        .post("/login");
+                                    
+                                    String sessionId = response.getCookie("JSESSIONID");
+                                    
+                                    given()
+                                        .cookie("JSESSIONID", sessionId)
+                                        .when()
+                                        .get("/endpoint")
+                                        .then()
+                                        .statusCode(200);
+										
+	***********************     Security Testing for API ************************************
+	
+	Security Testing: Check for vulnerabilities such as SQL injection, XSS, or unauthorized access by testing with incorrect tokens or permissions.
+	
+	SQL Injection Testing -->  Ensure that the API is not vulnerable to SQL injection attacks by injecting malicious SQL queries into input fields.
+	Unauthorized Access Testing --> Ensure the API enforces proper authentication and authorization for each endpoint.
+	Invalid Input Handling --> Test how the API handles malicious or malformed inputs in various parameters.
+	Rate Limiting and Brute Force Attack Testing -->  Ensure the API implements rate-limiting to prevent brute force attacks.
+
+
+
+
+
+******************************************************************************************************************************************************************
+
+
+
+------>What are the four parameter you have to pass in Selenium?
+Four parameters that you have to pass in Selenium are
+
+Host
+Port Number
+Browser
+URL
+
+------>How you can use “submit” a form using Selenium?
+You can use “submit” method on element to submit form-
+
+element.submit () ;
+
+Alternatively you can use click method on the element which does form submission
+
+
+--------->Explain what is Datadriven framework and Keyword driven?
+Datadriven framework: In this framework, the test data is separated and kept outside the Test Scripts, while Test Case logic resides in Test Scripts. Test data is read from the external files ( Excel Files) and are loaded into the variables inside the Test Script. Variables are used for both for input values and for verification values.
+
+Keyworddriven framework: The keyword driven frameworks requires the development of data tables and keywords, independent of the test automation. In a keyword driven test, the functionality of the application under test is documented in a table as well as step by step instructions for each test.
+
+------->What is an Ajax?
+Ajax or Asynchronous JavaScript is used mostly to create quick and responsive web pages. 
+Let us take an example of a web page, where the user information updates on click of a button. 
+Suppose a user is updating his information quite frequently, because of that, the whole web page needs to be reloaded each time.
+However, on a web page which is built on Ajax, 
+only the part of user information which the user modified should be updated, rather than reloading the whole page.
+
+How we handle--- Thread.sleep , Implicit Wait, Explicite Waits
+
+
+------->Broken Links? 
+does not work i.e. does not redirect to the webpage it is meant to. 
+This usually occurs because the website or particular web page is down or does not exist
+A valid URL will have a 2xx HTTP status code.  Broken links, which are essentially invalid HTTP requests have 4xx and 5xx status codes.
+
+404 Page Not Found – The destination web page has been removed by the owner
+400 Bad Request – The server cannot process the HTTP request triggered by the link because the URL address requested is wrong
+ 
+ for link ------------->>>>>>>>>>>>>>
+*find <a ankel type webelements 
+*find url of the this webelements
+*Send HTTP request for the link
+*Verify the HTTP response code for the link
+
+for imange ------------->>>>>>>>>>>>>>>
+* find <image tag webelements  ex --- <img src=”assets/img/image.jpg” alt=”some text”>; 
+*find url of the this webelements
+*Send HTTP request for the link
+*Verify the HTTP response code for the link
+
+                        HttpURLConnection httpURLConnection = (HttpURLConnection) link.openConnection();
+                        httpURLConnection.setConnectTimeout(3000); // Set connection timeout to 3 seconds
+                        httpURLConnection.connect();
+                        if (httpURLConnection.getResponseCode() == 200) {
+                        System.out.println(url + " - " + httpURLConnection.getResponseMessage());
+                        } else {
+                        System.out.println(url + " - " + httpURLConnection.getResponseMessage() + " - " + "is a broken link");
+                        }
+                        } catch (Exception e) {
+                        System.out.println(url + " - " + "is a broken link");
+                        }
+						
+						
+						
+						
+---------Explain how you can handle colors in web driver?	
+Use getCssValue(arg0) function to get the colors by sending ‘color’ string as an argument
+
+
+----------- Which web driver implementation is fastest?
+HTMLUnit Driver implementation is fastest, HTMLUnitDriver does not execute tests on browser but plain http request, 
+which is far quick than launching a browser and executing tests
+
+					
+					
+---->>>> Explain using Webdriver how you can perform double click?
+You can perform double click by using
+
+Syntax- Actions act = new Actions (driver);
+act.doubleClick(webelement);
+
+
+----->>>>>Selenium tricky interview question and answer
+-----------------------------------------------------
+     How to handle iframes without using switchTo().frame()?
+This can be done using Explicit waits.
+CodeSnippet:-
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+wait.until(ExpectedConditions.frameTobeAvailableAndSwitchToIt(By.locator);
+Then you can interact with the element in the iframe using driver.findElement();
+
+
+-------->>>>Capture Full Page Screenshot with AShot API
+Add Dependency Pom.xml file AShot
+Screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(1000)).takeScreenshot(driver);
+ImageIO.write(screenshot.getImage(), "jpg", new File("c:\\ElementScreenshot.jpg"));
+
+Ashot API is a freeware from Yandex.
+It is a utility for taking a screenshot in Selenium.
+It helps you to take a screenshot of an individual WebElement on different platforms like desktop browsers, iOS Simulator Mobile Safari, Android Emulator Browser.
+It can take a page screenshot of a page bigger than screen size.
+This feature has been removed in selenium version 3, so Ashot API is a good option.
+It can decorate the screenshots.
+It provides a screenshot comparison.
+
+
+------>>>> How to handle SSL Certificate Error using Selenium Webdriver
+Suppose we have written some test scripts and while executing the script, we caught in the situation as “Untrusted Connection” 
+above then how do we handle the exception purely through automation.
+
+DesiredCapabilities handlSSLErr = DesiredCapabilities.chrome ()       
+handlSSLErr.setCapability (CapabilityType.ACCEPT_SSL_CERTS, true)
+WebDriver driver = new ChromeDriver (handlSSLErr);
+
+SSL (Secure Sockets Layer) is a standard security protocol for establishing secure connection between the server and the client
+Browser and the server use SSL Certificate mechanism to be able to establish a secure connection.
+SSL works through a combination of programs and encryption/decryption routine that exist on the web server computer and web server browser.
+When secure connection is not established between the server and client due to certificate SSL certificate error will occur
+
+
+-------->>>> How to Handle Cookies in Selenium WebDriver
+information about the user and their preferences. It stores information using a key-value pair. 
+It is a small piece of data sent from Web Application and stored in Web Browser,
+
+If cookies are not stored, you will need to perform login action every time before you execute above listed test scenarios. 
+This will increase your coding effort and execution time.
+
+Stored in text file 
+driver.manage().getCookies();
+
+NOTE: Use hard refresh in case you see the login page after executing the above script.
+
+
+----->>>>>How to Handle Proxy Authentication in Selenium Webdriver
+A proxy acts as an intermediary between clients sending requests and server responding. The primary use of a proxy is to 
+maintain privacy and encapsulation between multiple interactive systems.
+
+HTTP Proxy authentication with Selenium in Chrome can be handled using the following approaches
+
+Using the AutoIT tool
+Using Alerts
+
+
+---->>>>>>> JavaScriptExecutor? Use
+JavaScriptExecutor is an Interface that helps to execute JavaScript through Selenium Webdriver.
+JavaScriptExecutor provides two methods 
+JavascriptExecutor js = (JavascriptExecutor) driver;  
+js.executeScript(Script,Arguments);
+or
+js.executeAsyncScript(Script,Arguments);
+
+“executescript”  
+1.Click an Element using JavaScripExecutor --->js.executeScript("arguments[0].click();", button);
+2.Capture Scrape Data and Navigate to different pages using JavaScriptExecutor.
+3.Scroll Down using JavaScriptExecutor. -->>js.executeScript("window.scrollBy(0,600)");	
+4.Fetched URL, title, and domain name using JavaScriptExecutor.
+
+“executeAsyncScript” 
+1.sleep in the browser under test.
+js.executeAsyncScript("window.setTimeout(arguments[arguments.length - 1], 5000);");
+
+
+
+
+-------->>>>> Refresh Page using Selenium Webdriver different approaches
+*driver.navigate().refresh();
+*driver.get(driver.getCurrentURL());
+*driver.navigate.to(driver.getCurrentURL());
+*driver.findElement(By.id("username")).sendKeys(Keys.F5);vc
+
+--->>>Date Picker 
+* Use Select Class if Dropdown Date Picker
+* Use Normal Send Keys 
+*Use Select Year Month Date 
+
+
+----->>
+WebDriver: Use when testing locally on the same machine where the test code is running.
+RemoteWebDriver: Use when:
+Running tests on a remote Selenium server or grid.
+Distributing tests across multiple environments or machines.
+
+------------------*******  Serenity Locator *********-------------------
+
+public static Target String nameOfLocater = Target.the("this locater use for click on button").located(Byshodow.cssSelector("target","ShadowHost"));
+
+
+public static Target String nameOfLocater = Target.the("this locater use for click on button").located(By.cssSelector("---------"));
+
+Public static final Target ClickOnButton(String textOfBUtton){
+String  locator = String.formate("");
+return Target.the("this locater use for click on button").locatedBy(loacter);
+}
+
+--------------- ********* ------------------------------------
+
+                ***     Code ****
+                      TakesScreenshot interface: driver must be cast to TakesScreenshot because it provides the getScreenshotAs() method.
+					  OutputType.FILE: The method getScreenshotAs(OutputType.FILE) returns a File object, which represents the screenshot image in binary format.
+
+            TakesScreenshot screenshot = (TakesScreenshot) driver;
+            File srcFile = screenshot.getScreenshotAs(OutputType.FILE);
+            File destFile = new File("screenshot.png");
+            FileHandler.copy(srcFile, destFile);
+--------------------------------------------------------------------------------------------------------------
+
+  ----------************             find the Broken link               *************--------------- 
+
+            List<WebElement> links = driver.findElements(By.tagName("a"));
+               for (WebElement link : links) {
+                String url = link.getAttribute("href");
+            
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("HEAD");
+            connection.connect();
+            int responseCode = connection.getResponseCode();
+            if (responseCode >= 400) {
+                System.out.println(url + " is a broken link. Response Code: " + responseCode);
+            } else {
+                System.out.println(url + " is valid. Response Code: " + responseCode);
+            }
+	}
+			
+       
+ --------------------------------------------------------------------------------------------------------------------  
+ 
+          ******    How do you optimize Selenium tests for performance?    ******
+
+Use explicit waits instead of implicit waits.
+Avoid unnecessary Thread.sleep().
+Utilize Page Object Model for reusability.
+Run tests in headless mode using ChromeOptions or FirefoxOptions.
+Use parallel execution to save time.
+
+
+
+************ How do you test web applications that require multi-factor authentication (MFA)? ******
+
+Testing MFA can be challenging. Here’s how you can approach it:
+
+Mock Authentication: Bypass MFA for test accounts on staging environments.
+External OTP Retrieval: Integrate APIs to retrieve OTP sent to email or SMS.
+String otp = getOTPFromAPI();
+driver.findElement(By.id("otpField")).sendKeys(otp);
+
+
+Bypass Authentication Using Cookies:
+Cookie authCookie = new Cookie("auth", "validAuthToken");
+driver.manage().addCookie(authCookie);
+driver.navigate().refresh();
+
+
+
+********** How do you test browser notifications in Selenium? *************
+
+Disable Browser Notifications:
+
+1.ChromeOptions options = new ChromeOptions();
+options.addArguments("--disable-notifications");
+WebDriver driver = new ChromeDriver(options);
+
+2.Use JavaScript to interact with notifications (third-party tools like AutoIT or Sikuli can help).
+
+
+
+
+******************** How do you validate a tooltip in Selenium? *************
+
+Tooltips are often implemented using the title attribute.
+
+Get Attribute Value:
+WebElement element = driver.findElement(By.id("tooltipElement"));
+String tooltipText = element.getAttribute("title");
+System.out.println("Tooltip: " + tooltipText);
+
+
+
+
+Hover Action Validation:
+Actions actions = new Actions(driver);
+WebElement element = driver.findElement(By.id("tooltipElement"));
+actions.moveToElement(element).perform();
+String tooltipText = driver.findElement(By.cssSelector(".tooltip-class")).getText();
+
+    and if we want to pause 
+	pause(): Introduce a delay between actions.
+-----***** Run testNg.xml file , through maven commend ******---------
+
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M5</version> <!-- Use the latest version -->
+            <configuration>
+                <!-- Specify the TestNG XML file -->
+                <suiteXmlFiles>
+                    <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+                </suiteXmlFiles>
+
+                <!-- Configure retrying failed tests -->
+                <testFailureIgnore>false</testFailureIgnore> <!-- Fail the build on test failure -->
+                <parallel>tests</parallel> <!-- Run tests in parallel (optional) -->
+                <threadCount>4</threadCount> <!-- Specify the number of threads for parallel execution -->
+
+                <!-- Configure retrying failed tests -->
+                <retryCount>2</retryCount> <!-- Retry failed tests up to 2 times -->
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+
+
+-----------------------------        TestNG               ------------------------
+
+TestNG is a  testing framework and is the advance version of Junit. designed to make it easier to write and manage tests in Java
+Usage:TestNG uses annotations to define test methods and configure the testing process. Common annotations include:
+
+Advantages of TestNG:
+1) Grouping
+2) Parallel Test Execution
+3) Assertions
+4) Data-Driven Testing
+5) DependsOnMethods
+6) we can skip test using enabled=false
+7) timeOut
+8) @Factory 
+9) Listeners
+10) we can run pack through testNG.xml file
+11) HTML, XML testNg report
+12)Annoatation  --> @Test ,@BeforeMethod ,@AfterMethod,@BeforeClass,@AfterClass,@BeforeSuite / @AfterSuite
+
+Difference between @Factory and @DataProvider
+Feature	                                        @Factory	                                                                 @DataProvider
+Purpose	                     Creates multiple instances of the test class.	                                   Provides multiple sets of data for a test method.
+How It Works	         Returns an array of objects (test class instances).	                              Returns a 2D array or Iterator<Object[]> (data sets).
+Scope	                 Creates instances of entire test classes.	                                          Provides data for individual test methods.
+When to Use	             When you need to run tests with different configurations.	                      When you need to run the same test with multiple data inputs.
+Execution	              TestNG runs test methods for each test class 	                                    TestNG runs the test method for each data set provided 
+                            instance created by the factory.                                                              by the data provider.
+							
+							
+							
+ **************************** testNg.xml file ***********************************************
+ <?xml version="1.0" encoding="UTF-8"?>
+<suite name="Test Suite" parallel="tests" thread-count="4">
+    <test name="Test Group A" >
+        <groups>
+            <run>
+                <include name="groupA"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.example.TestClassA"/>
+			<class name="com.example.TestClassB"/>
+        </classes>
+    </test>
+
+
+</suite>
+
+******************** testNG Listeners****************
+
+listeners are used to track the execution of tests and perform actions based on the results
+
+ITestListener:  Listens to test method execution events (start, success, failure, skip).
+
+public class TestListener implements ITestListener {
+
+    @Override
+    public void onTestStart(ITestResult result) {
+        System.out.println("Test Started: " + result.getName());
+    }
+
+    @Override
+    public void onTestSuccess(ITestResult result) {
+        System.out.println("Test Passed: " + result.getName());
+    }
+
+    @Override
+    public void onTestFailure(ITestResult result) {
+        System.out.println("Test Failed: " + result.getName());
+    }
+
+}
+
+************* IRetryAnalyzer ********************
+
+IRetryAnalyzer is an interface in TestNG that allows you to specify retry logic for test methods that fail.
+
+
+public class RetryAnalyzer implements IRetryAnalyzer {
+
+    private int retryCount = 0;
+    private static final int maxRetryCount = 3;  // Max retry attempts
+
+    @Override
+    public boolean retry(ITestResult result) 
+	{
+        if (retryCount < maxRetryCount) 
+		{
+            retryCount++;
+            System.out.println("Retrying test " + result.getName() + " for the " + retryCount + " time(s).");
+            return true;  
+        }
+        return false; 
+    }
+}
+
+************** ISuiteListerner ************************
+Listens to suite execution events (suite start, suite finish).
+
+<suite name="Test Suite">
+    <listeners>
+        <listener class="com.example.MyTestListener"/>
+    </listeners>
+    <test name="Test">
+        <classes>
+            <class name="com.example.TestClass"/>
+        </classes>
+    </test>
+</suite>
+
+							
+---------------------  *****   Property File read  *******----------------------------
+   
+
+public Properties getproperty(String key) throws IO Exception
+{  
+FileInputStream fis=new FileInputStream("");
+Properties prop=new Properties();
+prop.load(fis);
+prop.getproperty(key);
+return prop;
+}
+
+
+
+*******************ExcelReading******************
+FileInputStream fis=new FileInputStream("path of the file");
+
+XSSFWorkbook workbook=new XSSFWorkbook(fis);
+int totalsheets=workbook.getNumberOfSheets();
+
+
+for(int i=0;i<totalsheets;i++)
+{
+if(workbook.getSheetName(i).equalsIgnoreCase("testdata"))
+{
+XSSFSheet sheet=workbook.getsheetAt(i);
+
+Iterator<Row> rows=sheet.iterator();
+Row firstrow=rows.next();
+
+Iterator<Cell>ce=firstrow.cellIterator();
+while(ce.hasNext())
+{
+Cell value=ce.next();
+if(value.getStringCellValue().equalsIgnoreCase("Testcases"))
+{
+//desired column
+}
+
+}
+
+
+
+
+********************** Take Screenshot code *********************
+
+File src=((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+FileUtils.copyFile(src,new File("C:\\Users\\example.png"));
+
+***************** SSL Certification ******************************
+
+Selenium:
+         ChromeOptions options = new ChromeOptions();
+         options.setAcceptInsecureCerts(true); 
+API:
+		given().RelaxedHTTPSValidation();
+		
+******************** Extent Report ***************************
+
+
+        ExtentSparkReporter sparkReporter = new ExtentSparkReporter("extentSparkReport.html");
+        sparkReporter.config().setReportName("My Automation Test Report");
+        sparkReporter.config().setDocumentTitle("Test Execution Report");
+        ExtentReports extent = new ExtentReports();
+        extent.attachReporter(sparkReporter);
+        ExtentTest test = extent.createTest("Sample Test", "This is a sample test for Spark Report");
+
+       test.pass("Successfully navigated to the website");
+       test.fail("Test failed due to: " + e.getMessage());
+      
+       extent.flush();
+
+
+****************** Broken Link program **********************************
+
+     List<WebElement> links = driver.findElements(By.tagName("a"));
+        
+    for (WebElement link : links) 
+	{
+		String url = link.getAttribute("href");
+   
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("HEAD");
+            connection.connect();
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode >= 400) 
+			{
+                System.out.println(url + " is a broken link. Response Code: " + responseCode);
+            } else 
+			{
+                System.out.println(url + " is valid. Response Code: " + responseCode);
+            }      
+    }
+
+
+*************************** WireMock Code *******************************
+
+Category: HTTP Mock Server
+Purpose: Used for mocking and stubbing HTTP services in integration or system tests.
+Use Case: Simulating external HTTP APIs to test how a system interacts with them.
+
+Key Features:
+Acts as a standalone mock server that can mimic API responses.
+Records and replays HTTP interactions.
+Supports a wide range of HTTP protocols and behaviors (e.g., delays, timeouts).
+Can simulate real-world scenarios like service unavailability or slow responses.
+
+Common Use Cases:
+Testing microservices that rely on external APIs.
+Simulating API failures or latency.
+Testing systems in environments where external APIs are unavailable or costly to call.
+
+@BeforClass
+{ 
+                WireMockServer server = new WireMockServer(Port_Number);
+                server.start();
+                WireMock.configureFor(HOST,PORT_Number); 
+				
+           ResponseDefinitionBuilder mockeResponse = new ResponseDefinitionBuilder();
+           mockeResponse.withStatus(200);
+           mockeResponse.withStatusMessage("Hello mam");
+           mockeResponse.withHeader("Content-Type","Json");  
+           mockeResponse.withBody("text to put in the body");
+		   
+           WireMock.stubFor(WireMock.get("Resources")).willReturn(mockeResponse);
+}
+
+Simulating HTTP services (external APIs, microservices)., Mocking
+HTTP request/response mocking.
+@Test
+{
+Response response = given().log().all().when().get(" ").then().statusCode(201).extract().response();
+Assert.assertEquals(response.getHeader("token"),"1111")
+Assert.assertEquals(response.getBody().asString(),"this code looks Good ,Thank you")
+}
+
+@AfterClass
+{
+if(server.isRunning() && null !=server)
+server.shutdown();
+}
+
+    WireMock Code  ---> Simulating HTTP services (external APIs, microservices)., Mocking HTTP request/response mocking., Interacts with external systems via HTTP.,Useful when you need to simulate external HTTP services without hitting them.
+                        Use
+	Mockito   ---> Mocking dependencies in unit tests ,Unit testing (verifying logic of individual classes or methods).,Mocking Object/method-level mocking ,Generally simpler setup for mocking objects and method calls.,
+                   	
+						
+
+******************** Database Connection ************************
+connection con= Drivermanager.getconnection( url, " username""password");
+
+URL Jdbc : mySql" :// + host +": " + port +" / datbasename" ; Jdbc : mysql://"+localhost +"+" 3306 +"/databasename";
+
+statement s = con.Createstatement ();
+
+Result rs = S.executequery ( "Enter query for Finding value");
+
+while (rS. next ()) {
+
+System out.println( rs. getstring (" username");
+}
+
+
+************************ Hibernate ******************************
+           Maps Java objects (classes) to database tables and Java data types to SQL data types.
+           Eliminates the need for manual mapping and SQL query writing.
+		   
+		   
+1. Add dependency 
+   a)hibernate-core b)mysql-connector-java
+   
+  2. Create hibernate.cfg.xml --> to set URL and Username , password for Data Base
+ 
+  3. Create Data Entity Class for represent Data base Table 
+     with few annotation like @Entity @Table(name='Username')
+	 
+	 public user {
+	 @cloumn(name='email')
+	 private String email;
+	 public String getEmail(){
+	  return email;
+	 }	 
+	  public void setEmail(String email){
+	    this email= email;
+	 } 
+   }
+	 
+
+  4. Create RestAssured Test Class
+       
+        Session session = HibernateUtil.getSession();
+        User user = session.get(User.class, 1);
+        HibernateUtil.closeSession(session);
+
+        Response response = RestAssured.given()
+                .baseUri("http://localhost:8080/api")
+                .get("/users/1").then().statusCode(200)
+                .body("email", equalTo(user.getEmail()));
+
+
+
+
+
+**************** Waits *************
+There are tow types of waits:
+1) Conditional Waits
+Implicit Wait: It’s applied globally for all elements and remains active until the session ends.
+
+WebDriver driver = new ChromeDriver();
+driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));	
+
+Exception: NoSuchElementException
+Defaulttimeout: 0sec
+
+Explicit Wait: 
+The Explicit Wait is used when you want to wait for a specific condition to occur (e.g., element visibility, element clickability, etc.). 
+It is only applied to specific elements.
+
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+WebElement clickableElement = wait.until(ExpectedConditions.elementToBeClickable(By.id("submitButton")));	
+
+Exception: TimeOutException
+
+Fluent Wait: 
+Fluent Wait is an advanced version of explicit wait where you can specify the maximum time to wait, 
+the polling interval, and the conditions to ignore (like NoSuchElementException).
+
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        wait.pollingEvery(Duration.ofMillis(500));         
+		wait.ignoring(Exception.class);
+WebElement visibleElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("welcomeText")));	
+
+Exception: StaleElementReferenceException, NoSuchElementException, TimeoutException	
+
+2) Unconditional Waits
+Thread.sleep();
+
+**************** Exceptions in selenium *******************************
+
+1) NoSuchElementException:  
+This exception is thrown when WebDriver cannot find an element using the specified locator (e.g., findElement()).
+Solution: Explicit Waits
+
+2)ElementNotInteractableException OR ElementClickInterceptedException
+The element is present in the DOM but not interactable/clickable (e.g., hidden or disabled).
+Solution: Explicit Waits ,
+((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+
+3) StaleElementReferenceException  
+The element reference is no longer valid, typically because the DOM has changed after the element was located.
+Solution: Explicit Wait, Retry Analayzer , Refresh the page and Try and catch method
+
+4) TimeoutException  
+The wait condition did not succeed within the specified time.
+Solution: Adjust the timeout duration as needed.
+
+5) ElementNotVisibleException: 
+when an element is present in the DOM but not visible on the screen.
+Solution: Explicit Wait, JavascriptExecutor
+
+*********** Get and Navigate Method ***********
+get(): 
+It loads a web page in the browser and waits for the page to load completely.
+It does not allow you to go back or forward to other pages.
+It is blocking, meaning the script will not continue until the page is completely loaded.
+Syntax: driver.get("https://www.example.com");
+
+navigate():
+Allows for more advanced navigation (back, forward, refresh, load a URL).
+Non-blocking for navigation tasks (can proceed with other actions).
+Does not block and can be used for navigating to pages, refreshing, or going back.
+Syntax: driver.navigate().to("https://www.example.com"); 
+        driver.navigate().back();  
+        driver.navigate().refresh(); 
+		
+**************** Locators in selenium *****************
+locators are used to identify and interact with elements on a web page.
+All these locators are present in a class called By, which is an abstract class. 
+
+1. id(String)
+2. name(String)
+3. className(String)
+4. tagName(String)
+5. linkText(String)
+6. partialLinkText(String)
+7. cssSelector(String)
+8. xpath(String)
+
+*********** Differences Between findElement() and findElements() *****************
+findElement()	                                                     findElements()
+Finds a single element                                            Finds multiple elements.
+Returns a single WebElement                                        Returns a List<WebElement>.
+Throws NoSuchElementException if not found.	               Returns an empty list if no elements are found.
+Used when you expect one matching element	              Used when you expect multiple elements or don't know if any element will be found.
+WebElement element =                                       List<WebElement> elements = driver.findElements(By.className("button"));
+driver.findElement(By.id("elementId"));
+
+
+************* JavascriptExecutor Code *********************
+JavaScriptExecutor is an Interface that helps to execute JavaScript through Selenium Webdriver.
+
+JavaScriptExecutor provides two methods 
+JavascriptExecutor js = (JavascriptExecutor) driver;  
+js.executeScript(Script,Arguments);
+or
+js.executeAsyncScript(Script,Arguments);
+
+“executescript”  
+1.Click an Element using JavaScripExecutor 
+Code: ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);;
+
+2.Enter key using JavaScripExecutor
+Code: ((JavascriptExecutor) driver).executeScript("arguments[0].value='myValue';", inputField); 
+
+3.Scroll Down using JavaScriptExecutor
+Code: ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);	
+
+4.Refresh the page
+Code: ((JavascriptExecutor) driver).executeScript("history.go(0);");
+
+5. Handling Disabled Elements
+Code: WebElement element = driver.findElement(By.id("disabledField"));
+      ((JavascriptExecutor) driver).executeScript("arguments[0].removeAttribute('disabled');", element);
+	  	  
+*************** Window handles ******************
+Set<String> allWindowId = driver.getWindowHandles()
+Iterator <String> it = allWindowId.iterator();
+String parentWindowId = it.next();
+String child = it.next();
+
+for (String x : allWindowId) {
+if (!parentWindowId.equals(x)) {
+driver.switchTo().window(x);
+--- **Automation Code **---
+
+driver.switchTo().defaultContent(); or driver.switchTo().window(parentWindowId); 
+}
+}
+************** Static dropdown handling using Select class ***************
+                    
+					Select s=new Select(w);
+                        List<WebElement> o = s.getOptions();
+                        for (WebElement x:o) {
+                        System.out.println(x.getText());
+                           }
+                        }
+                        s.selectByIndex(3);
+                        s.selectByValue("gfg");
+                        s.selectByVisibleText("ggffd");
+
+
+************* Actions class ***************
+Actions class is used to handle the mouse movements, keyboard actions, drag-and-drop, hover, and more.
+
+                   Actions a=new Actions(driver);
+                   a.moveToElement(courses).perform();
+                   a.dragAndDrop(source, des).perform();
+                        or
+                   a.clickAndHold(src).moveToElement(target).release().perform();
+
+*************** Alerts Handling ************
+
+Alert alert = driver.switchTo().alert();
+alert.accept();
+alert.dismiss(); 
+alert.getText(); 
+alert.sendKeys("Hello, this is a test!");
+
+********** Block popup window *************************
+1) Blocking JavaScript Pop-ups (Alerts, Confirm, and Prompt)
+
+ChromeOptions options = new ChromeOptions();
+options.addArguments("--disable-popup-blocking");
+WebDriver driver = new ChromeDriver(options);
+
+2) Using Browser Extensions or Ad-Blockers 
+
+ChromeOptions options = new ChromeOptions();
+options.addExtensions(new File("/path/to/extension.crx"));
+WebDriver driver = new ChromeDriver(options);
+
+************* Proxy validation and addition ******************
+
+
+Proxy proxy = new Proxy();
+proxy.setHttpProxy("localhost:8080");  
+
+DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+capabilities.setCapability("proxy", proxy);
+ChromeDriver driver = new ChromeDriver(capabilities);
+
+*************** Cookies validation in selenium
+1) Add cookie:
+
+ChromeDriver driver = new ChromeDriver();
+
+Cookie cookie = new Cookie("sessionID", "12345");
+driver.manage().addCookie(cookie);
+
+driver.get("https://www.example.com");
+
+2) get Cookies
+
+ChromeDriver driver = new ChromeDriver();
+Set<Cookie> cookies = driver.manage().getCookies();
+
+for (Cookie cookie : cookies) {
+    System.out.println("Name: " + cookie.getName() + ", Value: " + cookie.getValue());
+}
+3) get specific cookie
+
+
+ChromeDriver driver = new ChromeDriver();
+Cookie cookie = driver.manage().getCookieNamed("sessionID");
+
+if (cookie != null) 
+{
+    System.out.println("Cookie Name: " + cookie.getName());
+    System.out.println("Cookie Value: " + cookie.getValue());
+} else 
+{
+    System.out.println("Cookie not found!");
+}
+
+4) Deleting a specific cookie
+
+ChromeDriver driver = new ChromeDriver();
+driver.manage().deleteCookieNamed("sessionID");
+
+5) Deleting all cookies
+ChromeDriver driver = new ChromeDriver();
+driver.manage().deleteAllCookies();
+
+************* SSL Certification *******************
+ChromeOptions options = new ChromeOptions();
+options.addArguments("--ignore-certificate-errors");
+ChromeDriver driver = new ChromeDriver(options);
+driver.get("https://example.com");
+
+OR
+
+ChromeOptions options = new ChromeOptions();
+options.setAcceptInsecureCerts(true);
+ChromeDriver driver = new ChromeDriver(options);
+driver.get("https://example.com");
+
+************* Xpaths with cssSelector **************************************
+
+XPath is used to locate elements on a web page for automation. 
+XPath expressions are widely used to find elements in an HTML document based on attributes, text, position, and more.
+
+There are two types of XPath:
+
+Absolute XPath: This is a complete path from the root of the document to the element.
+Relative XPath: This is a more flexible path that starts from any point in the document (not necessarily the root).
+
+1) Finding Elements by Tag Name:  //button
+2) Finding Elements by Attribute:  //input[@id='username']
+3) Finding Elements by Text:  //button[text()='Submit']         //a[text()='Login']
+4) Using Contains() to Match Substring: 
+   //button[contains(@class, 'submit')]
+   //input[contains(@name, 'user')]
+  //a[contains(text(), 'Log')]
+5) Using Starts-with() 
+to Match Start of Attribute:    //input[starts-with(@id, 'user')]
+6) Using OR and AND Conditions:
+//input[@id='username' and @name='user']
+//input[@id='username' or @name='user']
+7) Finding Parent, Child, and Sibling Elements:
+    /parent:: ,/child:: , /following-sibling:: /precceding-sibling:: , /ancestor:: , /descendant::
+	
+	//div[normalize-space(text())='Example Text']  --->  remove leading and trailing whitespace and replace sequences of whitespace characters 
+
+	
+	css - > 
+	starts-with  //tagName[attribute^ = 'value' ]
+	end-with     //tagName[attribute$='value']
+	subString    //tagName[attribute*='value']
+	following-sibling   //tagName[attribute*='value']~tagName
+	nth-child  //tagName[attribute*='value']:nth-child(index)
+	                                         first-child(index)
+											 last-child(index)
+   :first-of-type
+   :last-of-child
+   
+   
+   
+-----------***************-------------------------------
+
+Action -->  represents a single, user-interaction action (e.g., mouse movement, click, or keypress)
+
+        Actions builder = new Actions(driver);
+        Action clickAction = builder.click(locator).build();
+        clickAction.perform();
+
+
+Actions->Used for chaining multiple actions together. 
+like -->build and execute complex user interactions like drag-and-drop, mouse hover, double-click, and keyboard events.
+
+Actions actions = new Actions(driver);
+        actions.moveToElement(Locator1).moveToElement(Locator2).click().perform();
+		
+		---------*********-------------------
+		Password Protected URL selenium java 	
+		Using URL with Credentials (Basic Authentication)
+	  String url = "https://username:password@yourwebsite.com";
+	  
+  _______________________________******_______________________________******
+  
+ *********************************  Selenium Archestruter ***************
+  
+  SearchContext (Interface)
+   |
+   +--> WebDriver (Extends SearchContext)
+           |
+           +--> RemoteWebDriver (Implements WebDriver)
+                    |
+                    +--> ChromeDriver
+                    +--> FirefoxDriver
+                    +--> EdgeDriver
+   |
+   +--> TakesScreenshot (Separate Interface)
+   +--> JavascriptExecutor (Separate Interface)
+-------------------------------********************************************************
+How do you manage browser sessions in a parallel test execution environment?
+Answer:
+
+Use WebDriverFactory Pattern: Create a factory to manage WebDriver instances for each test.
+ThreadLocal WebDriver: Isolate WebDriver instances for each thread.
+java
+Copy code
+private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
+public static WebDriver getDriver() {
+    if (driver.get() == null) {
+        driver.set(new ChromeDriver());
+    }
+    return driver.get();
+}
+Selenium Grid: Execute tests in parallel using a distributed setup.
+Cloud Services: Use platforms like BrowserStack or Sauce Labs for parallel execution.
+
+_______________________________******_______________________________******
+
+How would you handle file uploads and downloads in Selenium?
+Answer:
+
+File Upload: Use sendKeys() or third-party tools like AutoIt for non-input elements.
+driver.findElement(By.id("fileInput")).sendKeys("/path/to/file.txt");
+
+
+
+File Download: Set browser preferences to download files automatically.
+Example for Chrome:
+
+
+HashMap<String, Object> prefs = new HashMap<>();
+prefs.put("download.default_directory", "/path/to/downloads");
+
+ChromeOptions options = new ChromeOptions();
+options.setExperimentalOption("prefs", prefs);
+WebDriver driver = new ChromeDriver(options);
+
+----------*************************---------------------------------
+
+               Challenges in Testing Dynamic Websites
+Frequent UI Changes: Element locators may break due to changes in structure.
+Scenario: Locators for a search bar changing due to website redesign.
+Dynamic IDs: IDs or classes of elements generated dynamically.
+Solution: Use XPath or CSS selectors based on relative properties.
+Page Load Timing: Synchronizing tests with content rendering.
+Scenario: AJAX calls loading content after a delay.
+Responsive Design Testing: Adapting tests for multiple viewports.
+
+
+--------------****************************-----------------------
+Challenges in Running Tests on Multiple Browsers Using Selenium Grid
+Compatibility Issues: Different browsers may interpret elements differently.
+Environment Setup: Proper configuration of hub and nodes.
+Synchronization: Dynamic loading and delays require handling timeouts effectively.
+Resource Management: High resource usage on servers when running parallel tests.
+Browser-Specific Bugs: Tests passing on one browser but failing on another.
+
+-------------************---------------------------------------------------
+ How do you validate that a web application is responsive?
+Answer:
+              Use browser developer tools to simulate various screen sizes.
+              Automate using Selenium or Cypress with different viewport sizes:
+              java
+              Copy code
+              driver.manage().window().setSize(new Dimension(375, 667));
+			  
+	*************** Shadow DOM **********************
+The Shadow DOM is a web standard that enables developers to encapsulate a component's structure 
+keeping it separate from the rest of the document's DOM.
+
+Shadow DOM elements are not part of the main DOM tree, so standard locators (like XPath or CSS selectors) cannot access them directly.
+Simple Dom --> one Host with one root
+Nested Showdom -->one Host with multiple root
+
+How to find Using selenium --> JavaScripExecut
+How to locate --> 1. use Css Selector 
+                  2. Go to Console and Write document.querySelector('Host').Shadowdom.querySelector('root')		  
+			  
+
+
+********************************************************************************************************************************************************************
+
+
+
+dryRun : It is used to verify that all steps of the feature file defined on step generator or glue code file or not. Syntax is : dryRun= true
+One thing keep in mind that when dryRun=true then entire code should not run only it checks that all the methods matched with feature file or not.  
+
+strict: It is used to verify that all steps of the feature file defined on step generator or glue code file or not.
+Syntax is : strict= true
+Difference between dryRun and strict is that strict run allow execute the code and report as fail if any steps not implemented on feature code.
+
+
+------->>>>>>  parallel Excecuation in Cucumber feature file
+  1. Add Dependncy J-unit 5  Use the cucumber-junit-platform-engine to run scenarios in parallel with JUnit 5
+  <dependency>
+    <groupId>io.cucumber</groupId>
+    <artifactId>cucumber-junit-platform-engine</artifactId>
+    <version>7.14.0</version>
+</dependency>
+
+
+@Suite
+@IncludeEngines("cucumber")
+@SelectClasspathResource("features")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "stepdefinitions")
+@ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
+@ConfigurationParameter(key = PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, value = "true")
+@ConfigurationParameter(key = PARALLEL_CONFIG_STRATEGY_PROPERTY_NAME, value = "fixed")
+@ConfigurationParameter(key = PARALLEL_CONFIG_FIXED_PARALLELISM_PROPERTY_NAME, value = "3")
+public class RunCucumberTest {
+}
+
+Key configuration parameters:
+
+PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME enables parallel execution.
+PARALLEL_CONFIG_STRATEGY_PROPERTY_NAME sets the parallelism strategy (fixed or dynamic).
+PARALLEL_CONFIG_FIXED_PARALLELISM_PROPERTY_NAME specifies the number of threads.
+
+Feature: Login functionality                                                             
+
+  Scenario Outline: Successful login
+    Given I am on the login page
+    When I enter username "<username>" and password "<password>"
+    Then I should see the dashboard
+
+    Examples:
+      | username | password |
+      | user1    | pass123  |
+      | user2    | pass456  |
+      | user3    | pass789  |
+	  
+	
+
+	public class LoginSteps {
+
+    @Given("I am on the login page")
+    public void i_am_on_the_login_page() {
+        System.out.println( Thread.currentThread().getName() + ": Navigating to login page");--------->>>>>>>>> this is way called Thread.currentThread
+    }
+	
+	
+	
+*****************************  Scenario Context in Cucumber *****************
+
+**Scenario Context is a mechanism in Cucumber that allows sharing data between steps in the same scenario.
+  It acts as a storage (key-value pair) for data that is relevant across multiple steps.
+**Definition: Share data between steps in the same scenario using key-value pairs.
+  Purpose: Avoid hardcoding and enable dynamic, reusable steps.  
+
+Feature: Login Feature
+Scenario: Successful Login
+    Given I am on the login page
+    When I login with username "testUser" and password "password123"
+    Then I should see the welcome message
+	
+	
+	public class ScenarioContext {
+    private Map<String, Object> context = new HashMap<>();
+
+    public void set(String key, Object value) {
+        context.put(key, value);
+    }
+
+    public Object get(String key) {
+        return context.get(key);
+    }
+}
+
+
+public class LoginSteps {
+    private ScenarioContext scenarioContext = new ScenarioContext();
+
+    @When("I login with username {string} and password {string}")
+    public void iLoginWithUsernameAndPassword(String username, String password) {
+        scenarioContext.set("Username", username);
+        scenarioContext.set("LoginStatus", "Success");
+        System.out.println("Logged in with username: " + username);
+    }
+
+    @Then("I should see the welcome message")
+    public void iShouldSeeTheWelcomeMessage() {
+        String loginStatus = (String) scenarioContext.get("LoginStatus");
+        Assert.assertEquals("Success", loginStatus);
+
+        String username = (String) scenarioContext.get("Username");
+        System.out.println("Welcome, " + username + "!");
+    }
+}
+
+
+------------------------****************************---------------------
+How do you use JUnit to handle exceptions?
+Answer:
+Using assertThrows:
+
+
+@Test
+void testException() {
+    assertThrows(IllegalArgumentException.class, () -> {
+      
+        throw new IllegalArgumentException("Invalid argument");
+    });
+}
+
+
+----------------********** Cucumber CLI *******--------------
+
+The Cucumber CLI is a powerful tool for running BDD tests written in Gherkin directly from the terminal, 
+and it provides various options to customize how tests are executed and reported. 
+It is often used in automation frameworks as part of Continuous Integration (CI) pipelines to run feature files automatically.
+
+TestRunner.java for JUnit:
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+    features = "src/test/resources/features", // Path to your feature files
+    glue = "stepdefinitions", // Package containing step definitions
+    plugin = {"pretty", "html:target/cucumber-report.html"}, // Reporting options
+	snippets = CAMELCASE,  // capitalized letters to separate words in a phrase, without spaces.
+   monochrome = true,  //This makes the output more readable.
+   tags="@dashboard_01"
+)
+
+
+TestRunner.java for TestNg:
+
+@CucumberOptions(
+    features = "src/test/resources/features",
+    glue = "stepdefinitions",
+    plugin = {"pretty", "html:target/cucumber-report.html"}
+)
+public class TestRunner extends AbstractTestNGCucumberTests {
+}
+
+
+Command -->
+
+cucumber --glue stepdefinitions --plugin pretty --format html --out target/cucumber-report.html src/test/resources/features
+cucumber --tags @regression --format html --out report.html
+cucumber features/login.feature(featureFile name )
+
+
+Maven Command -->
+mvn clean test
+
+    
+	
+    with Specific tag ----> 
+    mvn test -Dcucumber.filter.tags="@SmokeTest"
+
+
+
+**************************    How can you run Cucumber scenarios in parallel?   ****************************
+
+Use the Cucumber-JVM parallel plugin or a test runner like TestNG.
+Example with Maven Surefire plugin:
+Add the cucumber-jvm-parallel-plugin in pom.xml, then configure the parallel threads.
+  
+  
+  *************************   How do you integrate Cucumber reports with a test management tool like JIRA?  ********************
+
+Use plugins like cucumber-jvm with a reporting integration library.
+Generate reports in JSON format, then parse and push results to JIRA using REST API.
+
+
+**********************  How do you implement conditional execution of steps based on runtime data?  ****************************
+
+Use Assume or runtime checks in step definitions.
+
+@Given("I perform a task only if condition is true")  
+public void conditionalExecution() {
+    Assume.assumeTrue(someCondition());
+    System.out.println("Condition met. Performing task...");
+}
+
+
+*******************    Extract Data from One Step for Cucumber Feature File *****************
+
+  Scenario : 
+  Given     Logine Application with Username and Password 
+              |Username | Password |
+			  |rohan  | 1234  |
+			  |amit   | 23rfmk|
+			  |Nikhil | 1234  |
+			  
+			  
+			  @Given("Logine Application with Username and Password")
+			  public void addItemsToCart(DataTable dataTable) {
+              List<List<String>> items = dataTable.asLists();
+              String itemName = items.get(rowIndex).get(columnIndex);
+			  
+  	  }
+	  
+	  
+	  
+	  ------------- ********************------------------------------
+	  
+	  
+----> What is the use of transform in Cucumber?
+Answer: The transform feature (deprecated in recent versions) was used to convert test data to a desired format before passing it to the step definition.
+
+For newer versions, use ParameterTypes:
+
+@ParameterType(".*")
+public LocalDate date(String date) {
+    return LocalDate.parse(date);
+}
+
+
+---->> Dependency Injection (DI) with PicoContainer or Spring in Cucumber:
+Dependency Injection is a design pattern used to manage object dependencies and promote code reusability. 
+In Cucumber, DI is used to share state or variables across step definitions, hooks, and other classes during scenario execution.
+
+
+------------------------      ****************** --------------------------
+How do you use Regular Expressions in Cucumber to match dynamic parameters in steps?
+
+Answer: Regular expressions are used to match parameters dynamically in step definitions. 
+For example, a step like "Given I have entered 100 into the calculator" can be matched using a regular expression 
+in the stepnv definition like Given("^I have entered (\\d+) into the calculator$"). The value 100 will be passed to the step definition method as a parameter.
+
+
+
+---->>>> Role of Feature Files in Cucumber BDD
+Documentation: Define scenarios in plain language for non-technical stakeholders.
+Structure: Organizes test cases with Given-When-Then format.
+Traceability: Maps user requirements to test cases.
+Reusability: Allows sharing steps between scenarios.
+
+
+BDD ---> emphasizes communication and collaboration, focusing on the behavior of the system.
+TDD ---> focuses on writing tests before code and improving code quality through iterative development.
+
+
+**************** What is dependency injection in cucumber ********************
+Dependency injection(like PicoContainer) allows sharing objects between step definitions.
+
+*************** What is the use of Cucumber Expressions ********************
+Cucumber expressions are a simpler way to define step definitions without complex regular expressions.
+
+**************** what are the limitations of cucumber *******************
+Not ideal for complex logic testing
+slower execution compared to other testing frameworks.
+Requires extra effort for non-technical users to understand automation scripts.
+
+
+******************************************************************************************************************************************************************
+
+
+
+
+******************  Design patterns in automation testing  ****************************
+1)Page Object Model (POM)---Each web page is represented as a class
+Benefits:
+Enhances code reusability and readability.
+
+2) Singleton Pattern ---Ensures a single instance of a class is created and shared.
+Commonly used for managing WebDriver instances to avoid creating multiple drivers.
+
+3) Factory Pattern  ---Provides a centralized way to create objects, such as WebDriver or PageObject.
+
+4) Observer Pattern
+Allows components (e.g., listeners) to be notified of changes in the system, such as test failures or execution events.
+
+          public interface TestObserver {
+    void update(String message);
+}
+
+public class TestSubject {
+    private List<TestObserver> observers = new ArrayList<>();
+
+    // Add observer
+    public void attach(TestObserver observer) {
+        observers.add(observer);
+    }
+
+    // Remove observer
+    public void detach(TestObserver observer) {
+        observers.remove(observer);
+    }
+
+    // Notify all observers
+    public void notifyObservers(String message) {
+        for (TestObserver observer : observers) {
+            observer.update(message);
+        }
+    }
+	
+	
+	public class ApiObserver implements TestObserver {
+    @Override
+    public void update(String message) {
+        System.out.println("API Observer received: " + message);
+        // Simulate API validation or response checking
+    }
+}
+
+public class ObserverPatternTest {
+    public static void main(String[] args) {
+        // Create subject
+        TestSubject subject = new TestSubject();
+
+        // Attach observers
+        ApiObserver apiObserver = new ApiObserver();
+        UiObserver uiObserver = new UiObserver();
+        subject.attach(apiObserver);
+        subject.attach(uiObserver);
+
+        // Simulate API response change and notify observers
+        subject.notifyObservers("Test Data from API");
+    }
+}
+
+
+5)Builder Design Pattern->
+design pattern that allows you to construct complex objects step by step. 
+It separates the construction process of an object from its representation
+
+*********** Difference between comparable and comparator ************************
+
+Comparable interface:
+The Comparable interface is used to compare objects of the same class.
+It is implemented by the class whose instances need to be compared.
+Purpose: Used to define a natural ordering of objects of a class.
+public int compareTo(T o);
+Less flexible (only one sort order)
+Limited to one sorting logic
+
+Comparator interface:
+The Comparator interface is used to compare objects of different classes or objects of the same class with a custom comparison logic.
+It is implemented in a separate class, often passed as an argument to methods that require comparison (e.g., Collections.sort()).
+Purpose: Used to define custom ordering for objects.
+public int compare(T o1, T o2);
+More flexible (can create multiple comparators)
+Can define multiple sorting logics
+
+Comparable example:
+
+class Person implements Comparable<Person> {
+    String name;
+    int age;
+    
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    @Override
+    public int compareTo(Person other) {
+        return Integer.compare(this.age, other.age); // Sort by age
+    }
+}
+
+Comparator example:
+
+class Person {
+    String name;
+    int age;
+    
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+
+class AgeComparator implements Comparator<Person> {
+    @Override
+    public int compare(Person p1, Person p2) {
+        return Integer.compare(p1.age, p2.age); // Sort by age
+    }
+}
+
+*************** Java Stream *****************
+Stream API is new feature available from Java 8,
+By using Stream we can perform various aggregate operator like filter, formatting data, collecting result and reduce code complexity
+
+Use lambda expression -> operator , left side specifies the parameter and right side specified the action
+
+example:  
+ArrayList<String> list = new ArrayList();
+list.add("amit");
+list.add("d");
+list.stream().filter(s -> s.startsWith("a")).forEach(System.out::println);
+
+***************** Java 8 functions **********************
+
+Lambda Expression, 
+Stream API: list.stream().filter(s -> s.startsWith("a")).forEach(System.out::println);
+Method Reference: list.forEach(System.out::println);  
+New Date and Time API,
+Collector
+*********************** Immutable Classes in Java *********************
+String: Once a String object is created, it cannot be changed.
+Wrapper Classes: Classes like Integer, Double,Private Fields, Final Fields, Final Class etc., are immutable.
+
+******************* Synchronization ***********************
+Synchronization in the context of test automation refers to ensuring that actions (like clicks or inputs) and assertions
+ (validating conditions) are executed in the correct order and timing. 
+ 
+********************  How to run failed Test cases **********************
+TestNg --->>>
+
+1.a testng-failed.xml file after running a test suite if there are failed tests.
+2.RetryAnalyzer
+
+Cucumber -- use rereun.txt file 
+@CucumberOptions(
+    plugin = {"pretty", "rerun:target/rerun.txt"}, // Failed scenarios stored in rerun.txt
+    features = "src/test/resources/features",
+    glue = "step_definitions"
+)
+public class TestRunner {
+}
+
+
+Jenkins --
+1.After a build, Jenkins marks failed tests.
+Use the testng-failed.xml (TestNG) or rerun JUnit rules in your next build to re-run the failed cases.
+2.Use the rerun plugin in your Cucumber setup and ensure that Jenkins is configured to execute the rerun class for failed scenarios.
+-------------------------**********************--------------------------------------------------
+******************  Design patterns in automation testing  ****************************
+1)Page Object Model (POM)---Each web page is represented as a class
+Benefits:
+Enhances code reusability and readability.
+
+2) Singleton Pattern ---Ensures a single instance of a class is created and shared.
+Commonly used for managing WebDriver instances to avoid creating multiple drivers.
+
+3) Factory Pattern  ---Provides a centralized way to create objects, such as WebDriver or PageObject.
+
+4) Observer Pattern
+Allows components (e.g., listeners) to be notified of changes in the system, such as test failures or execution events.
+
+*********** Difference between comparable and comparator ************************
+
+Comparable interface:
+The Comparable interface is used to compare objects of the same class.
+It is implemented by the class whose instances need to be compared.
+Purpose: Used to define a natural ordering of objects of a class.
+public int compareTo(T o);
+Less flexible (only one sort order)
+Limited to one sorting logic
+
+Comparator interface:
+The Comparator interface is used to compare objects of different classes or objects of the same class with a custom comparison logic.
+It is implemented in a separate class, often passed as an argument to methods that require comparison (e.g., Collections.sort()).
+Purpose: Used to define custom ordering for objects.
+public int compare(T o1, T o2);
+More flexible (can create multiple comparators)
+Can define multiple sorting logics
+
+Comparable example:
+
+class Person implements Comparable<Person> {
+    String name;
+    int age;
+    
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    @Override
+    public int compareTo(Person other) {
+        return Integer.compare(this.age, other.age); // Sort by age
+    }
+}
+
+Comparator example:
+
+class Person {
+    String name;
+    int age;
+    
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+
+class AgeComparator implements Comparator<Person> {
+    @Override
+    public int compare(Person p1, Person p2) {
+        return Integer.compare(p1.age, p2.age); // Sort by age
+    }
+}
+
+*************** Java Stream *****************
+Stream API is new feature available from Java 8,
+By using Stream we can perform various aggregate operator like filter, formatting data, collecting result and reduce code complexity
+
+Use lambda expression -> operator , left side specifies the parameter and right side specified the action
+
+example:  
+ArrayList<String> list = new ArrayList();
+list.add("amit");
+list.add("d");
+list.stream().filter(s -> s.startsWith("a")).forEach(System.out::println);
+
+***************** Java 8 functions **********************
+
+Lambda Expression, 
+Stream API: list.stream().filter(s -> s.startsWith("a")).forEach(System.out::println);
+Method Reference: list.forEach(System.out::println);  
+New Date and Time API,
+Collector
+
+********************* different types of collection ************************ 
+Feature	                                Non-Generic Collection	                                                          Generic Collection
+Type Safety							Not type-safe; allows any object type.											Type-safe; restricts to a specific type.
+Compile-Time Check	                No type checking at compile time.												Ensures type-checking during compilation.
+Typecasting						Required when retrieving elements.													Not required; eliminates ClassCastException.
+Code Readability				Less readable due to typecasting.													More readable and concise.
+Runtime Exceptions				High chance of ClassCastException.													Eliminates runtime type mismatch errors
+
+*********************** Immutable Classes in Java *********************
+String: Once a String object is created, it cannot be changed.
+Wrapper Classes: Classes like Integer, Double,Private Fields, Final Fields, Final Class etc., are immutable.
+
+********************** Test Runner ****************
+test runner is a tool or framework that automates the execution of tests in software development. 
+It manages the execution of test scripts, collects results, and reports the outcomes
+
+Features:
+Running Test Cases
+Managing Test Suites
+Generating Reports
+Handling Test Dependencies
+Integration
+
+Popular test runners include:
+
+JUnit (for Java)
+TestNG (for Java)
+cucumber
+
+******************* Synchronization ***********************
+Synchronization in the context of test automation refers to ensuring that actions (like clicks or inputs) and assertions
+ (validating conditions) are executed in the correct order and timing. 
+ 
+********************  How to run failed Test cases **********************
+TestNg --->>>
+
+1.a testng-failed.xml file after running a test suite if there are failed tests.
+2.RetryAnalyzer
+
+Cucumber -- use rereun.txt file 
+@CucumberOptions(
+    plugin = {"pretty", "rerun:target/rerun.txt"}, // Failed scenarios stored in rerun.txt
+    features = "src/test/resources/features",
+    glue = "step_definitions"
+)
+public class TestRunner {
+}
+
+
+Jenkins --
+1.After a build, Jenkins marks failed tests.
+Use the testng-failed.xml (TestNG) or rerun JUnit rules in your next build to re-run the failed cases.
+2.Use the rerun plugin in your Cucumber setup and ensure that Jenkins is configured to execute the rerun class for failed scenarios.
+
+****************** Concurrent hashmap ****************************
+ConcurrentHashMap is a thread-safe version of HashMap in Java, designed for concurrent access in multi-threaded environments. 
+
+************* SOLID Principles ***********************
+SOLID principles in Java are a set of design principles aimed at creating maintainable, scalable, and robust software.
+
+1. Single Responsibility Principle (SRP): Class should have one responsibility.
+A class with multiple responsibilities becomes hard to maintain and test because changes in one responsibility might affect others
+example:
+class UserService {
+    void createUser(String username) {
+        // Logic to create a user
+    }
+}
+
+class EmailService {
+    void sendEmail(String email) {
+        // Logic to send email
+    }
+}
+
+2. Open/Closed Principle (OCP)
+Definition: A class should be open for extension but closed for modification.
+
+Problem: Modifying existing code for new functionality can introduce bugs and requires retesting.
+Solution: Use abstractions like interfaces or inheritance to add new functionality without modifying existing code.
+
+3. Liskov Substitution Principle (LSP)
+This means that if a program is using a base class, you should be able to replace it with any subclass of that 
+base class without the program malfunctioning. The subclass must adhere to the expectations (behavioral contracts) set by the base class.
+
+4. Interface Segregation Principle (ISP)
+A class should not be forced to implement interfaces it doesn't use.
+
+Problem: A large interface with methods irrelevant to some implementing classes leads to unnecessary code and complexity.
+Solution: Break down large interfaces into smaller, more specific ones.
+
+5. Dependency Inversion Principle (DIP)
+Definition: High-level modules should not depend on low-level modules; both should depend on abstractions.
+
+Problem: Tight coupling between high-level and low-level modules makes the code harder to test and maintain.
+Solution: Use interfaces to decouple the modules.
+
+Benefits of SOLID Principles
+Maintainability: Code is easier to understand and modify.
+Scalability: New features can be added without modifying existing code.
+Testability: Decoupled and modular code is easier to test.
+Readability: Clean and organized code with clear responsibilities.
+
+**************** Risk Collision **************************
+A collision occurs when two different keys produce the same hash code, causing them to map to the same bucket 
+in the underlying array of the HashMap
+Java's HashMap handles collisions using a mechanism called Chaining
+1) Chaining with LinkedList:
+2) Tree-based Structure (Java 8+)
+
+************* try-with-resources in Java  *****************
+The try-with-resources statement in Java is a special form of try that is used to handle resources like files, 
+database connections, or network sockets, ensuring that these resources are closed automatically at the end of the try block. 
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class TryWithResourcesExample {
+    public static void main(String[] args) {
+        try (BufferedReader br = new BufferedReader(new FileReader("example.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+*************** Tools which we use for serialization and deserialization *****************
+Jackson
+Java Built-in Serialization
+JSON Libraries
+YAML Libraries
+XML Libraries
+
+
+
+*******************************************************************************************************************************************************************
+
+
+
+**** How do you approach writing and maintaining automation scripts **** How you would develop and execute an automated test script 
+ *** How do you ensure the reliability and reusability of your automated test scripts
+
+1. Use a Robust Framework --> Follow best practices such as the Page Object Model (POM) or Design pattern to separate test logic from UI interaction.
+2. Write Clean and Maintainable Code --> Use meaningful names for classes, methods, and variables or clean coding principles (e.g.SOLID Princiaple).
+3. Parameterization and Data-Driven Testing --> Use external files (e.g., JSON, Excel, or CSV) to supply test data, enabling easy updates without modifying scripts.
+4. Dynamic Locators and hadnling Synchronization --> Write locators that adapt to changes in the DOM (e.g., XPath, CSS selectors). ,Use auto-wait mechanisms to handle dynamic elements.
+5. Comprehensive Error Handling --> Add try-catch blocks for critical operations. ,Implement assertions with meaningful error messages.
+6. Version Control -->Use Git for versioning scripts and collaboration, Maintain a branch strategy for test scripts (e.g., development and release branches).
+7. Cross-Browser and Platform Testing --> Test scripts on multiple browsers and devices using tools like Selenium Grid or BrowserStack.and CI/CD
+8. Regular Maintenance --> Refactor scripts periodically to remove redundancy and improve performance or Code Smell useing Sonar Cube tools
+9. Reporting and Alerts --> Use reporting tools (e.g., Allure, Extent Reports).
+
+
+***************** Key challeges in selenium automation *************
+1. Dynamic Web Elements
+	Challenge: Modern web applications frequently use dynamic elements, where IDs, class names, 
+	           or other attributes change on each reload or session.
+	Solution: Use dynamic locators like XPath, CSS selectors, or attribute-based strategies (e.g., contains()
+	           or starts-with() in XPath).
+			   
+2. Handling Asynchronous Elements
+	Challenge: Web elements might not be available immediately due to delays like AJAX calls or animations.
+	Solution: Use explicit waits (WebDriverWait) to ensure elements are interactable before proceeding.
+	
+3. Cross-Browser Compatibility
+	Challenge: Tests may behave differently across browsers due to variations in rendering engines.
+	Solution: Regularly test across multiple browsers and utilize cloud platforms like BrowserStack or 
+	Sauce Labs for wider coverage.
+	
+4. Pop-Ups and Alerts
+	Challenge: Managing unexpected pop-ups, system alerts, or modal dialogs.
+	Solution: Handle pop-ups using Selenium's Alert interface and design test flows to anticipate such occurrences.
+	
+5. Captcha and Two-Factor Authentication (2FA)
+	Challenge: These security measures prevent automated interactions.
+	Solution: Use pre-configured test environments where these features are disabled, or mock backend
+	responses where feasible.
+	
+6. Managing Test Data
+	Challenge: Tests often require consistent, repeatable data, which can be difficult in dynamic systems.
+	Solution: Use databases, API calls, or pre-set test configurations to ensure consistent data availability.
+	
+7. Flaky Tests
+	Challenge: Tests may intermittently fail due to timing issues, dependencies, or environmental changes.	
+	Solution: Analyze root causes, stabilize locators, introduce appropriate waits, and reduce inter-test dependencies.
+	
+8. Scalability and Maintenance
+	Challenge: As test suites grow, maintaining locators and test logic becomes cumbersome.
+	Solution: Implement Page Object Model (POM), modularize test scripts, and use version control systems.
+	
+9. Performance Testing
+	Challenge: Selenium is not designed for performance or load testing.
+	Solution: Use dedicated tools like JMeter, Gatling, or BlazeMeter for performance testing while using 
+	Selenium for functional checks.
+	
+10. Environmental Dependencies
+	Challenge: Test environments may differ from production, leading to false positives or negatives.
+	Solution: Standardize environments using containers (e.g., Docker) or virtualization.
+	
+*********** By using webdriver what are the UI complications you faced ************************
+Using WebDriver for UI automation comes with several challenges, primarily due to the dynamic and complex 
+nature of modern web applications.
+
+1. Element Identification Issues
+Dynamic Elements: Web elements with frequently changing attributes make them hard to locate reliably.
+Hidden Elements: Some elements may not be visible or interactable causing ElementNotVisibleException.
+Overlapping Elements: Other elements might obstruct interaction with the intended element.
+Solution: Use robust locators like XPath, CSS selectors, or a combination of stable attributes (e.g., data-testid) 
+and wait strategies like WebDriverWait.
+
+2. Synchronization Issues
+Page Load Delays: Actions may fail if the page or elements are not fully loaded.
+Animations: Transition effects may cause timing issues, leading to flaky tests.
+Solution: Use explicit waits (e.g., WebDriverWait with conditions like elementToBeClickable) or fluent waits 
+instead of relying on static delays.
+
+3. Handling Frames and Windows
+iFrames: Interacting with elements inside an <iframe> requires switching the context to the frame, which is 
+often overlooked.
+Multiple Windows: Managing multiple browser tabs or windows can complicate element interaction.
+Solution: Use driver.switchTo().frame() for iFrames and driver.switchTo().window() for handling windows.
+
+4. Browser Compatibility Issues
+Tests that work on one browser might fail on another due to rendering differences, JavaScript execution timing, 
+or browser-specific behaviors.
+Solution: Run cross-browser testing using tools like Selenium Grid or services like BrowserStack/Sauce Labs.
+
+5. Handling Pop-Ups and Alerts
+JavaScript Alerts: Unexpected alerts might disrupt test execution.
+Custom Pop-Ups: Custom modal dialogs can be hard to detect and handle.
+Solution: Use driver.switchTo().alert() for JavaScript alerts and proper locators for custom pop-ups.
+
+6. Dynamic Content and Asynchronous Events
+Dynamic updates, like content loading via AJAX or web sockets, may lead to tests interacting with incomplete 
+or stale data.
+Solution: Use WebDriverWait to wait for specific conditions, such as visibility of elements or absence of loaders.
+
+7. Flaky Tests
+Minor UI changes, network instability, or timing issues can cause tests to pass sometimes and fail other times.
+Solution: Improve test design by reducing reliance on exact UI structure and leveraging reusable utility methods.
+
+8. File Uploads and Downloads
+Handling file inputs (e.g., upload buttons) and verifying downloaded files can be tricky as WebDriver cannot 
+directly interact with OS-level dialogs.
+
+9. Responsive Design and Mobile Testing
+Verifying UI on different screen resolutions can be challenging, especially for mobile views.
+Solution: Use tools like Browser DevTools, emulators, or frameworks like Appium for responsive testing.
+
+10. Performance and Scalability
+UI tests with WebDriver can be slow due to browser interactions, especially for large test suites.
+Solution: Run tests in parallel using frameworks like TestNG or JUnit, and focus on optimizing locators 
+and test workflows.
+
+************** Which one is better backend or UI testing ******************
+Choose backend automation if you value stability, speed, and deeper technical challenges.
+ Opt for UI automation if you're inclined towards end-user experience and testing the visual aspects of 
+ applications. Both roles are crucial, and combining them often provides the best coverage in a testing strategy.
+ 
+Backend Automation Testing:
+	Focus: Testing APIs, databases, business logic, and server-side operations.
+	Pros:
+		Faster test execution and feedback.
+		Easier to maintain because backend code is less likely to change frequently compared to UI.
+		Better for testing critical business logic.
+		Requires less setup for automation frameworks.
+		Skills Needed: Strong knowledge of APIs, databases, and tools like Postman, RestAssured, or SOAPUI; programming languages like Java, Python, or JavaScript.
+		Best For: Performance testing, integration testing, and verifying business logic.
+
+UI Automation Testing
+	Focus: Testing the graphical user interface, including user workflows and frontend behavior.
+	Pros:
+		Validates user experience, ensuring the UI behaves as expected.
+		Directly impacts end-user satisfaction.
+		Identifies visual and usability issues.
+		Skills Needed: Familiarity with UI frameworks like Selenium or Playwright; CSS, HTML, and JavaScript basics.
+	Cons:
+		Slower test execution.
+		More prone to breakage due to frequent UI changes.
+
+********************** what is entry and exit criteria for manual test cases ****************
+Entry Criteria -> Conditions that must be met before a testing phase or process begins., ensures testing can start without interruptions.
+Exit  Criteria -> Conditions that must be satisfied to conclude a testing phase or process, objectives are met and results are acceptable for project delivery or the next phase.
+
+Manual Testing:
+Entry Criteria -> Requirements Clarity, Test Plan and Test Cases, Test Environment, Build Availability, Test Data,Defect Management Tool
+Exit  Criteria -> Test Case Execution, Defect Resolution,Test Results Documentation,Requirement Coverage,Sign-Off
+
+Automation Testing:
+Entry Criteria ->  Stable Application Build, Automation Framework ,Automation Tools ,Test Environment ,Script Readiness
+Exit  Criteria -> Script Execution Completion,Defect Verification,Test Coverage,Regression Results,Reports Generation,Framework Stability,Stakeholder Approval
+
+******************* what are your roles and responsibility as an automation tester **********************
+As an automation tester I participated in meetings like daily stand-ups, sprint reviews, and retrospectives to stay 
+aligned with team goals.
+In Sprint planning meeting we define testing scope, goal and strategy which will be required for testing.
+In Daily Stand-up (Daily Scrum) : We discuss about the status of each insprint jira with 
+development as well as testing perspective.
+In Sprint Review meeting: We demonstrate about the work completed during the sprint and gather feedback.
+In Sprint Retrospective meeting: We were discussing about Pros and Cons which happened during the sprint.
+what all things we can make better in next sprint.
+
+
+*******************************************  process of automating API testing using tools like Postman or Rest Assured ********************
+
+Understand API Specifications
+Action: Review API documentation (e.g., Swagger/OpenAPI specs).
+Key Information: Endpoints, request methods (GET, POST, etc.), headers, query parameters, request body, and response format., Authentication Mechanisum
+
+Setup_Project on Postman
+Setup Environment:Create Environment Variables for base URLs, tokens, and other reusable data.
+Write Tests:Use Postman’s built-in scripting feature (JavaScript-based)
+ Conclusion --> Understand API Automaion requirment and Manual Egde test case 
+ 
+Setup_Project on Automation with Resstassured 
+Setup Project:
+Write API Tests:
+Integrate with CI/CD:
+
+
+Example from Previous Projects
+Scenario: Validating the login functionality of a REST API.
+Steps:
+Postman:
+Created a collection for the Login API.
+Tested positive scenarios (valid credentials) and negative scenarios (invalid credentials, missing fields).
+Rest Assured:
+Automated tests for response codes, token generation, and error messages.
+Validated performance using response times.
+
+
+****************************How do you ensure that your test coverage aligns with the defined acceptance criteria in Agile sprints?  *************************
+How do you ensure that your test coverage aligns with the defined acceptance criteria in Agile sprints?
+1.Collaborate with the product owner, developers, and stakeholders to create detailed and unambiguous acceptance criteria.
+2. Write Test Cases Based on Acceptance Criteria --> Map test cases to criteria
+3. Implement a Traceability Matrix
+4. Regularly sync with the team to review progress and ensure testing efforts stay aligned with evolving criteria.
+6. Reviews of Test Cases with BA and Stakeholder
+7. Leverage Testing Tools --> Use tools like JIRA, or Zephyr to document and link acceptance criteria to test cases, enabling visibility and alignment.
+
+****************************** Key challeges face During Manual Testing *********************
+Data Management: Handling and preparing test data is complex.
+Requirement : when dealing with large datasets or frequent changes
+Environment Issues: Environment in not satbel or fcaing performance issue and slowness 
+Defect Reproduction: Intermittent issues are hard to reproduce and taking longer time to perform End to End Test 
+Limited Test Coverage: Testers may not be able to cover all possible test scenarios, especially edge cases, Some defects may remain undetected, impacting product quality.
+
+
+***************** Key Indicators That Manual Testing Is Ready for Automation  ************************
+Manual test execution is complete and successful for the current scope.
+Repetitive tasks are taking up significant manual effort.
+Critical defects have been detected, resolved, and validated.
+Test cases requiring regression or cross-environment testing are identified.
+A stable application and environment are available.
+The team has the necessary skills and tools for automation.
+
+************** What key metrics do you use to measure the success of automation testing? ***************
+Answer:
+Automation Coverage
+Execution Time
+Defect Detection Rate
+Flakiness Rate
+Savings in time and cost compared to manual testing.
+Pass/Fail Ratio
+
+************************  Resolve a Complex Testing Issue API ***********************
+
+  While testing a new feature for a web application—an interactive dashboard for analytics—I discovered
+  
+  Isusue -> dashboard occasionally failed to load specific user data when filters were applied.
+            Taking longer time to load
+			No content Avilable shows the messages , (Even i check on Database  data is there )
+			It happend with respect to User as well 
+			
+ Why Happend -> Reviewed the logs and identified that the issue was related to API requests timing out when filters were applied.
+                When user is onboard on application and select the template with respect to type of loan missing some parameters ,some to the field is pass nulll value on HTTP request body
+ 
+			Steps Taken: 
+			Collaboration with Cross-Functional Teams: Developers ,Product Managers,UX Designers,DevOps 
+			Proposed and Tested Solutions: 
+			Developers -> optimized the database query, adding appropriate indexes and caching mechanisms., add validation with respect to template and redmark field is manditory
+			Tester ->  a) updated the test cases to include edge cases and scenarios with large datasets to ensure the issue would not recur.
+			           b) Conducted regression testing to verify the fix did not introduce new issues. 
+					      Collaborated with the QA team to run exploratory tests on the entire dashboard functionality.
+		   Post-Deployment Monitoring -> Used monitoring tools to track API performance and gather feedback from end users.
+		   
+		   
+		   Achive -> 
+		   A 40% improvement in dashboard load times.
+           Higher user satisfaction due to consistent and accurate filtering.
+           Improved collaboration and streamlined communication processes between teams for future projects.
+		   
+		   
+************************ Resolving a Complex Testing Issue Using JMeter ****************************
+              While testing the performance of a new REST API for a financial services application,	
+ 
+   Issue --> encountered intermittent slowdowns under high user loads 
+     
+	  How to Solve -> 
+	 Apache JMeter to simulate real-world traffic :
+	 Added a Thread Group with 500 virtual users, ramping up over 10 seconds with Constant times
+	 Included Dynamic Parameters 
+     Configured Assertions to validate response time and status codes.
+	 using View Results Tree and Summary Report listeners.
+	 
+	 Why Happend -> 
+	 Observed that response times for some requests exceeded 5 seconds (expected < 1 second).
+	 Intermittent 500 Internal Server Errors were logged, but only under high concurrency.
+	 
+	 Solution --> 
+	 Database Bottleneck-> Slow queries caused delays during API responses.
+	 Thread Pool Saturation: The application server's thread pool was maxing out under high concurrency.
+     Improper Caching: Redundant API calls were hitting the database instead of using cached data.
+	 
+	 Achive- > 
+	 Error rate reduced to nearly 0% during high concurrency.
+
+
+  ****************************  Read a PDF File Using  Automaion ***********************
+  
+  A ----> Add Apache PDFBox Dependency 
+          <groupId>org.apache.pdfbox</groupId>
+		  
+  B ----> 
+        File file = new File(filePath);
+        try (PDDocument document = PDDocument.load(file)) {      if PDF file is encrypted or password Protected ----> PDDocument document = PDDocument.load(file, "password")  
+            if (!document.isEncrypted()) {
+                   PDFTextStripper pdfStripper = new PDFTextStripper(); -> // Create a PDFTextStripper object to extract text  
+                String text = pdfStripper.getText(document); -> // Extract text from the PDF document  
+                System.out.println("Extracted Text:"); -> // Print the extracted text
+                System.out.println(text);
+            } else {
+                System.out.println("The PDF file is encrypted.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }  
+	
+	
+	<--- Reading Specific Pages --->
+	
+	           PDFTextStripper pdfStripper = new PDFTextStripper();
+              pdfStripper.setStartPage(2);  // Start from page 2
+              pdfStripper.setEndPage(3);    // End at page 3
+              
+              String text = pdfStripper.getText(document);
+              System.out.println("Extracted Text from pages 2-3:");
+              System.out.println(text);
+			  
+   <--- image in PDF files --->
+   
+   PDFRenderer pdfRenderer = new PDFRenderer(document);
+   BufferedImage image = pdfRenderer.renderImageWithDPI(0, 300); // Render first page with 300 DPI
+   ImageIO.write(image, "PNG", new File("output.png")); /
+   
+   
+   ***************************************************************************************************************
+   
+     ****************************  What is  API Gateway   ***********************
+	     is a software component thatacts as an entry point for client requests to backend services or microservices in a distributed system.
+	     It serves as a single entry point for all clients (such as web, mobile, or IoT devices) and routes their requests to the appropriate backend services.
+	     Key Functions of an API Gateway:-> Routing , Load Balancing , Request/Response Transformation , Authentication & Authorization
+	 	 
+	 **************  Handling Tight Deadlines  ******************************
+	 --{<|>}[>  our team is given a short timeframe to deliver a new feature.
+	 
+	Prioritize Testing:Focus on critical paths, such as login, trade execution, and account management.
+    Risk-Based Testing:Identify high-risk areas and allocate more resources there.
+	Leverage Automation:Use existing automation scripts for regression.
+    Communicate Clearly:Keep stakeholders updated on what can be tested within the timeline and any potential risks.
+                        **************    ******************************
+
+
+
+
+****************   Microservice <---> Kafka <----> API Gatway Testing  *********************
+Produce Messages to Kafka: Validate that the application correctly produces messages to Kafka topics.
+Consume Messages from Kafka: Verify that the microservices correctly consume and process messages from Kafka topics.
+
+API Gateway Integration:
+Verify that the API Gateway routes requests to the correct microservices.
+Validate the end-to-end functionality by testing APIs exposed via the API Gateway.
+
+Data Flow: Ensure data consistency and correctness as it flows between the API Gateway, Kafka, and microservices.
+
+Error Handling:
+Test invalid Kafka messages.
+Test API Gateway behavior for invalid or unauthenticated requests.
+
+Performance:
+Validate message throughput and latency in Kafka.
+Test the API Gateway's ability to handle a high volume of concurrent requests.
+
+
+  *********  Issues Faced During Parallel Testing  ************
+                                   <-- Functinal Side -->
+Data Collision & Test Data Dependency->If multiple tests read/write the same database records, conflicts may arise.
+Solution:Use separate test data for each test.
+
+Session Management Issues-> Some applications do not support multiple active sessions per user.
+Solution:Use different test users for each parallel test.
+
+Order Dependency -> Some test cases depend on the execution of previous tests (e.g., creating an order before validating the checkout).
+Solution:Make test cases independent.
+
+                                      <-- Technical Issues --> 
+Infrastructure->Running multiple tests in parallel consumes high CPU, RAM, and network bandwidth.
+Solution:Use cloud-based test grids (e.g., Selenium Grid, BrowserStack, Sauce Labs).
+
+Automation Framework ->
+1.In Selenium parallel execution, multiple WebDriver instances may conflict with each other if not handled properly.
+ Solution : Use ThreadLocal WebDriver for thread safety.
+
+2.When multiple tests query or update the same database tables, database locks can slow down execution or cause deadlocks.
+  Solution : Implement retry mechanisms for deadlocks.
+
+3.If tests are dependent on asynchronous operations (e.g., waiting for an email, API response), they may fail due to timing mismatches.
+ Solution : Use explicit waits and polling mechanisms instead of fixed delays.
+            Implement retries for flaky tests.
+
+
+
+
+
+
+
+
+
+
+*******************************************************************************************************************************************************************
+
+*Git --> Local Repository                                            
+GIT is a distributed version control system and source code management (SCM) 
+system with an emphasis to handle small and large projects with speed and efficiency.
+
+*GitHub --> Remote Repository
+Centralized repository or on Cloude.
+
+1.Why do we need a .gitignore file? 
+
+Prevent Unwanted Files in the Repository: Avoid committing sensitive, temporary, or irrelevant files like build artifacts, logs, or local configurations.
+Clean Repository:Ensures the repository only contains meaningful files.
+
+
+2.                  
+ following this link ---> https://www.youtube.com/watch?v=8vxBbGUUM2o&list=PLxLHu4An_uMNNV90g3MCJPl-xNHkiz-_I&index=20 
+
+ Git Revert   --> a.Creates a new commit to undo changes.
+                  b.Preserves history.
+		  c.always creates a new commit.
+				  
+				  git revert CommiteID
+           
+ Git Reset   --> a.Moving position of head pointer to previous commit or Moves HEAD to a previous commit.
+                 b.To clean up your commit history before pushing changes.
+                 c.To undo recent changes or commits entirely.
+                 d.Type of Mode--> --soft, --mixed, and --hard.
+				 
+				 git reset Head ~2
+				 
+3.Git Stash	---> When We are working on one Dev1 Brache so after some time immidiate or high priority  works comes , 
+So without no need to change or No Need to Commit If half work is done and need to change branch,We can use git stash	
+
+git stash is just like  temporary storage , we saved all temporary file on that storage
+
+   git  stash --all
+   git stash save
+   
+   use this link --> https://www.youtube.com/watch?v=POq8YS52_4o&list=PLxLHu4An_uMNNV90g3MCJPl-xNHkiz-_I&index=24
+   
+
+4.
+    Working Directory          Statging Area                         Local Repository         Remote Repository
+	              --->git Add              -->git Commit -m "message"                -->git push
+				  
+			<---------------------------------------------- git pull <----------------------------------- 
+			     <----------------------------------------git merge              <--    git fetch       <---
+			
+	
+
+5. Git rebase --> 
+                           a.Reapply commits from one branch on top of another branch, rewriting the commit
+			   b.Moves the base of your branch to the tip of another branch, creating a linear history.
+			   c.Creates a cleaner, linear history, making it easier to read and review.
+			   
+ link --> https://www.youtube.com/watch?v=p4Cke4D4d1M&t=1s
+  
+    Squashing -->>
+    Squashing combines multiple commits into one .
+	command -->	git rebase -i <base-branch>
+ 
+6. git merge --> 
+               a. Combines changes from two branches by creating a new merge commit that ties their histories together.
+			   b. it preserves the history of both branches.
+			   c.Maintains a complete history of all commits,
+
+
+7. How can we add modified/updated/edited files to the staging area and commit then at the same time? 
+        # git commit -a -m "Do Something once more"
+
+create a branch?   --->   # git branch <branch_name>
+checkout to branch --->   # git checkout <branch_name>
+create branch while checkout ---> # git checkout -b <branch_name>
+difference between 2 branches  ---> # git diff <branch1>..<branch2 >
+
+How do you push the files to master branch in remote repo?
+                 #git push (you must be in master branch)
+How do you push files from local to particular branch in remote repo?
+                 #git push origin <branch_name>
+How do you pull a file from particular remote branch?
+                 # git pull origin <branch_name>
+				 
+				 
+branching strategy  --->
+				 
+		Master Brache --- > Only One 
+		Released Brache ---> More than One , With respect to Sprint or PI 
+		Feature Brache  ---> with respect to Sprint feature 
+
+
+ git commit --amend ->>
+
+ command is used to modify the most recent commit. 
+ This is useful when you want to change the commit message, 
+ add more changes to the commit, or correct mistakes in your last commit.
+ 
+ 
+ git cherry-pick --->
+if i want to add specific commit from other branche then i used cherry-pick,
+when you want to bring in a particular change without merging an entire branch.
+ 
+        git cherry-pick <commit-hash-ID>
+ 
+
+
+		 
+				 
+**** What is the difference between a fork and a clone in GitHub?
+
+Fork: Creates a copy of a repository under your GitHub account, typically for contributing to a project.
+Clone: Downloads a local copy of a repository to your machine for development.
+  
+  
+ *** What are Git hooks, and how can they be used in an automation testing project?
+
+         Git hooks are scripts triggered by specific Git events (e.g., commit, push).
+         Use pre-commit hooks to run linting or unit tests before committing changes.
+         Use post-merge hooks to run tests after merging a branch.
+
+**** You accidentally committed sensitive data (e.g., passwords) into your repository. How do you remove it from history?
+      Highlight using git filter-repo or git rebase to remove sensitive information.
+	  
+	  
+**** How do you handle a situation where a team member force-pushed and overwrote shared branch changes?
+
+Recover using git reflog to identify lost commits.
+Communicate and create a resolution plan with the team.
+
+
+
+**** How do you enforce code standards for automation scripts in a Git repository?
+
+Use pre-commit hooks for linting or formatting.
+Set up CI tools to fail builds if standards are not met.
+
+
+How do you ensure that no sensitive data (like API keys) is committed in test scripts?
+
+Use .gitignore for local sensitive files.
+Implement pre-commit hooks to scan for sensitive data.
+
+
+*****************************************************************************************************************************************************************
+
+
+
+----->>>>The distinction between Java's == and equals methods
+In Java, equals() is regarded as a method. It is mostly used for
+ comparing reference values and objects. It is used to compare the object's real content.
+ The == operator can be used with objects and primitives.
+ 
+ ------>>>>  Java, a catch block cannot exist without a corresponding try block. 
+ If you try to write a catch block without a try block, the code will not compile and will throw a syntax error.
+ In Java, a try block can exist without a catch block, 
+ but only if it is accompanied by a finally block.
+ This structure is useful when you need to ensure some code is executed regardless of whether an exception occurs or not, 
+ such as closing resources or cleaning up.
+ 
+ 
+ 
+ ------>>>>While try-catch is the most common way to handle exceptions, alternatives include:
+
+Propagating exceptions with throws.
+Validating inputs to prevent exceptions
+
+---->>>>
+Serialization and Deserialization in Java are processes used to convert objects into a 
+format that can be stored or transmitted and later reconstructed.
+
+
+---Serialization
+Serialization is the process of converting an object into a sequence of bytes. 
+This sequence of bytes can then be stored in a file, database, or transmitted over a network.
+ The primary use of serialization is to persist an object's state or to send it between Java Virtual Machines (JVMs).
+ 
+ --Deserialization
+Deserialization is the reverse process of serialization. It reconstructs an object from a sequence of bytes. This is useful for restoring the state of an object or for receiving objects over a network.
+
+Key Points
+Purpose: To recreate an object from its serialized state.
+
+
+--------->>>>>>Multithreading in Java is a feature that allows concurrent execution of two or more parts of a program,
+ known as threads. A thread is a lightweight, independent path of execution within a program. 
+ Multithreading is useful for performing multiple tasks simultaneously, improving the efficiency and performance of a program.
+ 
+ Key Concepts
+Thread:
+
+A single, sequential flow of control within a program.
+Every Java application has at least one thread, called the main thread, which runs the main() method.
+Multithreading:
+
+Enables a program to run multiple threads concurrently.
+Threads can share resources (like memory) within the same process, which is efficient compared to creating multiple processes.
+
+
+------->>>
+Garbage Collection (GC) in Java is a process by which the Java 
+Virtual Machine (JVM) automatically identifies and removes unused objects from memory, freeing up space and preventing memory leaks. 
+
+Stack Memory
+Purpose: Used for execution of threads and stores method calls, local variables, and function parameters.
+Heap Memory
+Purpose: Used to store objects and instance variables.
+
+
+
+
+------------------------**** Collection Java FrameWork  *****-----------------------------
+                                Interfaces
+List: Ordered, allows duplicate elements.
+Example: ArrayList, LinkedList, Vector.
+Usage: Storing test data in the order it is retrieved (e.g., list of web elements)
+
+Feature                	ArrayList	                                                                    LinkedList	                                                           
+Implementation	        ArrayList internally uses a dynamic array to store elements.	        LinkedList internally uses a doubly linked list to store elements,. or The LinkedList dynamically grows or shrinks as elements are added or removed.
+Performance          	Faster for random access (index-based access).	                        Faster for insertions/deletions (at non-end positions).	               
+Thread Safety	        Not synchronized (not thread-safe).	                                    Not synchronized (not thread-safe).	                                   
+Iteration	            Uses Iterator.	                                                        Uses Iterator.	
+ 
+                                                                                               Each element is stored in a Node object, which has references to both the next node and the previous node. 
+
+
+ArrayList								           
+*An ArrayList uses a dynamic array 		
+to store elements. 						
+*As the size of the list increases, 		
+the array is resized (usually doubled).
+*Useful for situations where read-heavy 	
+by index)are frequent.					
+*Less memory overhead (no extra pointers)	
+
+
+Linked List
+*A LinkedList is implemented using a doubly linked list, 
+where each element (node) contains a reference to the previous
+node and the next node in the list.This allows for bidirectional traversal.
+*Useful for situations where insertions/removals are frequent, operations (such as getting an element 
+and random access (getting an element by index) 
+is less important.
+*More memory overhead (needs pointers)																						   
+
+Set: Unordered, no duplicates.
+Example: HashSet, TreeSet, LinkedHashSet.
+Usage: Storing unique test data like unique dropdown values or test case IDs.
+
+Map: Key-value pairs, keys are unique.
+Example: HashMap, TreeMap, LinkedHashMap.
+Usage: Mapping test case IDs to expected results.
+
+Queue: Maintains FIFO order.
+Example: PriorityQueue, Deque.
+Usage: Handling test execution queues or task prioritization.
+ 
+   
+HashSet 				                        LinkedHashSet                                              TreeSet  
+Unordered									Insertion order maintained	                                Sorted (ascending by default, or custom comparator)
+Heterogenous data is accepted				Heterogenous data is accepted								Homogenous data is accepted as it wont be able to arrange heterogeneous data
+One null element is accepted				Allows only one null element								Donot allow null element
+Very fast for operations like add,			Slightly slower than HashSet								Slower than Linked HashSet and HashSet
+remove and contains                                                                                     if we set Heterogenous data and Callled this data throw excetipn name ==> classCastException 
+
+
+
+ConcurrentHashMap	 --->  Thread-safe,Does not allow null keys or values,High performance in concurrent scenarios.
+
+           
+                       HashMap                                              LinkedHashMap                                        TreeMap                                             
+Order of Keys	    No guaranteed order.	                      Maintains insertion order of keys.                        Sorted order (natural or custom comparator).	          
+Null Keys/Values	Allows one null key and multiple null val	 Allows one null key and multiple null values.              Does not allow null keys but allows multiple null values.
+Thread Safety	    Not synchronized (not thread-safe).	          Not synchronized (not thread-safe).                       Not synchronized (not thread-safe).	                      
+
+
+
+Immutable java Class --- String,Final,Private,LocalDate,LocalTime,LocalDateTime 
+
+
+
+TRY - RESOURCES ->
+
+The try-with-resources statement in Java is used to manage resources like files, sockets, or database connections automatically. 
+It ensures that resources are closed after their usage, eliminating the need for explicit finally blocks.
+
+
+Exception: Excpetion is unwanted and unexepected behavior of code.
+There are two types of Exception:
+
+Throwable ->> 
+A >>> Exception ---> We can handle by try-cathch and throw or Throws keyword use
+1. Compliletime exception/ Checked execption : IOException, SQLException, ClassNotFoundException in Java
+2. Runtime exception/ Unchecked exception : NullPointerException, ArithmeticException, IndexOutOfBoundException, NumberFormatException
+B. >>> Error ----> We can not handle by Java code 
+ex. Stackoverflow , VirtualMachineError , OutofMemeoryError
+
+How can we handle exception
+using try, catch, finally, and throw/throws.
+
+
+    throw--->
+	The throw keyword allows you to explicitly throw an exception at a specific point in your code. 
+	It does not handle exceptions, but rather creates and throws them.
+* The throw keyword is used to create and throw an exception from within a method or block of code.
+  You can use throw to trigger exceptions based on certain conditions in your code.
+  However, it’s important to note that throw does not handle exceptions; 
+  it only raises an exception. The exception still needs to be caught and handled using a try-catch block, or
+  it will propagate upwards through the call stack.
+  
+  public class Main {
+    public static void main(String[] args) {
+        try {
+            checkAge(15); 
+        } catch (IllegalArgumentException e) {
+            System.out.println("Caught exception: " + e.getMessage());
+        }
+    }
+
+  
+    static void checkAge(int age) {
+        if (age < 18) {
+           
+            throw new IllegalArgumentException("Age must be at least 18.");
+        }
+        System.out.println("Age is valid");
+    }
+}
+
+
+  finally --- >Requires manual resource cleanup. 
+               You must handle exceptions while closing resources.
+  
+  TRY - RESOURCES ->
+
+The try-with-resources statement in Java is used to manage resources like files, sockets, or database connections automatically. 
+It ensures that resources are closed after their usage, eliminating the need for explicit finally blocks.
+  
+  Try-resouce ---> Automatically manages resource cleanup.
+                   Only works with resources implementing AutoCloseable.
+				   
+				   try (BufferedReader reader = new BufferedReader(new FileReader("example.txt"))) {
+            System.out.println(reader.readLine());
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+
+         ********************            Difference between  equals() method and the == operator :  **************************
+                     
+                        == operator: 
+                     1) Compares references (memory locations) for objects and values for primitives.
+                     2) Works for both primitives and objects.	
+                     3) Checks if two references point to the same object.	
+                     4) Cannot be overridden.	
+                     
+                        equals() operator: 
+                     1) Compares the content of objects for equality, as defined in the implementation of the equals() method.
+                     2) Works only for objects.
+                     3) Default behavior (from Object class) is the same as ==.
+                     4) Can be overridden in user-defined classes.
+                     
+                     Example: 
+                       String s1 = "Hello";
+                       String s2 = "Hello";
+                       String s3 = new String("Hello");
+                       
+                       s1 == s2 --> true,				s1.equals(s2) --->true
+                       s1 == s3 --->false,				s1.equals(s3) --->true
+                       s2 == s3 ---> false				s2.equals(s3) --->true
+  
+  
+  
+                  OOPS- Object Oriented Programming Language Concept
+				  
+OOPS concept is a object oriented progran where we track the human behavior to the programming languauage by using diefferent approaches
+1) Abstraction
+2) Encapsulation
+3) Interface
+4) Polymorphism
+5) Inheritance
+
+Abstraction:
+Abstraction is notthing but hiding the essential information and highlighting or making visible only some set of services
+Whenever action is common but implementation is different then we use abstraction
+Abstract class contains atleast one abstract method
+We can't create object of abstract class (only those class which is extending the abstract class can create object)
+It constains both Abstract and Nonabstract method
+We cannot define abstract method as private as we won't be able to override it
+In abstract class we can create constructor
+
+Example in framework:
+Abstraction:
+In base class we initiailize the webdriver, Excel sheetread/write, config file property reading code 
+and tear down the application that kind of implementation abstract in base class 
+and before running any test invoke this unimplemented method by using extend keyword
+
+
+Interface:
+Interface is just like class which contains only abstract methods
+We can achieve 100% abstraction by using interface
+To achive interface we can use implements/Interface keyword
+In Interface by default variables are public + static +final and Methods are public and abstract
+Interface cannot have constructor and static method
+We can't crate of Object of class
+
+Example: 
+1) WebDriver driver= new ChromeDriver();
+2) We use Listener Class example we use ItestListener in which we use unimplemented methods such as OnTestSuccess, OnTestFailure
+
+Real time functional example:
+We have Partpayment method for which we have created interface class. This partpayment method we are using for different products as on the basis of part paymenyt chrages 
+hence we implemented and defined this method with respect to charges for that product 
+
+Encapsulation:
+Encapsulation is a mechanism through which we can bind data members and methods in single unit.
+We can say that every class in java has Encapsulation behavior
+
+
+Polymorphism:Poly means many and forms means behaviour which means we have same object with different behavior.
+We can achive polymorphism using two approaches
+1) Compile time polymorphism vs Static binding vs Method Overloding
+2) Run time polymorphism vs Dynamic binding Vs Methos Override
+
+Complie time polymorphism: polymorphism we exist at the time of compliation is called as compile time polymorphism/early binding
+Method overloading is example like when we have multiple methods we same name but different parameters and we call method from the main class on the basis of paramters
+example: Impilict wait is an example of method overloading where we use different timestamp second, minute, hour
+
+RunTime Polymorphism:Polymorphism which exist at the time of execution of program is called as RunTime polymorphism
+Whenever we write a method in super and subclass in such a way that method name and parameter  is same then we can achiev runtime polymorphism.
+We can call parent class method using Super keyword also if require we can call subclass method also by using this keywordg
+Example: Method overriding can be achieved by any webDriver method like FindElements method same as assertion we can override method like assert.true(actual,expected,message)
+
+Inheritance:
+By using inheritance we can acquire the propertoes of parent class in child class using extend keyword in such a way that we will be able to increase the code resuability
+We cannot achieve multiple inheritance injava using inheritance but it can only be achieve through interface
+Method overloading is only possible through Inheritanvce
+we cannot access private menmbers of class through inheritance, we can access protected members using inheritance.
+Types of inheritance:
+1. Simple Inheritance
+2. Multilevel inheritance
+3. Multiple inheritance
+
+Example: In base class we invoke all prequisite method and this methods we can utlize in subclass or all the test class using extend keyword
+
+Constructor: Construtor is a special type of method whose name is same as classname. Main purpose of constructor is to initialize the object
+every class has a default constructor
+Constructor do not have any return type incuding void
+Constructor is automatically called at the time of object creation
+ constructors cannot be overridden like methods
+
+Types of Constructor:
+1. Default Constructor 2. Paramterized Constructor  
+public class demo
+{
+demo(String example)
+{
+this.example=example;
+
+}
+}
+
+-----------------***************  Java Stream *********----------------------------------
+
+ Java Streams are part of the Java 8 Stream API, designed to simplify processing collections of
+ data using functional programming. Streams allow you to filter, map, and reduce data in a clean and readable way.
+ 
+ Ex-  >   In automation testing, Java Streams can be effectively used for various scenarios like processing lists of web elements, 
+          validating API responses, and handling test data.
+ 
+ Key-->
+filter: To filter data based on a condition.
+map: To transform data (e.g., extract text from web elements).
+collect: To collect the results into a collection like a List or Set.
+forEach: To perform an action for each element.
+anyMatch, allMatch: To validate conditions on elements.
+reduce: To aggregate data (e.g., sum or concatenate strings).
+
+
+*****************************Enum Class*********************
+
+is a special data type that represents a fixed set of constants.
+
+1.An enum can, just like a class , have attributes and methods. 
+2.The only difference is that enum constants are public , static and final (unchangeable - cannot be overridden). 
+3.An enum cannot be used to create objects, and it cannot extend other classes (but it can implement interfaces).
+4.Enum can have fields, constructors and methods
+5.Enum may implement many interfaces but cannot extend any class because it internally extends Enum class
+
+public Enum APIResources
+{
+AddPlaceAPI("/maps/api/place/add/json"),
+DeletePlaceAPI("/maps/api/place/delete/json"),
+getPlaceAPI("/maps/api/place/get/json"),
+
+private String resource;
+
+
+APIResources(String resource)
+{
+this.resource=resource;
+}
+
+public String getResource()
+{
+return resource;
+}
+
+ 
+***************************    Ternary operator       **************************************
+The ternary operator in Java is a shorthand for the if-else conditional statement. It is also known as the conditional operator.
+
+condition ? expression1 : expression2;
+condition: A boolean expression that evaluates to true or false.
+expression1: The value or statement executed if the condition is true.
+expression2: The value or statement executed if the condition is false.
+
+        int a = 10, b = 20;
+        int max = (a > b) ? a : b;
+		System.out.println("The maximum is: " + max);
+		
+		Ans --> 20 
+   
+   
+   *************** equals overriding hashcode****************
+Why Override Both Methods?
+When you override equals(), you are redefining how objects are compared for equality.
+If you don't also override hashCode(), the default implementation (from Object) may produce inconsistent behavior 
+in hashed collections,as it doesn't align with your custom equality logic.
+
+
+Modifier	Same Class	Same Package	Subclass (Other Package)	Other Package
+public	        ✔	       ✔	              ✔	                       ✔
+protected	    ✔	       ✔	              ✔ (via inheritance)	       ✖
+default	        ✔	       ✔	              ✖	                       ✖
+private	        ✔	       ✖	              ✖	                       ✖
+
+
+
+
+
+
+
+********************************************************************************************************************************************************
+
+ *What is Jenkins?
+Jenkins is an open-source automation server used for Continuous Integration/Continuous Delivery (CI/CD). 
+It helps automate the build, testing, and deployment process.
+Example: Jenkins can trigger automatic builds when new code is pushed to a Git repository.
+
+
+Explain the architecture of Jenkins.
+Jenkins follows a master-slave(node or Agent) architecture 
+where the master controls the build process, 
+and slaves execute jobs on different environments.
+
+What is CI and CD
+CI - Dev deploy the code on Repository , then jenkin build the Project then later test 
+CD - Deploy the Project
+
+o Build
+o Test
+o Deploy
+
+ 
+ 
+ * Jenkinsfile is a text ---->
+ A Jenkinsfile is a text file that contains the pipeline code.
+A Jenkinsfile is a text file that contains the definition of a Jenkins pipeline. 
+It is written in Groovy-based domain-specific language (DSL) and is used to automate the steps of building,
+ testing, and deploying applications as part of a CI/CD pipeline.
+ 
+ * architecture of Jenkins.
+Jenkins follows a master-slave architecture where the master controls the build process, and slaves execute jobs on different environments.
+ 
+ 
+ pipeline {
+    agent any // Specifies the agent to run the pipeline
+stages {
+        stage('Build') {
+            steps {
+                echo 'Building the application...'
+                sh 'mvn clean package' // Example build step
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                sh 'mvn test' // Example test step
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the application...'
+                sh './deploy.sh' // Example deployment step
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline execution completed.'
+        }
+        success {
+            echo 'Pipeline completed successfully.'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
+
+-----------*******------------
+How do you trigger Jenkins jobs automatically?
+
+a.Using webhooks from a version control system like GitHub.
+b.Poll SCM or use triggers like cron syntax.
+c.Upstream/downstream jobs in Jenkins.
+
+------***********--------
+How do you handle parallel testing in Jenkins pipelines?
+
+Use the parallel directive in declarative pipelines:
+groovy
+Copy code
+stage('Parallel Testing') {
+    parallel {
+        stage('Test1') {
+            steps {
+                sh 'mvn test -Dtest=Test1'
+            }
+        }
+        stage('Test2') {
+            steps {
+                sh 'mvn test -Dtest=Test2'
+            }
+        }
+    }
+}
+
+* Explain the different types of Jenkins jobs.
+ Freestyle, Pipeline, Multibranch Pipeline, and Maven jobs.
+ Example: A Maven job builds a project using the Maven tool.
+
+* How do you troubleshoot Jenkins build failures?
+ Check the console output, logs, and error messages for build failures.
+ Example: A failed build due to missing dependencies would show in logs.
+
+* How do you perform load balancing in Jenkins?
+ Set up multiple agents(Node) and distribute jobs across them for balanced workloads.
+
+* How do you troubleshoot Jenkins build failures?
+ Check the console output, logs, and error messages for build failures.
+
+
+    **************************         How to Re-run failed test Cases   **************************
+	
+	TestNG --->>
+	1.Use the testng-failed.xml file, automatically generated by TestNG, to re-run failed tests
+	2.mvn test -DsuiteXmlFile=test-output/testng-failed.xml
+	3.Add a retry logic in your test listener
+
+	
+	Junit with cucmber --->>
+	1.@CucumberOptions(
+    plugin = {"pretty", "html:target/cucumber-html-report",
+              "rerun:target/rerun.txt"},
+    features = "src/test/resources/features"
+                                                )
+												
+      mvn test -Dcucumber.options=@target/rerun.txt
+
+
+	  
+   2.Implement a custom Retry rule
+ public class RetryRule implements TestRule {
+    private int retryCount;
+    public RetryRule(int retryCount) {
+        this.retryCount = retryCount;
+    }
+    @Override
+    public Statement apply(Statement base, Description description) {
+        return new RetryStatement(base, retryCount);
+    }
+	
+	
+	Jenkins  : 
+	Stage 1: Run the full suite of tests.
+    Stage 2: Re-run failed tests based on the generated rerun configuration (testng-failed.xml or rerun.txt).
+	
+	Groovy-based :        tage('Re-run Failed Tests') {
+                                                      when {
+                                                      fileExists('test-output/testng-failed.xml')
+                                                         }
+                                                      steps {
+                                                      sh 'mvn test -DsuiteXmlFile=test-output/testng-failed.xml'
+                                                         }
+                                                        }
+                                                      }   
+	Directly Use in Pipeline->
+                                       	retry(2) {
+                                           sh 'mvn test'
+                                                 }
+
+
+* How do you back up Jenkins?
+Answer:
+Back up the $JENKINS_HOME directory, including job configurations, plugins, and build history.
+
+* What are common Jenkinsfile errors and how do you troubleshoot them?
+Answer:
+Syntax errors: Validate the Jenkinsfile using the Pipeline Syntax Validator.
+Plugin compatibility issues: Ensure all required plugins are installed and updated.
+Permission issues: Verify workspace and repository access permissions.
+	
+Setup-part Jenkins -->
+Go to "New Item" > Choose "Freestyle Project" or "Pipeline."
+Configure the job by specifying:
+Source Code Management (e.g., Git repository).
+Build triggers (e.g., GitHub webhook, schedule).
+Build steps (e.g., shell scripts, Maven commands).
+	
+	
+	
+
+************   What is the Splunk Plugin for Jenkins ?  ****************************
+The Splunk Plugin for Jenkins is a tool that integrates Jenkins with Splunk, a powerful platform for searching, monitoring, 
+and analyzing machine-generated data. This plugin allows you to send Jenkins build and job-related data (such as logs, metrics, and events) 
+to Splunk for centralized logging, monitoring, and analysis.
+
+
+***************************************************************************************************************************************************************
+
+
+ *What is Jenkins?
+Jenkins is an open-source automation server used for Continuous Integration/Continuous Delivery (CI/CD). 
+It helps automate the build, testing, and deployment process.
+Example: Jenkins can trigger automatic builds when new code is pushed to a Git repository.
+
+
+Explain the architecture of Jenkins.
+Jenkins follows a master-slave(node or Agent) architecture 
+where the master controls the build process, 
+and slaves execute jobs on different environments.
+
+What is CI and CD
+CI - Dev deploy the code on Repository , then jenkin build the Project then later test 
+CD - Deploy the Project
+
+o Build
+o Test
+o Deploy
+
+ 
+ 
+ * Jenkinsfile is a text ---->
+ A Jenkinsfile is a text file that contains the pipeline code.
+A Jenkinsfile is a text file that contains the definition of a Jenkins pipeline. 
+It is written in Groovy-based domain-specific language (DSL) and is used to automate the steps of building,
+ testing, and deploying applications as part of a CI/CD pipeline.
+ 
+ * architecture of Jenkins.
+Jenkins follows a master-slave architecture where the master controls the build process, and slaves execute jobs on different environments.
+ 
+ 
+ pipeline {
+    agent any // Specifies the agent to run the pipeline
+stages {
+        stage('Build') {
+            steps {
+                echo 'Building the application...'
+                sh 'mvn clean package' // Example build step
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                sh 'mvn test' // Example test step
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the application...'
+                sh './deploy.sh' // Example deployment step
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline execution completed.'
+        }
+        success {
+            echo 'Pipeline completed successfully.'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
+
+-----------*******------------
+How do you trigger Jenkins jobs automatically?
+
+a.Using webhooks from a version control system like GitHub.
+b.Poll SCM or use triggers like cron syntax.
+c.Upstream/downstream jobs in Jenkins.
+
+------***********--------
+How do you handle parallel testing in Jenkins pipelines?
+
+Use the parallel directive in declarative pipelines:
+groovy
+Copy code
+stage('Parallel Testing') {
+    parallel {
+        stage('Test1') {
+            steps {
+                sh 'mvn test -Dtest=Test1'
+            }
+        }
+        stage('Test2') {
+            steps {
+                sh 'mvn test -Dtest=Test2'
+            }
+        }
+    }
+}
+
+* Explain the different types of Jenkins jobs.
+ Freestyle, Pipeline, Multibranch Pipeline, and Maven jobs.
+ Example: A Maven job builds a project using the Maven tool.
+
+* How do you troubleshoot Jenkins build failures?
+ Check the console output, logs, and error messages for build failures.
+ Example: A failed build due to missing dependencies would show in logs.
+
+* How do you perform load balancing in Jenkins?
+ Set up multiple agents(Node) and distribute jobs across them for balanced workloads.
+
+* How do you troubleshoot Jenkins build failures?
+ Check the console output, logs, and error messages for build failures.
+
+
+    **************************         How to Re-run failed test Cases   **************************
+	
+	TestNG --->>
+	1.Use the testng-failed.xml file, automatically generated by TestNG, to re-run failed tests
+	2.mvn test -DsuiteXmlFile=test-output/testng-failed.xml
+	3.Add a retry logic in your test listener
+
+	
+	Junit with cucmber --->>
+	1.@CucumberOptions(
+    plugin = {"pretty", "html:target/cucumber-html-report",
+              "rerun:target/rerun.txt"},
+    features = "src/test/resources/features"
+                                                )
+												
+      mvn test -Dcucumber.options=@target/rerun.txt
+
+
+	  
+   2.Implement a custom Retry rule
+ public class RetryRule implements TestRule {
+    private int retryCount;
+    public RetryRule(int retryCount) {
+        this.retryCount = retryCount;
+    }
+    @Override
+    public Statement apply(Statement base, Description description) {
+        return new RetryStatement(base, retryCount);
+    }
+	
+	
+	Jenkins  : 
+	Stage 1: Run the full suite of tests.
+    Stage 2: Re-run failed tests based on the generated rerun configuration (testng-failed.xml or rerun.txt).
+	
+	Groovy-based :        tage('Re-run Failed Tests') {
+                                                      when {
+                                                      fileExists('test-output/testng-failed.xml')
+                                                         }
+                                                      steps {
+                                                      sh 'mvn test -DsuiteXmlFile=test-output/testng-failed.xml'
+                                                         }
+                                                        }
+                                                      }   
+	Directly Use in Pipeline->
+                                       	retry(2) {
+                                           sh 'mvn test'
+                                                 }
+
+
+* How do you back up Jenkins?
+Answer:
+Back up the $JENKINS_HOME directory, including job configurations, plugins, and build history.
+
+* What are common Jenkinsfile errors and how do you troubleshoot them?
+Answer:
+Syntax errors: Validate the Jenkinsfile using the Pipeline Syntax Validator.
+Plugin compatibility issues: Ensure all required plugins are installed and updated.
+Permission issues: Verify workspace and repository access permissions.
+	
+Setup-part Jenkins -->
+Go to "New Item" > Choose "Freestyle Project" or "Pipeline."
+Configure the job by specifying:
+Source Code Management (e.g., Git repository).
+Build triggers (e.g., GitHub webhook, schedule).
+Build steps (e.g., shell scripts, Maven commands).
+	
+	
+	
+
+************   What is the Splunk Plugin for Jenkins ?  ****************************
+The Splunk Plugin for Jenkins is a tool that integrates Jenkins with Splunk, a powerful platform for searching, monitoring, 
+and analyzing machine-generated data. This plugin allows you to send Jenkins build and job-related data (such as logs, metrics, and events) 
+to Splunk for centralized logging, monitoring, and analysis.
+
+
+
+
+****************************************************************************************************************************************************************
+
+
+Manaul Testing 
+
+
+------>>>>>What is the difference between Test matrix and Traceability matrix?
+Test Matrix: Test matrix is used to capture actual quality, effort, the plan, resources and time required to capture all phases of software testing
+Traceability Matrix: Mapping between test cases and customer requirements is known as Traceability Matrix
+
+
+** What are the different stages of an Automation test ???
+Test Planning: Define the goals and scope of automation.
+Test Design: Design the structure and test cases.
+Test Development: Write the automation scripts.
+Test Execution: Run the automated tests.
+Test Reporting: Analyze the results and share reports.
+Test Maintenance: Update scripts based on changes in the application.
+Test Optimization: Improve the speed and effectiveness of tests.
+Test Analysis and Feedback: Evaluate and optimize the automation process.
+
+@* Test Stratergy Document -- This documentation for Organization level -- Give the overall Proccess of testing
+@* Test Plan --- Project Level Document
+
+Scope: Define in-scope and out-of-scope items.
+Objectives: Validate functional requirements.
+Test Types: Functional Testing.
+Test Environment:Test data preparation.
+Entry and Exit Criteria:
+Deliverables:
+Risks and Assumptions:
+Risks: Delayed builds, incomplete requirements.
+Assumptions: Stable test environments, timely documentation.
+Roles and Responsibilities:
+Schedule:
+Approval:
+Stakeholders sign off on the plan.
+These points ensure a concise and actionable test plan for manual testing. Let me know if you need help expanding any section!
+
+Static code analysis----->
+Static code analysis is a process of examining the source code of a 
+program without executing it to detect potential bugs, security vulnerabilities, 
+code smells, and ensure adherence to coding standards.
+
+Clean Code Principles (including SOLID and DRY)
+clean code principles to demonstrate how you write maintainable, readable, and efficient code. 
+These principles help create code that is easier to understand, modify, and extend over time. 
+
+
+Sprint Velocity in Agile:
+Sprint Velocity is a metric used in Agile project management to measure the amount of work a team can 
+complete during a single sprint. 
+
+************* SOLID Principles ***********************
+SOLID principles in Java are a set of design principles aimed at creating maintainable, scalable, and robust software.
+
+1. Single Responsibility Principle (SRP): Class should have one responsibility.
+A class with multiple responsibilities becomes hard to maintain and test because changes in one responsibility might affect others
+example:
+class UserService {
+    void createUser(String username) {
+        // Logic to create a user
+    }
+}
+
+class EmailService {
+    void sendEmail(String email) {
+        // Logic to send email
+    }
+}
+
+2.Open/Closed Principle (OCP)
+Definition: A class should be open for extension but closed for modification.
+
+Problem: Modifying existing code for new functionality can introduce bugs and requires retesting.
+Solution: Use abstractions like interfaces or inheritance to add new functionality without modifying existing code.
+
+3.Liskov Substitution Principle (LSP)
+This means that if a program is using a base class, you should be able to replace it with any subclass of that 
+base class without the program malfunctioning. The subclass must adhere to the expectations (behavioral contracts) set by the base class.
+
+4.Interface Segregation Principle (ISP)
+A class should not be forced to implement interfaces it doesn't use.
+
+Problem: A large interface with methods irrelevant to some implementing classes leads to unnecessary code and complexity.
+Solution: Break down large interfaces into smaller, more specific ones.
+
+5.Dependency Inversion Principle (DIP)
+Definition: High-level modules should not depend on low-level modules; both should depend on abstractions.
+
+Problem: Tight coupling between high-level and low-level modules makes the code harder to test and maintain.
+Solution: Use interfaces to decouple the modules.
+
+Benefits of SOLID Principles
+Maintainability: Code is easier to understand and modify.
+Scalability: New features can be added without modifying existing code.
+Testability: Decoupled and modular code is easier to test.
+Readability: Clean and organized code with clear responsibilities.
+
+Entry Criteria -> Conditions that must be met before a testing phase or process begins., ensures testing can start without interruptions.
+Exit  Criteria -> Conditions that must be satisfied to conclude a testing phase or process, objectives are met and results are acceptable for project delivery or the next phase.
+
+Manual Testing:
+Entry Criteria -> Requirements Clarity, Test Plan and Test Cases, Test Environment, Build Availability, Test Data,Defect Management Tool
+Exit  Criteria -> Test Case Execution, Defect Resolution,Test Results Documentation,Requirement Coverage,Sign-Off
+
+Automation Testing:
+Entry Criteria ->  Stable Application Build, Automation Framework ,Automation Tools ,Test Environment ,Script Readiness
+Exit  Criteria -> Script Execution Completion,Defect Verification,Test Coverage,Regression Results,Reports Generation,Framework Stability,Stakeholder Approval
+
+
+
+
+
+
+****************   How do you manage and track bugs through the testing lifecycle?  *********************
+
+
+New: A bug is identified and logged for the first time.
+Assigned: The bug is reviewed and assigned to a developer or a team for resolution.
+In Progress: The developer is actively working on resolving the bug.
+Resolved: The developer fixes the bug and marks it as resolved.
+Verified: The QA team retests the fix and verifies the resolution.
+Closed: The bug is marked as closed if the fix is verified successfully.
+Reopened (if applicable): If the issue persists or reoccurs, the bug is reopened and reentered into the lifecycle.
+
+Create a detailed bug ticket with the following details:
+1)Title
+2) Description
+3) Severity
+4) Priority
+5) Attachments
+Categorize and Prioritize Bugs
+
+
+
+
+**************************************************************************************************************************************************************
+
+
+
+----------------------------Operator	Description -------------------------------------
+                              <	less than
+                              <=	less than or equal to
+                              >	greater than
+                              >=	greater than or equal to
+                              =	equal to
+                              <> or !=	not equal to
+---------------------------------------------------------------------------------------------
+-----------------     Where Condition -------------
+
+                 SELECT age, country
+                 FROM Customers
+                 WHERE country = 'USA';
+                 
+                 SELECT *
+                 FROM Customers
+                 WHERE NOT country = 'UK';
+                 
+                 SELECT name, email
+                 From Customers
+                 WHERE age >= 18 OR age < 25;
+                 
+                 SELECT name, email
+                 From Customers
+                 WHERE age > 18 AND age < 25;
+                 
+ ----------------------------------******************------------------------------------------------
+
+                  DISTINCT ------In this scenario, you may want to avoid including duplicate entries when presenting the results. 
+                  
+                  SELECT DISTINCT country
+                  FROM Customers;
+                 
+                 the result set contains a list of all the unique countries in the Customers table, without any duplicates.
+
+ ----------------------------------******************------------------------------------------------
+        SELECT first_name, country
+        FROM Customers
+        WHERE country = 'USA' OR country = 'UK';
+
+ ----------------------->>>>>>>>>>>>>>>>>>>      this above equetion is use equivalent 
+ 
+    SELECT first_name, country
+    FROM Customers
+    WHERE country IN ('USA', 'UK');
+	
+	
+	 
+	SELECT first_name, country
+    FROM Customers
+    WHERE country <> 'UK' AND country <> 'UAE';
+	
+	
+	SELECT first_name, country
+    FROM Customers
+    WHERE country NOT IN ('UK', 'UAE');
+	
+	
+	                                  ----------- BETWEEN --------------
+	
+                 SELECT *
+                 FROM Customers
+                 WHERE age BETWEEN 22 AND 27;
+
+
+                SELECT *
+                FROM Customers
+                WHERE age >= 22 AND age <= 27;
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                      
+                                      -- select everything from the Customers table
+                                      -- sort the results by the first_name column in ascending order ASC 
+                                       
+                                      SELECT *
+                                      FROM Customers
+                                      ORDER BY first_name ASC;
+                  
+                                        or With Where Condition
+                                        
+                                      SELECT first_name, age
+                                      FROM Customers
+                                      WHERE age > 23
+                                      ORDER BY age ASC;
+                                      
+                                      
+                                      SELECT *
+                                      FROM Customers
+                                      ORDER BY first_name DESC;
+                                      
+									  SELECT *
+                                      FROM Customers
+                                      ORDER BY first_name DESC, age ASC;
+									  
+									  
+									  SELECT name, quantity
+                                      FROM Products
+                                      ORDER BY quantity DESC, price DESC;
+                                      
+                                      
+ --------------------------------------------------------------------------------------------------------------------------------------------                                     
+                                      
+
+
+ 
+           -- select the first two rows
+ 
+            SELECT *
+            FROM Products
+            LIMIT 2;
+			
+			-- select products whose price is more than 100
+            -- then return the first two rows
+ 
+            SELECT *
+            FROM Products
+            WHERE price > 100
+            LIMIT 2;
+			
+			
+			-- skip first two rows using OFFSET 2
+            -- return only one row using LIMIT 1 
+ 
+                     SELECT name, price
+                     FROM Products
+                     LIMIT 1 OFFSET 2;
+					 
+					 
+					 Some databases, such as SQL Server and Oracle, use different syntax instead of LIMIT to limit the number of rows in the output. For example,
+					 -- select the first three rows
+
+                       SELECT TOP 3 *
+                       FROM Products;
+					 
+--------------------------------------------------------------------------------------------------------------------------------------------------			
+ 
+ 
+ Aggregate Functions    ----------->>>>>>>>>>>>>>>>>>>>
+ 
+MIN() - returns the minimum value in a column ---->>> SELECT MIN(age) FROM Employees;
+MAX() - returns the maximum value in a column  ---->>> SELECT MAX(age) FROM Employees;
+COUNT() - counts the number of rows in a column (Count the number of row) ----->>>>>> SELECT COUNT(first_name) FROM Employees; OR SELECT COUNT(*) FROM Employees;
+(Note ----->>>>>>>   SELECT COUNT(*) counts rows regardless of the NULL values.
+                     SELECT count(first_name) ignores the count of all the NULL values in the first_name column.
+					 )
+					 
+					 SELECT COUNT(DISTINCT country)FROM Customers;
+					 SELECT COUNT(DISTINCT country) AS distinct_country_count FROM Customers;
+
+
+SUM() - calculates the sum of values in a column ------>>>>>SELECT SUM(salary) FROM Employees;
+AVG() - calculates the average value of a column ------>>>>>SELECT AVG(age) AS average_age FROM Customers;
+
+
+The AS keyword assigns a temporary name—alias—to a column.  --|>
+Note: The AS keyword is also used to give an expression a temporary name, 
+
+SELECT MAX(age) AS max_age FROM Employees;     -------->>>>>>> AS keyword use for change colum name and assigns new colum name age to  max_age
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+                                                                   Filter Records
+																   
+                                                  <<<<---GROUP BY --->>>>>
+1.The GROUP BY clause in SQL is used to group a set of rows based on values in a column.	
+2.GROUP BY clause is almost always used in conjunction with aggregate functions such as SUM(), MIN(), MAX(),COUNT()
+																   
+																   
+Important Notes ---------->>>>  GROUP BY lets you use aggregate functions, like AVG, MAX, MIN, SUM, and COUNT. On the other hand DISTINCT just removes duplicates.	
+
+SELECT department, salary
+FROM Employees
+GROUP BY department;
+
+SELECT department, COUNT(*) AS number_of_employees
+FROM Employees
+GROUP BY department;
+
+
+SELECT department, MIN(salary) AS min_salary, MAX(salary) AS max_salary
+FROM Employees
+GROUP BY department;															   
+
+
+
+                                                    <<<<|---Having ---|>>>>>
+													
+													WHERE clause to filter rows.
+
+However, in the case of a GROUP BY clause containing aggregate functions, it is not possible to use the WHERE clause 
+this we not use for---->>>>>
+SELECT department, AVG(salary) AS average_salary
+FROM Employees
+GROUP BY department
+WHERE AVG(salary) > 4000;
+
+
+this is way we used ---->>>>
+SELECT department, AVG(salary) AS average_salary
+FROM Employees
+GROUP BY department
+HAVING AVG(salary) > 4000;
+
+SELECT department, AVG(salary) AS average_salary
+FROM Employees
+GROUP BY department
+HAVING average_salary > 3900;
+
+                                                              <<<<---Like --->>>>>
+															  
+ -- select customers who are from USA
+ SELECT *
+FROM Customers
+WHERE country = 'USA';
+
+
+-- select customers whose country starts with the letter 'U'
+ 
+SELECT *
+FROM Customers
+WHERE country LIKE 'U%';
+
+
+SELECT *FROM Customers WHERE country LIKE 'C%';             Select first_name ,country From Customers WHERE first_name LIKE '%e%' and country Like '%an%'; 
+
+SELECT * FROM Customers WHERE country NOT LIKE '%A';
+
+
+% Wildcard in SQL
+The % wildcard in SQL is used to represent zero or more characters. For example,
+
+SELECT first_name, age, country
+FROM Customers
+WHERE country LIKE 'C%i_';
+
+                                                   -------   New Case  -------
+												   
+	SELECT *,
+    CASE 
+        WHEN age >= 20 AND age <= 25 THEN '20-25'
+    END AS age_group ------->>>>>>>>>>>>>(Create new Column age_group and that column show true and false with range of 20-25)
+FROM Customers;
+
+customer_id	first_name	last_name	age	country	age_group
+ 1	         John	      Doe	    31	  USA	  other
+ 2	        Robert	     Luna	    22	  USA	  20-25
+
+
+SELECT *,
+    CASE 
+        WHEN age >= 18 AND age <= 19 THEN '18-19'
+        WHEN age >= 20 AND age <= 25 THEN '20-25'
+        WHEN age >= 26 AND age <= 30 THEN '26-30'
+        ELSE 'other' -------------->>>>>>>>>> We can add other as well
+    END AS age_group
+FROM Customers;
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Join
+ 1. Inner Join
+   INNER JOIN is used to combine rows from two or more tables based on a related column between them.
+                                    
+                                   SELECT Customers.name, Customers.city, Orders.product           
+                                   FROM Customers
+                                   INNER JOIN Orders
+                                   ON Customers.customer_id = Orders.customer_id;
+                                   
+								   Run Code  >>
+                                   Customers
+                                   customer_id	name	city
+                                   1	John	New York
+                                   2	Robert	Los Angeles
+                                   3	David	Chicago
+                                   4	Jane	New York
+                                   Orders
+                                   order_id	customer_id	product
+                                   1	1	Computer
+                                   3	2	Phone
+                                   4	1	Tablet
+                                   6	3	Phone
+                                   7	3	Computer
+                                   
+                                   SELECT c.name, c.city, o.product
+                                   FROM Customers AS c
+                                   INNER JOIN Orders AS o
+                                   ON c.customer_id = o.customer_id;
+                                   
+                                   SELECT *
+                                   FROM Customers c
+                                   INNER JOIN Orders o
+                                   ON c.customer_id = o.customer_id
+                                   WHERE o.product = 'Computer';
+                                   
+                                   Join more than two Column -------->>>>>>>>>
+                                   SELECT c.name, p.product, p.amount
+                                   FROM Customers c
+                                   JOIN Orders o
+                                   ON o.customer_id = c.customer_id
+                                   JOIN Products p
+                                   ON o.product_id = p.product_id;
+                                   
+                                   Left Join ---->>>
+                                   SELECT e.first_name, d.manager
+                                   FROM Employees e
+                                   LEFT JOIN Departments d
+                                   ON e.department = d.department_name;
+                                   
+                                   
+                                   A RIGHT JOIN is similar to a LEFT JOIN except that it selects all the rows from the right table and any matching rows from the left table.
+                                   You can use either the RIGHT JOIN or RIGHT OUTER JOIN statement to perform a right join. They are basically the same. For example,
+                                   
+                                   SELECT *
+                                   FROM Customers c
+                                   RIGHT JOIN Orders o
+                                   ON c.customer_id = o.customer_id;
+                                   
+                                   Full Join --- >>> A FULL JOIN combines the results of both a LEFT JOIN and a RIGHT JOIN.
+                                   
+                                   SELECT m.student_name, m.math_grade, h.student_name, h.history_grade
+                                   FROM math_grades m
+                                   FULL JOIN history_grades h
+                                   ON m.student_id = h.student_id;
+                                   
+                                    SELECT *
+                                   FROM math_grades m
+                                   FULL JOIN history_grades h
+                                   ON m.student_id = h.student_id;
+                                   
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                           SubQuary Test 
+														   
+														   
+SELECT * FROM Customers
+WHERE age = (
+  SELECT MIN(age)
+  FROM Customers
+); 
+
+SELECT 
+  (
+    SELECT name 
+    FROM Customers 
+    WHERE Customers.customer_id = Orders.customer_id
+  ) AS name, 
+  Orders.product 
+FROM Orders;
+Run Code  >>
+
+
+-- inner query returns a row if an employee is associated with the name column in the Departments table
+ 
+-- if the inner query returns one or more rows, the EXISTS clause returns TRUE
+ 
+-- the outer query returns the name of departments if the EXISTS clause returns TRUE
+ 
+                                                       SELECT Departments.name
+                                                       FROM Departments
+                                                       WHERE EXISTS (
+                                                         SELECT *
+                                                         FROM Employees
+                                                         WHERE Employees.department_name =   Departments.name
+                                                       );
+
+The NOT EXISTS operator is the opposite of the EXISTS operator.
+The NOT EXISTS operator returns TRUE if the subquery returns no rows, and FALSE if the subquery returns one or more rows.
+
+SELECT *
+FROM Customers
+WHERE age = (
+  SELECT MIN(age)
+  FROM Customers
+);
+
+
+Quetion ask _-------------------------------------------------->>>>>>>>>>>>>>>>
+SELECT MAX(amount) AS third_highest_amount
+FROM Orders
+WHERE amount NOT IN (
+    SELECT amount FROM Orders ORDER BY amount DESC LIMIT 2
+);
+
+
+Select MIN(amount) AS Second_minimum_Salary
+From Orders
+Where amount NOT IN (Select amount From Orders ORDER By amount ASC LIMIT 1)
+
+
+*******Cross Join:**********
+No ON condition is required.
+Typically generates a much larger dataset.
+SELECT a.id AS ID_A, b.id AS ID_B
+FROM TableA a
+CROSS JOIN TableB b;
+
+**********Inner Join:*************
+Requires a condition to match rows.
+Produces meaningful results for related datasets.
+SELECT a.id, b.name
+FROM TableA a
+INNER JOIN TableB b
+ON a.id = b.id;
+
+
+   *************************  Theory Quetion ************************
+   DELETE --->> removes single or multiple rows from an existing table based on condition but will not delete Schema, used to delete a row
+   TRUNCATE --->> deletes the whole contents of an existing table but will not delete Schema,used to remove all the rows from a table.
+   DROP ---->>  deletes the whole contents of an existing table with delete Schema/Structure
+   
+
+ 
+   Where --->>Where clause use befor GROUP BY Clause , Cannot Use Aggregate Functions
+   Have --->> Have Clause use after GROUP BY Clause , Having Clause containing Aggregate functions 
+   
+   
+   
+ ------------------------   ************************************* ----------------------------------
+
+
+SQL Databases : Also known as relational databases (RDBMS), they store data in structured tables with predefined schemas. 
+                They use SQL (Structured Query Language) for querying and manipulating data. Examples include MySQL, PostgreSQL, and Oracle.
+				
+NoSQL Databases : Non-relational databases that store data in various formats such as key-value pairs, documents, column families, or graphs.
+                  They are schema-less and designed for scalability and flexibility.
+				  Examples include MongoDB (document-based), Cassandra (column-family), Redis (key-value), and Neo4j (graph-based). 
+				  
+Feature             SQL	                                                PL/SQL
+Type	        Query language	                                 Procedural extension of SQL
+Execution	Executes one query at a time	                 Executes multiple SQL statements
+Use Case	Fetching data	                                 Writing business logic in DB
+				  
+What is ACID in the context of databases?
+
+ACID stands for Atomicity, Consistency, Isolation, and Durability —four properties that guarantee reliable database transactions.
+
+Atomicity : Ensures that all operations within a transaction are completed successfully. If any operation fails, the entire transaction is rolled back.
+Consistency : Ensures that a transaction brings the database from one valid state to another, maintaining integrity constraints.
+Isolation : Ensures that concurrent transactions do not interfere with each other. Each transaction executes as if it were the only transaction running.
+Durability : Ensures that once a transaction is committed, it will remain so even in the event of a system failure.
+
+
+
+
+
+
+
+
+
+
+
+									
