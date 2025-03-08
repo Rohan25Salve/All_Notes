@@ -166,101 +166,15 @@ Jenkins --
 1.After a build, Jenkins marks failed tests.
 Use the testng-failed.xml (TestNG) or rerun JUnit rules in your next build to re-run the failed cases.
 2.Use the rerun plugin in your Cucumber setup and ensure that Jenkins is configured to execute the rerun class for failed scenarios.
--------------------------**********************--------------------------------------------------
-******************  Design patterns in automation testing  ****************************
-1)Page Object Model (POM)---Each web page is represented as a class
-Benefits:
-Enhances code reusability and readability.
-
-2) Singleton Pattern ---Ensures a single instance of a class is created and shared.
-Commonly used for managing WebDriver instances to avoid creating multiple drivers.
-
-3) Factory Pattern  ---Provides a centralized way to create objects, such as WebDriver or PageObject.
-
-4) Observer Pattern
-Allows components (e.g., listeners) to be notified of changes in the system, such as test failures or execution events.
-
-*********** Difference between comparable and comparator ************************
-
-Comparable interface:
-The Comparable interface is used to compare objects of the same class.
-It is implemented by the class whose instances need to be compared.
-Purpose: Used to define a natural ordering of objects of a class.
-public int compareTo(T o);
-Less flexible (only one sort order)
-Limited to one sorting logic
-
-Comparator interface:
-The Comparator interface is used to compare objects of different classes or objects of the same class with a custom comparison logic.
-It is implemented in a separate class, often passed as an argument to methods that require comparison (e.g., Collections.sort()).
-Purpose: Used to define custom ordering for objects.
-public int compare(T o1, T o2);
-More flexible (can create multiple comparators)
-Can define multiple sorting logics
-
-Comparable example:
-
-class Person implements Comparable<Person> {
-    String name;
-    int age;
-    
-    Person(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-    
-    @Override
-    public int compareTo(Person other) {
-        return Integer.compare(this.age, other.age); // Sort by age
-    }
-}
-
-Comparator example:
-
-class Person {
-    String name;
-    int age;
-    
-    Person(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-}
-
-class AgeComparator implements Comparator<Person> {
-    @Override
-    public int compare(Person p1, Person p2) {
-        return Integer.compare(p1.age, p2.age); // Sort by age
-    }
-}
-
-*************** Java Stream *****************
-Stream API is new feature available from Java 8,
-By using Stream we can perform various aggregate operator like filter, formatting data, collecting result and reduce code complexity
-
-Use lambda expression -> operator , left side specifies the parameter and right side specified the action
-
-example:  
-ArrayList<String> list = new ArrayList();
-list.add("amit");
-list.add("d");
-list.stream().filter(s -> s.startsWith("a")).forEach(System.out::println);
-
-***************** Java 8 functions **********************
-
-Lambda Expression, 
-Stream API: list.stream().filter(s -> s.startsWith("a")).forEach(System.out::println);
-Method Reference: list.forEach(System.out::println);  
-New Date and Time API,
-Collector
+-------------------------**********************-------------------------------------------------
 
 ********************* different types of collection ************************ 
 Feature	                                Non-Generic Collection	                                                          Generic Collection
-Type Safety							Not type-safe; allows any object type.											Type-safe; restricts to a specific type.
-Compile-Time Check	                No type checking at compile time.												Ensures type-checking during compilation.
-Typecasting						Required when retrieving elements.													Not required; eliminates ClassCastException.
-Code Readability				Less readable due to typecasting.													More readable and concise.
-Runtime Exceptions				High chance of ClassCastException.													Eliminates runtime type mismatch errors
+Type Safety							Not type-safe; allows any object type.							Type-safe; restricts to a specific type.
+Compile-Time Check	                No type checking at compile time.						         			Ensures type-checking during compilation.
+Typecasting						Required when retrieving elements.								Not required; eliminates ClassCastException.
+Code Readability				Less readable due to typecasting.									More readable and concise.
+Runtime Exceptions				High chance of ClassCastException.									Eliminates runtime type mismatch errors
 
 *********************** Immutable Classes in Java *********************
 String: Once a String object is created, it cannot be changed.
