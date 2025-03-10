@@ -992,7 +992,7 @@ WebDriver driver = new ChromeDriver(options);
 
                Challenges in Testing Dynamic Websites
 Frequent UI Changes: Element locators may break due to changes in structure.
-Scenario: Locators for a search bar changing due to website redesign.
+Scenario: Locators for a search bar are changing due to the website redesign.
 Dynamic IDs: IDs or classes of elements generated dynamically.
 Solution: Use XPath or CSS selectors based on relative properties.
 Page Load Timing: Synchronizing tests with content rendering.
@@ -1027,5 +1027,21 @@ Nested Showdom -->one Host with multiple root
 
 How to find Using selenium --> JavaScripExecut
 How to locate --> 1. use Css Selector 
-                  2. Go to Console and Write document.querySelector('Host').Shadowdom.querySelector('root')		  
+                  2. Go to Console and Write document.querySelector('Host').Shadowdom.querySelector('root')	
+
+
+******************     Auto-Healing in Selenium     ************************
+Ability of test scripts to automatically recover from element identification failures due to dynamic locators, UI changes, or slow page loads. This helps reduce test flakiness and maintenance efforts.
+
+Tools Supporting Auto-Healing in Selenium  -->
+Healenium (by EPAM) – Popular library for self-healing locators.
+Selenium AI-based Locators – Uses Machine Learning to find elements.
+TestProject – Built-in self-healing capabilities.
+Katalon Studio – Offers auto-healing Smart Waits.
+
+
+        WebDriver delegate = new ChromeDriver();
+        WebDriver driver = SelfHealingDriver.create(delegate);  
+        driver.findElement(By.id("dynamicElement")).click();
+	  
 			  
