@@ -130,3 +130,26 @@ Create a detailed bug ticket with the following details:
 Categorize and Prioritize Bugs
 
 
+******************************** DOR and DOD ***************************
+
+** Definition of Ready (DOR) 📌
+The DOR ensures that a user story or task is fully prepared before being picked up for development. It defines the minimum criteria that must be met before a task enters a sprint.
+
+Key Points of DOR:
+✅ The user story is well-defined and clear.
+✅ Acceptance criteria are written and understood.
+✅ Dependencies are identified and resolved.
+✅ Necessary mockups, designs, and API contracts are available.
+✅ The story is estimated and approved by the team.
+
+** Definition of Done (DOD) ✅
+The DOD ensures that a task or user story is fully completed and meets quality standards before being considered "done".
+
+Key Points of DOD:
+✅ Code is written, reviewed, and merged.
+✅ Unit tests and automation tests are implemented and passed.
+✅ The functionality is tested in a staging environment.
+✅ No major bugs or issues exist.
+✅ The feature is deployed and documented.
+
+
