@@ -3442,6 +3442,18 @@ Null Keys/Values	Allows one null key and multiple null val	 Allows one null key 
 Thread Safety	    Not synchronized (not thread-safe).	          Not synchronized (not thread-safe).                       Not synchronized (not thread-safe).	                      
 
 
+***************** Difference between HashTable , hashmap and ConcurrentHashMap **********************
+Feature							Hashtable								HashMap									ConcurrentHashMap
+Thread Safety		✅ Yes (Fully synchronized)				❌ No (Not thread-safe)				✅ Yes (Partial synchronization)
+Performance			🚨 Slow due to full synchronization		✅ Fast (No synchronization)			✅ Faster (Uses fine-grained locking)
+Allows null			❌ No						✅ Yes						❌ No
+(Keys/Values)			
+Locking Mechanism	Entire object is locked					No locking					Bucket-level locking (better concurrency)
+Use Case		Legacy code, rarely used in modern applications	        Single-threaded apps				Multi-threaded apps with better performance
+					
+
+
+
 
 Immutable java Class --- String,Final,Private,LocalDate,LocalTime,LocalDateTime 
 
