@@ -3443,6 +3443,18 @@ Thread Safety	    Not synchronized (not thread-safe).	          Not synchronized
 Elements	Heterogenous data is accepted				Heterogenous data is accepted				Homogenous data is accepted as it wont be able to arrange heterogeneous data
 
 
+***************** Difference between HashTable , hashmap and ConcurrentHashMap **********************
+Feature							Hashtable								HashMap									ConcurrentHashMap
+Thread Safety		✅ Yes (Fully synchronized)				❌ No (Not thread-safe)				✅ Yes (Partial synchronization)
+Performance			🚨 Slow due to full synchronization		✅ Fast (No synchronization)			✅ Faster (Uses fine-grained locking)
+Allows null			❌ No						✅ Yes						❌ No
+(Keys/Values)			
+Locking Mechanism	Entire object is locked					No locking					Bucket-level locking (better concurrency)
+Use Case		Legacy code, rarely used in modern applications	        Single-threaded apps				Multi-threaded apps with better performance
+					
+
+
+
 
 Immutable java Class --- String,Final,Private,LocalDate,LocalTime,LocalDateTime 
 
