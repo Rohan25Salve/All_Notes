@@ -3440,6 +3440,7 @@ ConcurrentHashMap	 --->  Thread-safe,Does not allow null keys or values,High per
 Order of Keys	    No guaranteed order.	                      Maintains insertion order of keys.                        Sorted order (natural or custom comparator).	          
 Null Keys/Values	Allows one null key and multiple null val	 Allows one null key and multiple null values.              Does not allow null keys but allows multiple null values.
 Thread Safety	    Not synchronized (not thread-safe).	          Not synchronized (not thread-safe).                       Not synchronized (not thread-safe).	                      
+Elements	Heterogenous data is accepted				Heterogenous data is accepted				Homogenous data is accepted as it wont be able to arrange heterogeneous data
 
 
 
