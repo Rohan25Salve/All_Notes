@@ -3641,6 +3641,21 @@ this.example=example;
 }
 }
 
+************ difference between abstract class and interface *******************
+---------------- Abstract Class -------------
+Can have both abstract and nonabstract methods
+Can have instance variables
+Can have constructors	
+Can have public, protected, private methods	
+Supports single inheritance	
+
+------------------ Interface --------------
+Only abstract methods (Java 7 and earlier); Java 8+ allows default/static methods
+Variables- Only public static final constants
+Cannot have constructors
+Methods are public by default
+Supports multiple inheritance
+
 -----------------***************  Java Stream *********----------------------------------
 
  Java Streams are part of the Java 8 Stream API, designed to simplify processing collections of
