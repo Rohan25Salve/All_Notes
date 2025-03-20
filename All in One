@@ -1071,6 +1071,73 @@ Let me know if you'd like to explore any of these approaches further!
 
 ******************************************************************************************************************************************************************
 
+xpath 
+
+1)Tag – Attribute – Value Trio:
+Syntax = //tagname[@attribute=’Value‘]
+Example: //input[@id="username"]
+
+2)Contains:
+Syntax: //tag[contains(@attribute, ‘value‘)]
+Example: //div[contains(@class, "header")]
+
+3)Starts-with:
+Syntax: //tag[starts-with(@attribute, ‘value‘)]
+Example: //a[starts-with(@href, "https://")]
+
+4)Chained XPaths Declarations:
+Example: //div[@class="container"]//p[@id="paragraph"]
+Note: We can chain multiple relative XPath declarations with “//” double slash.
+
+5)XPath with "or" Statement:
+Syntax: //tag[XPath Statement-1 or XPath Statement-2]
+Example: //input[@type="text" or @type="email"]
+
+6)XPath with "and" Statement:
+Syntax: //tag[XPath Statement-1 and XPath Statement-2]
+Example: //input[@type="text" and @name="username"]
+
+7)XPath Text:
+Syntax: //tag[text()=’text value‘]
+Example: //p[text()="Hello, world!"]
+
+8)Ancestor:
+Example: //section[@id=’content’]//ancestor::div
+Step-1- First, it finds the element whose XPath is //section[@id=’content’]
+Step-2- Then, it starts to find all div elements in the node to which the above XPath belongs.
+
+9)Following:
+Example: //div[@class=’fusion-sliding-bar-wrapper’]//following::section
+Step-1- First, it finds this XPath with class attribute: //div[@class=’fusion-sliding-bar-wrapper’]
+Step-2- Then, it starts to find all section elements after that node.
+
+10)Child:
+Example: //div[@id="parent"]/child::span
+Step-1- First, it finds this XPath with id attribute: //div[@id="parent"]
+Step-2- Then, it starts to find all child elements in that node.
+
+11)Preceding:
+Example: //div[@id=’wrapper’]/div[@class=’fusion-sliding-bar-wrapper’]//preceding::li
+Step-1-Select all nodes that come before the current node, find all “li” elements on the page. First, locate the bottom element, then use the preceding with “li” to find all “li” elements, as shown below.
+
+12)Following-sibling:
+Example: //input[@id="username"]/following-sibling::input
+Note: This XPath selects all input elements that are siblings (at the same level in the DOM tree) and come after an input element with the attribute "id" having the value "username".
+
+13)Descendant:
+Example: //div[@id="container"]/descendant::span
+Note: This XPath selects all span elements that are descendants (children, grandchildren, etc.) of a div element with the attribute "id" having the value "container".
+
+14)Parent:
+XPath: //input[@id="username"]/parent::form
+Note:Returns the parent of the current node as shown in the above example.
+
+15)Locate an Element inside Array of Elements:
+Example: (//div[@id="username"])[3]
+Note: The parentheses "( )" are used to group the div elements as an array, and [3] selects the
+
+16)Absolute Xpath
+Example: /html[1]/body[1]/div[2]/div[2]
 
 
 ------>What are the four parameter you have to pass in Selenium?
