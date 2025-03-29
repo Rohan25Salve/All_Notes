@@ -2760,6 +2760,12 @@ ConcurrentHashMap is a thread-safe version of HashMap in Java, designed for conc
 ************* SOLID Principles ***********************
 SOLID principles in Java are a set of design principles aimed at creating maintainable, scalable, and robust software.
 
+1. Single Responsibility Principle (SRP)
+2. Open/Closed Principle (OCP)
+3. Liskov Substitution Principle (LSP)
+4. Interface Segregation Principle (ISP)
+5. Dependency Inversion Principle (DIP)
+
 1. Single Responsibility Principle (SRP): Class should have one responsibility.
 A class with multiple responsibilities becomes hard to maintain and test because changes in one responsibility might affect others
 example:
