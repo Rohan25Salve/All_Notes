@@ -55,7 +55,7 @@ Status code: -
 
 
 ----->>>>How to validate more than one possible status code using Rest Assured?
-using the Hamcrest Matcher framework’s anyOf() method we can validate more than one possible status code
+Using the Hamcrest Matcher framework’s anyOf() method, we can validate more than one possible status code
 
 given().baseUri("https://restful-booker.herokuapp.com/").when().get('/author').then()
  .statusCode(anyOf(is(STATUS_CODE_OK),is(STATUS_CODE_NOT_FOUND))); 
@@ -72,7 +72,43 @@ given().baseUri("https://restful-booker.herokuapp.com/").when().get('/author').t
 1)Separate test data, test logic, and assertions using a modular approach.
 2)Reduce code duplication by implementing reusable helper methods or classes.
 3)Variable and method names should be meaningful and descriptive.
-4)To make troubleshooting easier, implement effective error handlinuj API to another API)?
+4)To make troubleshooting easier, implement effective error handling API to another API)?
+
+
+
+POJO Class ( Plan old java object) 
+Pojo class for creating JSON payload for API 
+Declare variable as private
+that private variable class through getter and setter method
+
+public class Name {
+    private String firstName;
+    private String lastName;
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+}
+
+
+
+Enum Class:- 
+An Enum Class is just like a class that has a method and attribute
+enum contains Public, Static and Final
+An Enum cannot be used to create an object
+The enum class cannot be extended to other classes, but it is implemented through an interface.
 
 We can pass data using the ITestContext interface of TestNG.This interface provides context or information about the execution of a test suite. This interface has 2 very useful methods getAttribute () and setAttribute(). With the help of these methods, we can set and get the values that will be used in API chaining.
 @Test
