@@ -4809,6 +4809,72 @@ Isolation : Ensures that concurrent transactions do not interfere with each othe
 Durability : Ensures that once a transaction is committed, it will remain so even in the event of a system failure.
 
 
+--------------->   TO find json path here is the rest assured code
+
+public static void main(String[] args)
+	{
+		RestAssured.baseURI = "https://api.restful-api.dev/objects";
+		
+		Response response = RestAssured.given()
+				.when().get().then().statusCode(200).log().all().extract().response();
+		
+		System.out.println("response");
+		
+		String Jsonresponse = response.asString();
+		
+		JsonPath jsonpath = new JsonPath(Jsonresponse);
+		
+		String id = jsonpath.getString("[3].name");
+		
+		 System.out.println("ID: " + id);	
+				           
+	}
+}
+
+
+--------> Chaining Process in Rest assured
+
+
+
+RestAssured.baseURI = "https://reqres.in/api";
+
+        Response response = given()
+                .header("Content-Type", "application/json")
+                .when()
+                .get("/users/2")  // Request
+                .then()
+                .statusCode(200)  // Assertion
+                .log().body()  // Logging Response
+                .extract().response();  // Extracting Response
+
+        // Extract Data from Response
+        String firstName = response.jsonPath().getString("data.first_name");
+        System.out.println("First Name: " + firstName);
+    }
+}
+
+
+public static void main(String[] args) {
+        RestAssured.baseURI = "https://reqres.in/api";
+
+        String requestBody = "{ \"name\": \"John\", \"job\": \"leader\" }";
+
+        Response response = given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .when()
+                .post("/users")
+                .then()
+                .statusCode(201)
+                .log().body()
+                .extract().response();
+
+        String id = response.jsonPath().getString("id");
+        System.out.println("Created User ID: " + id);
+    }
+}
+
+
 
 
 
