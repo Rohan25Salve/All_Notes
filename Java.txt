@@ -396,3 +396,44 @@ public	        ✔	       ✔	              ✔	                       ✔
 protected	    ✔	       ✔	              ✔ (via inheritance)	       ✖
 default	        ✔	       ✔	              ✖	                       ✖
 private	        ✔	       ✖	              ✖	                       ✖
+
+
+************************ method reference and constructor reference ***********************
+Method references and constructor references are shorthand notations in Java that make code more readable by referring to existing methods or constructors using the :: operator.
+
+1. Method Reference (::)
+A method reference provides a way to refer to a method without executing it. It is a shorter way of writing lambda expressions when a method already exists that performs the required operation.
+
+Code:
+class MathUtil {
+    static int square(int n) {
+        return n * n;
+    }
+}
+import java.util.function.Function;
+public class Main {
+    public static void main(String[] args) {
+        Function<Integer, Integer> squareFunction = MathUtil::square;  // Method reference
+        System.out.println(squareFunction.apply(5));  // Output: 25
+    }
+}
+
+2. Constructor Reference:
+A constructor reference is used to refer to a class constructor without calling it immediately. 
+Syntax:ClassName::new
+
+This is similar to method references but applies to constructors instead. 
+It is mainly used with functional interfaces like Supplier, Function, etc.
+Code:
+import java.util.function.Supplier;
+class Sample {
+    Sample() {
+        System.out.println("Sample Constructor Called");
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Supplier<Sample> sampleSupplier = Sample::new;  // Constructor reference
+        Sample obj = sampleSupplier.get();  // Calls the constructor
+    }
+}
