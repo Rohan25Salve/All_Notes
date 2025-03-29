@@ -1068,4 +1068,78 @@ Let me know if you'd like to explore any of these approaches further!
 
 
 
+
+   *******************************  While doing API Testing, this parameter needs to be checked. ***************************
+
+1️⃣ Status Code Validation
+Does the API return correct HTTP status codes (200, 400, 401, 500, etc.)?
+Test both valid and invalid requests.
+
+2️⃣ Response Time & Performance
+How fast does the API respond under normal and high traffic?
+Test with thousands of requests per second to check scalability.
+
+3️⃣ Authentication & Authorization
+Can unauthorized users access protected endpoints?
+Test with expired, missing, or incorrect tokens.
+
+4️⃣ Data Integrity & Schema Validation
+Is the response structure (JSON/XML) correct?
+Validate against expected data types and formats.
+
+5️⃣ Rate Limiting & Throttling
+What happens if a user makes too many requests too quickly?
+Does the system block, delay, or allow excessive API calls?
+
+6️⃣ Error Handling & Edge Cases
+Does the API return meaningful error messages?
+Test extreme values, null inputs, and unexpected characters.
+
+7️⃣ Concurrency & Multi-Threading
+What happens if multiple users update the same record at the same time?
+Does the API prevent race conditions?
+
+8️⃣ Data Security & Injection Attacks
+Can SQL or XSS injection be performed via API calls?
+Test if sensitive data is exposed in responses.
+
+9️⃣ Backward & Forward Compatibility
+Does the API work after an update without breaking existing integrations?
+Test across older and newer versions.
+
+🔟 Integration with External Systems
+If the API depends on third-party services, what happens if they fail?
+Simulate timeout errors, slow responses, and downtime.
+
+✅ 1. Testing API Authentication & Security:
+ • Interview Question: “How will you test an API that requires authentication?”
+ • Answer:
+ • Check OAuth 2.0, tokens, API keys.
+ • Validate token expiration & refresh mechanism.
+ • Test unauthorized access (401, 403 responses).
+
+✅ 2. Handling Dynamic Data in API Testing:
+ • Interview Question: “How do you validate dynamic API responses?”
+ • Answer:
+ • Use JSONPath for extracting values dynamically.
+ • Validate API response schema using Rest Assured & Postman tests.
+
+✅ 3. API Performance & Load Testing:
+ • Interview Question: “How will you test if an API can handle 1000+ requests per second?”
+ • Answer:
+ • Use JMeter, K6, or Locust for performance testing.
+ • Analyze response time, error rates, and API scalability.
+
+✅ 4. Error Handling & Boundary Testing:
+ • Interview Question: “How will you test API error handling?”
+ • Answer:
+ • Send invalid input, missing fields, and incorrect headers.
+ • Verify API returns proper 400, 422, 500 errors.
+
+✅ 5. API CI/CD & Automation in Pipelines:
+ • Interview Question: “How do you integrate API tests into CI/CD?”
+ • Answer:
+ • Run API tests in Jenkins, GitHub Actions.
+ • Use Dockerized Postman Collections for automation.
+
 									

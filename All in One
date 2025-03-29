@@ -9,13 +9,13 @@ Status code: -
 202 Accepted
 203 Non-Authoritative Information
 204 No Content
-205 Reset Content
+205 Reset Content<<<<<<< patch-8
+
+
 206 Partial Content
 207 Multi-Status
 208 Already Reported
 226 IM Used
-
-
 
 3xx (Redirection):
 300 Multiple Choices
@@ -56,7 +56,7 @@ Status code: -
 
 
 ----->>>>How to validate more than one possible status code using Rest Assured?
-using the Hamcrest Matcher framework’s anyOf() method we can validate more than one possible status code
+Using the Hamcrest Matcher framework’s anyOf() method, we can validate more than one possible status code
 
 given().baseUri("https://restful-booker.herokuapp.com/").when().get('/author').then()
  .statusCode(anyOf(is(STATUS_CODE_OK),is(STATUS_CODE_NOT_FOUND))); 
@@ -73,7 +73,43 @@ given().baseUri("https://restful-booker.herokuapp.com/").when().get('/author').t
 1)Separate test data, test logic, and assertions using a modular approach.
 2)Reduce code duplication by implementing reusable helper methods or classes.
 3)Variable and method names should be meaningful and descriptive.
-4)To make troubleshooting easier, implement effective error handlinuj API to another API)?
+4)To make troubleshooting easier, implement effective error handling API to another API)?
+
+
+
+POJO Class ( Plan old java object) 
+Pojo class for creating JSON payload for API 
+Declare variable as private
+that private variable class through getter and setter method
+
+public class Name {
+    private String firstName;
+    private String lastName;
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+}
+
+
+
+Enum Class:- 
+An Enum Class is just like a class that has a method and attribute
+enum contains Public, Static and Final
+An Enum cannot be used to create an object
+The enum class cannot be extended to other classes, but it is implemented through an interface.
 
 We can pass data using the ITestContext interface of TestNG.This interface provides context or information about the execution of a test suite. This interface has 2 very useful methods getAttribute () and setAttribute(). With the help of these methods, we can set and get the values that will be used in API chaining.
 @Test
@@ -1072,6 +1108,73 @@ Let me know if you'd like to explore any of these approaches further!
 
 ******************************************************************************************************************************************************************
 
+xpath 
+
+1)Tag – Attribute – Value Trio:
+Syntax = //tagname[@attribute=’Value‘]
+Example: //input[@id="username"]
+
+2)Contains:
+Syntax: //tag[contains(@attribute, ‘value‘)]
+Example: //div[contains(@class, "header")]
+
+3)Starts-with:
+Syntax: //tag[starts-with(@attribute, ‘value‘)]
+Example: //a[starts-with(@href, "https://")]
+
+4)Chained XPaths Declarations:
+Example: //div[@class="container"]//p[@id="paragraph"]
+Note: We can chain multiple relative XPath declarations with “//” double slash.
+
+5)XPath with "or" Statement:
+Syntax: //tag[XPath Statement-1 or XPath Statement-2]
+Example: //input[@type="text" or @type="email"]
+
+6)XPath with "and" Statement:
+Syntax: //tag[XPath Statement-1 and XPath Statement-2]
+Example: //input[@type="text" and @name="username"]
+
+7)XPath Text:
+Syntax: //tag[text()=’text value‘]
+Example: //p[text()="Hello, world!"]
+
+8)Ancestor:
+Example: //section[@id=’content’]//ancestor::div
+Step-1- First, it finds the element whose XPath is //section[@id=’content’]
+Step-2- Then, it starts to find all div elements in the node to which the above XPath belongs.
+
+9)Following:
+Example: //div[@class=’fusion-sliding-bar-wrapper’]//following::section
+Step-1- First, it finds this XPath with class attribute: //div[@class=’fusion-sliding-bar-wrapper’]
+Step-2- Then, it starts to find all section elements after that node.
+
+10)Child:
+Example: //div[@id="parent"]/child::span
+Step-1- First, it finds this XPath with id attribute: //div[@id="parent"]
+Step-2- Then, it starts to find all child elements in that node.
+
+11)Preceding:
+Example: //div[@id=’wrapper’]/div[@class=’fusion-sliding-bar-wrapper’]//preceding::li
+Step-1-Select all nodes that come before the current node, find all “li” elements on the page. First, locate the bottom element, then use the preceding with “li” to find all “li” elements, as shown below.
+
+12)Following-sibling:
+Example: //input[@id="username"]/following-sibling::input
+Note: This XPath selects all input elements that are siblings (at the same level in the DOM tree) and come after an input element with the attribute "id" having the value "username".
+
+13)Descendant:
+Example: //div[@id="container"]/descendant::span
+Note: This XPath selects all span elements that are descendants (children, grandchildren, etc.) of a div element with the attribute "id" having the value "container".
+
+14)Parent:
+XPath: //input[@id="username"]/parent::form
+Note:Returns the parent of the current node as shown in the above example.
+
+15)Locate an Element inside Array of Elements:
+Example: (//div[@id="username"])[3]
+Note: The parentheses "( )" are used to group the div elements as an array, and [3] selects the
+
+16)Absolute Xpath
+Example: /html[1]/body[1]/div[2]/div[2]
 
 
 ------>What are the four parameter you have to pass in Selenium?
@@ -2693,6 +2796,12 @@ ConcurrentHashMap is a thread-safe version of HashMap in Java, designed for conc
 
 ************* SOLID Principles ***********************
 SOLID principles in Java are a set of design principles aimed at creating maintainable, scalable, and robust software.
+
+1. Single Responsibility Principle (SRP)
+2. Open/Closed Principle (OCP)
+3. Liskov Substitution Principle (LSP)
+4. Interface Segregation Principle (ISP)
+5. Dependency Inversion Principle (DIP)
 
 1. Single Responsibility Principle (SRP): Class should have one responsibility.
 A class with multiple responsibilities becomes hard to maintain and test because changes in one responsibility might affect others
@@ -4699,6 +4808,72 @@ Atomicity : Ensures that all operations within a transaction are completed succe
 Consistency : Ensures that a transaction brings the database from one valid state to another, maintaining integrity constraints.
 Isolation : Ensures that concurrent transactions do not interfere with each other. Each transaction executes as if it were the only transaction running.
 Durability : Ensures that once a transaction is committed, it will remain so even in the event of a system failure.
+
+
+--------------->   TO find json path here is the rest assured code
+
+public static void main(String[] args)
+	{
+		RestAssured.baseURI = "https://api.restful-api.dev/objects";
+		
+		Response response = RestAssured.given()
+				.when().get().then().statusCode(200).log().all().extract().response();
+		
+		System.out.println("response");
+		
+		String Jsonresponse = response.asString();
+		
+		JsonPath jsonpath = new JsonPath(Jsonresponse);
+		
+		String id = jsonpath.getString("[3].name");
+		
+		 System.out.println("ID: " + id);	
+				           
+	}
+}
+
+
+--------> Chaining Process in Rest assured
+
+
+
+RestAssured.baseURI = "https://reqres.in/api";
+
+        Response response = given()
+                .header("Content-Type", "application/json")
+                .when()
+                .get("/users/2")  // Request
+                .then()
+                .statusCode(200)  // Assertion
+                .log().body()  // Logging Response
+                .extract().response();  // Extracting Response
+
+        // Extract Data from Response
+        String firstName = response.jsonPath().getString("data.first_name");
+        System.out.println("First Name: " + firstName);
+    }
+}
+
+
+public static void main(String[] args) {
+        RestAssured.baseURI = "https://reqres.in/api";
+
+        String requestBody = "{ \"name\": \"John\", \"job\": \"leader\" }";
+
+        Response response = given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .when()
+                .post("/users")
+                .then()
+                .statusCode(201)
+                .log().body()
+                .extract().response();
+
+        String id = response.jsonPath().getString("id");
+        System.out.println("Created User ID: " + id);
+    }
+}
 
 
 

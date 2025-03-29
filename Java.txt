@@ -396,3 +396,28 @@ public	        ✔	       ✔	              ✔	                       ✔
 protected	    ✔	       ✔	              ✔ (via inheritance)	       ✖
 default	        ✔	       ✔	              ✖	                       ✖
 private	        ✔	       ✖	              ✖	                       ✖
+
+***************** Supplier and predicate *********************
+Supplier and Predicate are functional interfaces from the java.util.function package, widely used in automation testing for test data generation, validations, and conditional logic.
+
+Supplier<T>(Lazy Evaluation, Dynamic Data Generation):
+Supplier<T> is a functional interface that does not take any input but returns a value of type T.
+It is used for :
+1) Generating dynamic test data (e.g., random emails, usernames, IDs).
+2) Providing default values for missing test inputs.
+Code:
+ Supplier<String> randomEmailSupplier = () -> "user" + System.currentTimeMillis() + "@test.com";
+        // Calling get() to retrieve values
+        System.out.println("Generated Email 1: " + randomEmailSupplier.get());
+Output: Generated Email 1: user1711652323456@test.com  
+
+Predicate<T> (Conditional Checks, Assertions, Filtering):
+Predicate<T> is a functional interface that takes an input of type T and returns a boolean (true or false) 
+It is used for:
+1) Validating API responses (e.g., checking status codes, response bodies).
+2) Custom assertions without Assert.assertEquals().
+3) Filtering test data based on conditions.
+Code: 
+Predicate<Integer> isStatusCodeOK = statusCode -> statusCode == 200;
+System.out.println("Is Status 200? " + isStatusCodeOK.test(200))
+Output: True/False
