@@ -1103,6 +1103,33 @@ Let me know if you'd like to explore any of these approaches further!
 	Rate Limiting and Brute Force Attack Testing -->  Ensure the API implements rate-limiting to prevent brute force attacks.
 
 
+***************** Difference between Wiremock and Mockito ******************
+
+WireMock: 
+Used to mock HTTP APIs (e.g., REST, SOAP services) for integration and system tests.
+Focused on mocking external HTTP services or APIs.	
+Simulate a real HTTP server for testing API calls.	
+Operates at the network layer, mimicking an HTTP server.	
+Sets up endpoints with predefined request-response behavior.	
+Typically used in integration tests.	
+Supports HTTP and HTTPS.	
+Define request-response pairs with HTTP methods, headers, and payloads.	
+Mocking a REST API endpoint for testing an HTTP client.	
+Requires a WireMock server (standalone, in-memory, or Docker).	
+Perfect for testing how an application interacts with external APIs.	
+
+Mockito:
+Used to mock and simulate behavior of Java objects in unit tests.
+Focused on mocking dependencies within the application (classes or interfaces).
+Mock internal components like services, repositories, or utility classes in isolation.
+Operates at the code level, mocking Java objects and methods.
+Creates mock objects and defines the behavior of their methods
+Typically used in unit tests.
+Works within Java only (does not directly deal with protocols like HTTP).
+Define return values, exceptions, or method calls using method stubbing.
+Mocking a service or repository in a service layer test.
+Requires the Mockito framework only (embedded in test code).
+Not suited for testing external systems directly.
 
 
 
