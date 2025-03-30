@@ -1,0 +1,165 @@
+***************************** TestNG ************************************
+
+TestNG is a  testing framework and is the advance version of Junit. designed to make it easier to write and manage tests in Java
+Usage:
+TestNG uses annotations to define test methods and configure the testing process. Common annotations include:
+
+
+Advantages of TestNG:
+1) Grouping
+2) Parallel Test Execution
+3) Assertions
+4) Data-Driven Testing
+5) DependsOnMethods
+6) we can skip test using enabled=false
+7) timeOut
+8) @Factory 
+9) Listeners
+10) we can run pack through testNG.xml file
+11) HTML, XML testNg report
+12)Annoatation  --> @Test ,@BeforeMethod ,@AfterMethod,@BeforeClass,@AfterClass,@BeforeSuite / @AfterSuite
+
+********************** Difference between @Factory and @DataProvider **********************
+Feature	                                        @Factory	                                                                 @DataProvider
+Purpose	                     Creates multiple instances of the test class.	                                   Provides multiple sets of data for a test method.
+How It Works	         Returns an array of objects (test class instances).	                              Returns a 2D array or Iterator<Object[]> (data sets).
+Scope	                 Creates instances of entire test classes.	                                          Provides data for individual test methods.
+When to Use	             When you need to run tests with different configurations.	                      When you need to run the same test with multiple data inputs.
+Execution	              TestNG runs test methods for each test class 	                                    TestNG runs the test method for each data set provided 
+                            instance created by the factory.                                                              by the data provider.
+							
+							
+							
+ **************************** testNg.xml file ***********************************************
+ <?xml version="1.0" encoding="UTF-8"?>
+<suite name="Test Suite" parallel="tests" thread-count="4">
+    <test name="Test Group A" >
+        <groups>
+            <run>
+                <include name="groupA"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.example.TestClassA"/>
+			<class name="com.example.TestClassB"/>
+        </classes>
+    </test>
+
+
+</suite>
+
+******************** testNG Listeners****************
+
+listeners are used to track the execution of tests and perform actions based on the results
+
+ITestListener:  Listens to test method execution events (start, success, failure, skip).
+
+public class TestListener implements ITestListener {
+
+    @Override
+    public void onTestStart(ITestResult result) {
+        System.out.println("Test Started: " + result.getName());
+    }
+
+    @Override
+    public void onTestSuccess(ITestResult result) {
+        System.out.println("Test Passed: " + result.getName());
+    }
+
+    @Override
+    public void onTestFailure(ITestResult result) {
+        System.out.println("Test Failed: " + result.getName());
+    }
+
+}
+
+************* IRetryAnalyzer ********************
+
+IRetryAnalyzer is an interface in TestNG that allows you to specify retry logic for test methods that fail.
+
+
+public class RetryAnalyzer implements IRetryAnalyzer {
+
+    private int retryCount = 0;
+    private static final int maxRetryCount = 3;  // Max retry attempts
+
+    @Override
+    public boolean retry(ITestResult result) 
+	{
+        if (retryCount < maxRetryCount) 
+		{
+            retryCount++;
+            System.out.println("Retrying test " + result.getName() + " for the " + retryCount + " time(s).");
+            return true;  
+        }
+        return false; 
+    }
+}
+
+************** ISuiteListerner ************************
+Listens to suite execution events (suite start, suite finish).
+
+<suite name="Test Suite">
+    <listeners>
+        <listener class="com.example.MyTestListener"/>
+    </listeners>
+    <test name="Test">
+        <classes>
+            <class name="com.example.TestClass"/>
+        </classes>
+    </test>
+</suite>
+
+**************** Parallel execution at method level *****************
+
+<suite name="Parallesuite" parallel="methods" thread-count="3">
+<test name="Test1">
+<classes>
+ 	<class name="packagename.clasname"/>
+</classes>
+</test>
+</suite>
+
+**************** Parallel execution at method level *****************
+
+<suite name="Parallesuite" parallel="methods" thread-count="3">
+<test name="Test1">
+<classes>
+ 	<class name="packagename.clasname"/>
+</classes>
+</test>
+</suite>
+
+************** Parallel execution at class level ********************
+<suite name="parallelsuite" parallel="classes" thread-count="3">
+<test name="test1">
+<classes>
+<class name="packagename.classname1"/>
+<class name="packagename.classname2"/>
+</classes>
+</test>
+</suite>
+
+************ Parallel execution at test level *******************
+<suite name="parallesuite" parallel="test" thread-count="3">
+<test name="test1">
+<classes>
+<class name="packagename.classname">
+</classes>
+</test>
+
+<test name="test2">
+<classes>
+<class name="packagename.classname">
+</classes>
+</test>
+</suite>
+
+************ Parallel execution at suite level ***************
+
+<suite name="Parentsuite" parallel="suites" thread-count=2>
+<suite-files>
+<suite-file path="Parallelsuite1.xml">
+<suite-file path="Parallelsuite2.xml">
+</suite-files>
+</suite>
