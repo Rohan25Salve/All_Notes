@@ -3936,6 +3936,86 @@ System.out.println("Is Status 200? " + isStatusCodeOK.test(200))
 Output: True/False
 
 
+**************** Direct Dependency and Indirect Dependency **********************
+Direct Dependency
+A direct dependency is a library that your project explicitly depends on. You declare it in your pom.xml (Maven) or build.gradle (Gradle), and your code directly references it.
+Example:
+<dependencies>
+    <!-- Direct dependency -->
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.12.0</version>
+    </dependency>
+</dependencies>
+
+
+Indirect (Transitive) Dependency
+An indirect dependency (or transitive dependency) is not explicitly declared in your project but is required by one of your direct dependencies.
+Example: If commons-lang3 depends on another library, that library becomes an indirect dependency.
+[INFO] --- maven-dependency-plugin:3.2.0:tree ---
+[INFO] com.example:my-app:jar:1.0
+[INFO] ├── org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] │   └── org.apache.commons:commons-text:jar:1.9:compile  (indirect)
+
+************ Custom Exception in Java ************************
+A custom exception in Java is a user-defined exception that extends either "Exception" (checked exception) or "RuntimeException" (unchecked exception). It allows you to define specific error-handling logic for your application.
+
+1) Creating a Custom Exception using Checked Exception
+- Checked exceptions must be handled using try-catch or declared with throws.
+- Checked exceptions must be explicitly handled.
+
+Code example:
+// Define a checked exception
+class InvalidAgeException extends Exception {
+    public InvalidAgeException(String message) {
+        super(message);
+    }
+}
+
+public class CustomCheckedExceptionExample {
+    public static void main(String[] args) {
+        try {
+            validateAge(15); // This will throw an exception
+        } catch (InvalidAgeException e) {
+            System.out.println("Exception caught: " + e.getMessage());
+        }
+    }
+
+    static void validateAge(int age) throws InvalidAgeException {
+        if (age < 18) {
+            throw new InvalidAgeException("Age must be 18 or above.");
+        }
+        System.out.println("Valid age!");
+    }
+}
+
+2) Unchecked Exception (Extends RuntimeException)
+- Unchecked exceptions do not require explicit handling.
+- Unchecked exceptions can be thrown without try-catch or throws
+
+// Define an unchecked exception
+class InvalidInputException extends RuntimeException {
+    public InvalidInputException(String message) {
+        super(message);
+    }
+}
+
+public class CustomUncheckedExceptionExample {
+    public static void main(String[] args) {
+        processInput(-5); // This will throw an exception
+    }
+
+    static void processInput(int value) {
+        if (value < 0) {
+            throw new InvalidInputException("Input value cannot be negative.");
+        }
+        System.out.println("Valid input: " + value);
+    }
+}
+
+
+
 ********************************************************************************************************************************************************
 
  *What is Jenkins?
