@@ -5045,6 +5045,197 @@ public static void main(String[] args) {
 }
 
 
+-------------------------Scenario based question in API-------------------------
+
+
+
+Q1 ) You are testing an API that returns a 500 Internal Server Error. How will you debug this issue?
+ Answer:
+🔹 Check Logs & Response Details:
+Validate the API request URL, headers, body, and parameters.
+Capture response details: response body, error messages, and stack trace (if available).
+🔹 Verify API Behavior:
+Check if the API works with valid and invalid inputs.
+Try sending a request without headers or body to see the response.
+🔹 Validate API Dependencies:
+If the API is dependent on DB or external service, check DB connection, status of dependent services, or integration failures.
+🔹 Use Postman/Swagger for Quick Debugging:
+Send the request using Postman or Swagger UI and compare results.
+Check server logs and console errors to identify the root cause.
+ Expected Fix:
+If it’s a server-side issue, escalate to developers with error logs.
+If it's a client issue, ensure proper payload, headers, and authentication.
+
+
+Q2 )Your API frequently returns 429 Too Many Requests. How will you handle this issue in automation?
+Ans :-   Understand Rate Limits:
+Check API documentation to find rate limit policies (e.g., 100 requests per minute).
+Identify if the API is using Retry-After headers to indicate when requests can be retried.
+ Implement Retry Mechanism:
+If the API supports retries, use exponential backoff to retry after a delay.
+for (int i = 0; i < 5; i++) {
+    Response response = RestAssured.get("https://api.example.com/data");
+    if (response.statusCode() == 429) {
+        Thread.sleep(2000 * (i + 1));  // Exponential backoff
+    } else {
+        break;
+    }
+}
+🔹 Optimize API Calls:
+Avoid unnecessary API calls. Cache responses instead of making duplicate requests.
+Use pagination to fetch large datasets efficiently.
+Request Throttling:
+Configure API testing scripts to send requests at a controlled rate (e.g., Thread.sleep() or JMeter thread delay).
+
+Q3) Your API tests fail because the authentication token expires every 30 minutes. How will you handle this in automation?
+Ans:-  Use Token Refresh Mechanism:
+Instead of hardcoding tokens, fetch a new token dynamically.
+ Handle Expiry Gracefully:
+When a 401 Unauthorized error occurs, automatically generate a new token and retry the request.
+
+
+Q4)  How do you automate testing for an API that allows file uploads?
+Ans:- 🔹 Verify API Endpoint & Request Type:
+Check if the API supports multipart/form-data.
+Validate max file size, supported formats (PDF, JPEG, etc.), and authentication.
+ Validation Steps:
+✅ Ensure API returns 200 OK
+✅ Validate response contains uploaded file name
+✅ Check for error handling (e.g., upload large/unsupported files)
+
+Q5) What happens if the API restricts file sizes? How do you test this?
+Answer:
+🔹 Check API Documentation for Size Limits
+Example: API only supports max 10MB files.
+Try uploading a file larger than 10MB and validate response.
+Expected Outcome: API should return 413 Payload Too Large
+
+Q6) How do you verify the API restricts unsupported file types?
+Ans:-
+ Check API Restrictions
+Example: API supports only JPEG, PNG, PDF but rejects .exe or .txt files.
+API should reject invalid formats with 400 Bad Request.
+
+Q7) How do you automate testing for an API that allows file downloads?
+Ans:- Verify Response & Content Type
+Ensure the API responds with 200 OK
+Validate Content-Type (application/pdf, image/png, etc.)
+Compare file size & checksum to confirm integrity
+Ensure downloaded file matches expected format & size.
+
+Q8)How do you validate that a downloaded file is not corrupted?
+Ans:-  Compare Checksum (MD5 or SHA256)
+Before downloading, get the expected checksum from API response.
+After downloading, calculate checksum and compare.
+
+Q9) How to simulate 1000 cocurenet user hitting an API?
+Ans:- To simulate 1000 concurrent users making requests to an API, you need a performance testing tool like:
+✅ JMeter
+✅ Gatling
+
+Q10)How can you calculate ROI for automation?
+Ans:- 
+ROI (Return on Investment) helps justify automation by comparing its cost and benefits.
+                 Savings from Automation−Automation Cost
+ ROI =       ------------------------------------------------  x 100
+​                             Automation Cost
+Q11) As a qa lead what are the check list for code review?
+Ans:-  Functional & Business Logic
+🔹 Does the code meet the business requirements?
+🔹 Are all scenarios handled (positive, negative, edge cases)?
+🔹 Are there proper validations for user inputs and API responses?
+
+Exception Handling & Logging
+🔹 Are try-catch blocks used properly for error handling?
+🔹 Are exceptions logged with meaningful messages?
+🔹 Is logging used at appropriate levels (INFO, DEBUG, ERROR)?
+🔹 Are logs clear, informative, and not exposing sensitive data?
+
+Version Control & Documentation
+🔹 Is the code properly committed with meaningful commit messages?
+🔹 Are merge conflicts resolved before merging to main branch?
+🔹 Is the documentation clear for setup, APIs, and complex logic?
+🔹 Are proper comments added where necessary?
+
+Q12) how to perform cross browser testing?
+Ans:- Selenium WebDriver allows running tests on multiple browsers.
+How It Works?
+Uses TestNG @Parameters to run tests in different browsers.
+Accepts browser names from TestNG XML file and executes tests accordingly.
+
+Run Tests in Parallel:- o run tests in multiple browsers simultaneously, modify the TestNG XML:
+<suite name="ParallelCrossBrowserSuite" parallel="tests" thread-count="3">
+    <test name="ChromeTest">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="CrossBrowserTest"/>
+        </classes>
+    </test>
+
+    <test name="FirefoxTest">
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="CrossBrowserTest"/>
+        </classes>
+    </test>
+</suite>
+
+Q13) How do you handel browser cookies and session managememt?
+Ans:-  Cookie newCookie = new Cookie("user", "12345");
+        driver.manage().addCookie(newCookie);
+       -> get cookiese
+       -> delet cookiese
+       -> Get a Specific Cookie
+       ->  Delete a Specific Cookie
+ Handeling Session Managment 
+   Login once & store session cookies
+   Use stored cookies in subsequent tests to avoid logging in again
+
+Q14) test ng reports
+Ans:- 
+Default TestNG Reports – Automatically generated HTML reports.
+Custom TestNG Reports – Using IReporter or ITestListener interfaces.
+public class CustomReport implements IReporter {
+    public void generateReport(List<XmlSuite> xmlSuites, List<ISuite> suites, String outputDirectory) {
+        System.out.println("Custom Report Generated!");
+    }
+}
+Extent Reports – Advanced reporting with logs, screenshots, and graphs.
+First we need to add dependency
+
+Q15) How to you identify root cause analysis in testing of any production bugs 
+Ans:- Understand the Issue
+  -> Gather detailed information about the bug.
+  -> Check logs, screenshots, user complaints, and error messages.
+  ->  Replicate the issue in a lower environment (if possible).
+      Perform Log Analysis & Debugging
+  -> Check server logs, database logs, application logs.
+  ->Use debugging tools (e.g., Postman for APIs, Chrome DevTools for UI).
+  ->If necessary, roll back the latest deployment and test.
+      Identify and Fix the Root Cause
+Code Issue? → Fix the bug and write test cases to prevent reoccurrence.
+Infrastructure Issue? → Fix configurations or server settings.
+Process Issue? → Improve CI/CD pipelines or testing coverage.
+
+Q16) let say you have login page and captcha then how i can handel this kind of scenario in selenium
+  Ans:-  
+Disable CAPTCHA in the Test Environment
+Use Manual Intervention .Use Thread.sleep() or Scanner to take input from the tester.
+If CAPTCHA appears only on first login, log in manually, store cookies, and reuse them in Selenium
+Some browser extensions can auto-fill CAPTCHA.
+Use Buster: CAPTCHA Solver for Humans (Chrome Extension)
+Load the extension in Selenium's ChromeOptions.
+
+Q17) Where we use chrome option
+Ans:-  ChromeOptions is a class in Selenium WebDriver used to customize and configure the behavior of the Chrome browser. 
+1) . Run Chrome in Headless Mode (No UI)
+2) . Open Chrome in Incognito Mode
+3)  Disable Browser Notifications (Pop-ups)
+4) . Ignore SSL Certificate Errors
+5) . Load Chrome with a Specific User Profile
+6) Start Chrome in Maximized Window
+7)  Disable Extensions
+
 
 
 
