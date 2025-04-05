@@ -54,6 +54,26 @@ Status code: -
 510 Not Extended
 511 Network Authentication Required
 
+              ******************** Status Code ****************
+			  
+200	OK	                            Request succeeded.	                                    No action needed.
+201	Created	                        Resource was successfully created.	                    Ensure the resource creation logic.
+204	No Content	                    Request succeeded, no content to return.	            Ensure the behavior matches expectations.
+HTTP 202 Accepted status code  --->   server has received and understood the request
+400	Bad Request	                    Invalid request syntax or parameters.	                Verify request payload, headers, and parameters.
+401	Unauthorized	                Missing or invalid authentication token.	            Check and provide valid credentials.
+403	Forbidden	                    Client lacks permissions.	                            Ensure correct permissions and roles.
+404	Not Found	                    Resource not found on the server.	                    Verify the endpoint or resource ID.
+429	Too Many Requests	            Client has exceeded request limits.	                    Implement retry logic or reduce request frequency.
+405 Method not allow
+409 conflict
+
+500	Internal Server Error	        Unexpected server error.	                            Check server logs and debug backend logic.
+502	Bad Gateway	                    Invalid response from an upstream server.	            Ensure upstream servers are functional.
+503	Unavailable Service             Unavailable	Server is overloaded or under maintenance.	Retry after some time or check server status.
+504	Gateway Timeout	                Upstream server didn't respond in time.	Optimize server performance or increase timeout.
+501 Not Implemente
+
 
 ----->>>>How to validate more than one possible status code using Rest Assured?
 Using the Hamcrest Matcher framework’s anyOf() method, we can validate more than one possible status code
@@ -855,26 +875,6 @@ Access Tokens are typically short-lived and expire after a certain period.
 Refresh Tokens are long-lived and are used to get new access tokens once they expire.
 
 
-              ******************** Status Code ****************
-			  
-200	OK	                            Request succeeded.	                                    No action needed.
-201	Created	                        Resource was successfully created.	                    Ensure the resource creation logic.
-204	No Content	                    Request succeeded, no content to return.	            Ensure the behavior matches expectations.
-HTTP 202 Accepted status code  --->   server has received and understood the request
-400	Bad Request	                    Invalid request syntax or parameters.	                Verify request payload, headers, and parameters.
-401	Unauthorized	                Missing or invalid authentication token.	            Check and provide valid credentials.
-403	Forbidden	                    Client lacks permissions.	                            Ensure correct permissions and roles.
-404	Not Found	                    Resource not found on the server.	                    Verify the endpoint or resource ID.
-429	Too Many Requests	            Client has exceeded request limits.	                    Implement retry logic or reduce request frequency.
-405 Method not allow
-409 conflict
-
-500	Internal Server Error	        Unexpected server error.	                            Check server logs and debug backend logic.
-502	Bad Gateway	                    Invalid response from an upstream server.	            Ensure upstream servers are functional.
-503	Unavailable Service             Unavailable	Server is overloaded or under maintenance.	Retry after some time or check server status.
-504	Gateway Timeout	                Upstream server didn't respond in time.	Optimize server performance or increase timeout.
-501 Not Implemente
-
 
 ** What is the difference between 401 and 403?
 
@@ -1545,17 +1545,17 @@ Advantages of TestNG:
 3) Assertions
 4) Data-Driven Testing
 5) DependsOnMethods
-6) we can skip test using enabled=false
+6) we can skip the test using enabled=false
 7) timeOut
 8) @Factory 
 9) Listeners
-10) we can run pack through testNG.xml file
+10) We can run pack through the testNG.xml file
 11) HTML, XML testNg report
 12)Annoatation  --> @Test ,@BeforeMethod ,@AfterMethod,@BeforeClass,@AfterClass,@BeforeSuite / @AfterSuite
 
 Difference between @Factory and @DataProvider
 Feature	                                        @Factory	                                                                 @DataProvider
-Purpose	                     Creates multiple instances of the test class.	                                   Provides multiple sets of data for a test method.
+Purpos                    Creates multiple instances of the test class.	                                        Provides multiple sets of data for a test method.
 How It Works	         Returns an array of objects (test class instances).	                              Returns a 2D array or Iterator<Object[]> (data sets).
 Scope	                 Creates instances of entire test classes.	                                          Provides data for individual test methods.
 When to Use	             When you need to run tests with different configurations.	                      When you need to run the same test with multiple data inputs.
