@@ -3861,10 +3861,10 @@ When you override equals(), you are redefining how objects are compared for equa
 If you don't also override hashCode(), the default implementation (from Object) may produce inconsistent behavior 
 in hashed collections,as it doesn't align with your custom equality logic.
 
-
+Access Modifier
 Modifier	Same Class	Same Package	Subclass (Other Package)	Other Package
 public	        ✔	       ✔	              ✔	                       ✔
-protected	    ✔	       ✔	              ✔ (via inheritance)	       ✖
+protected	✔	       ✔	              ✔ (via inheritance)     ✖
 default	        ✔	       ✔	              ✖	                       ✖
 private	        ✔	       ✖	              ✖	                       ✖
 
