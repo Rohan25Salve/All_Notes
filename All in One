@@ -1204,6 +1204,21 @@ Note: The parentheses "( )" are used to group the div elements as an array, and 
 Example: /html[1]/body[1]/div[2]/div[2]
 
 
+************ Key Changes in Selenium 4.0 ******************
+1. W3C WebDriver Standard
+2. Relative Locators: New methods: above(), below(), toLeftOf(), toRightOf(), near().
+3. Improved Selenium Grid: Standalone Mode, Distributed Mode,Docker Support,Observability
+4. Enhanced Wait Mechanisms: The Duration class is used instead of TimeUnit.
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("username")));
+5. Enhanced Action Class: Selenium 4 introduced a more robust Actions API for complex user interactions 
+like drag-and-drop, multi-touch, and keypress sequences.
+6.Improved Screenshot Capabilities
+
+
+
+
+
 ------>What are the four parameter you have to pass in Selenium?
 Four parameters that you have to pass in Selenium are
 
