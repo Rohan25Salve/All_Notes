@@ -1204,6 +1204,25 @@ Note: The parentheses "( )" are used to group the div elements as an array, and 
 Example: /html[1]/body[1]/div[2]/div[2]
 
 
+
+
+
+***********************************************************************
+
+
+𝗤: 𝗛𝗼𝘄 𝘁𝗼 𝗛𝗮𝗻𝗱𝗹𝗲 𝗛𝗶𝗱𝗱𝗲𝗻 (𝗗𝗶𝘀𝗮𝗽𝗽𝗲𝗮𝗿𝗲𝗱) 𝗘𝗹𝗲𝗺𝗲𝗻𝘁𝘀 𝗶𝗻 𝗔𝘂𝘁𝗼𝗺𝗮𝘁𝗶𝗼𝗻.
+𝗔𝗡𝗦:
+One of the challenges I faced in my initial days was handling hidden elements especially the ones that disappear during actions like searching. 
+There are many solutions out there, but one I recently discovered has been especially effective using the "Emulate a Focused Page" feature. This common issue often pops up in web apps particularly those built with frameworks like React during interactions like dropdowns or autocomplete search suggestions.
+
+𝑯𝒆𝒓𝒆’𝒔 𝒉𝒐𝒘 𝒊𝒕 𝒘𝒐𝒓𝒌𝒔:
+--Go to the site you are working on.
+--Open DevTools and select the overall DOM.
+--Press Ctrl + Shift + P (or Command + Shift + P on Mac) to bring up the Command Menu.
+--Type and select “Emulate a Focused Page”.
+--Once this is active, the disappearing elements will stay visible, allowing you to inspect them properly.
+
+
 ************ Key Changes in Selenium 4.0 ******************
 1. W3C WebDriver Standard
 2. Relative Locators: New methods: above(), below(), toLeftOf(), toRightOf(), near().
