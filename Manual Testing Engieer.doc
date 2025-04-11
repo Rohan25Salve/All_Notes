@@ -106,7 +106,10 @@ Entry Criteria ->  Stable Application Build, Automation Framework ,Automation To
 Exit  Criteria -> Script Execution Completion,Defect Verification,Test Coverage,Regression Results,Reports Generation,Framework Stability,Stakeholder Approval
 
 
+Priority vs. Severity
 
+Priority: How urgent it is to fix a bug based on project needs.
+Severity: How much the bug impacts the user or system.
 
 
 
