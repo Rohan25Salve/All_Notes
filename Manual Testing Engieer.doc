@@ -155,4 +155,159 @@ Key Points of DOD:
 ✅ No major bugs or issues exist.
 ✅ The feature is deployed and documented.
 
+***************  Test Strategy  *********************
+Definition: A high-level document that defines the approach, objectives, and overall guidelines for testing activities
+A test strategy is typically used by QA managers or senior stakeholders to standardize 
+testing processes across teams and ensure alignment with organizational goals.
+Key Components of a Test Strategy:
+Testing Objectives
+Testing Scope
+Testing Approach
+Tools and Technologies
+Test Environment
+Risk Management
+Metrics and Reporting
+
+****************** Test Plan  **********************
+Definition: A detailed document that outlines and provide a roadmap for testing activities, ensuring that all necessary tasks are completed.
+A test plan is typically created by the QA lead or test manager for a specific release of a product,
+ detailing the step-by-step activities for testing.
+Key Components of a Test Plan
+Test Objectives
+Test Scope
+Test Deliverables
+Testing Schedule
+Roles and Responsibilities
+Test Environment Requirements
+Entry and Exit Criteria
+Risks and Contingencies
+
+*************** Entry and Exit Criteria *****************
+Entry Criteria:
+Entry criteria are the conditions that must be met before automation testing can begin. These conditions help ensure that the testing process is 
+efficient and avoids wasted effort.
+
+Exit Criteria:
+Exit criteria are the conditions that must be fulfilled before the automation testing process can be concluded. 
+These ensure that testing objectives are met and the application is ready for the next stage.
+
+******************* Regression Testing anf Retesting **********************
+
+Regression Testing:
+Regression testing is performed to ensure that new changes, such as enhancements, bug fixes, or updates, have not adversely affected
+the existing functionality of the application.
+Its is Performed After changes like bug fixes, enhancements, or updates.
+Performed multiple times throughout development.
+
+Objective:
+Verify that the application works as expected after changes.
+Ensure stability of the unchanged parts of the system.
+Scope: Broad, covering both affected and unaffected areas.	
+
+Retesting:
+Retesting is performed to verify that specific bugs or issues reported earlier have been fixed.
+It is performed After the reported defects are fixed.
+Performed only after defect fixes.
+
+Objective:
+Confirm that the reported defect is resolved.
+Validate the exact change without considering the surrounding system.
+Scope: Narrow, focused on specific failed test cases.
+
+*********************** Test Document  **************************
+test document provides a structured approach to managing and executing the testing lifecycle for a software application. 
+It outlines the test strategy, scope, objectives, entry and exit criteria, test cases, and deliverables.
+
+
+************************ Time estimation *********************
+Time estimation is the process of predicting the duration required to complete a task, activity, or project. 
+It is essential for planning, resource allocation, and setting realistic expectations. 
+Accurate time estimation involves understanding the scope, complexity, and dependencies of tasks.
+
+Steps for Time Estimation:
+1)Understand the Scope
+2)Break Down Tasks
+3)Assign Effort
+4)Add Buffers
+5)Validate Estimates
+
+********************** Exploratory Testing ********************
+Exploratory testing is a type of software testing where testers simultaneously design, execute, and learn about the system under 
+test without predefined test cases. It emphasizes the tester's creativity, experience, and intuition to identify issues that might not be 
+covered by formal testing methods.
+
+-----How to Perform Exploratory Testing
+1) Understand the Application
+2) Define Charters
+3) Explore and Test
+4) Document Findings
+5)Review and Repeat
+
+*******************************************************************************************************************************
+
+What is SDLC ? 
+1.Planning:
+	In this initial phase we define the project's scope, goals, and objectives, as well as identify the resources and 
+	tools needed for the project.
+2. Requirements Analysis:
+	In this phase, we gather and analyzes the requirements from stakeholders to understand what the software should
+	do and how it should function.
+3. Design:
+	We create the software architecture and design test cases
+4. Implementation:
+	In this phase we start with writing the code and building the software based on the design specifications.
+5. Testing:
+	During this phase, the software is rigorously tested to identify and fix bugs and we ensure that it meets the 
+	requirements.
+6. Deployment:
+	Once the software is tested and ready, it's deployed to the target environment and made available to users.
+7. Maintenance:
+	After deployment, the software is maintained to ensure it continues to function correctly and to address any 
+	issues that arise.
+
+
+********************************************************************************************************* 
+
+										STLC
+													
+1. Requirement Analysis:
+in t phase involves understanding the product requirements, including both functional and non-functional requirements, to determine what needs to be tested. 
+2. Test Planning:
+This phase focuses on creating a test strategy, including defining the scope, objectives, resources, and schedule for the testing process. 
+3. Test Case Development:
+In this phase, test cases are created to cover different scenarios and conditions, ensuring thorough testing. 
+4. Test Environment Setup:
+This phase involves setting up the necessary hardware, software, and network resources to create a suitable environment for executing the tests. 
+5. Test Execution:
+This is the core phase where the test cases are executed, and the results are recorded. 
+6. Defect Reporting:
+Any issues or defects found during test execution are documented and reported, providing feedback to the development team. 
+7. Test Closure:
+This final phase involves evaluating the entire testing process, documenting the results, and identifying lessons learned to improve future testing efforts. 
+
+************************* Severity and Priority *************************************
+Severity (Impact of the bug): Describes how serious the bug is in terms of the application's functionality.
+Usually set by the Tester
+Types of Severity:
+Critical – System crash, data loss, no workaround.
+High – Major functionality broken, no workaround.
+Medium – Minor functionality not working properly, workaround exists.
+Low – Cosmetic issues, spelling mistakes, UI misalignments.
+
+Priority (Urgency to fix the bug): Describes how soon the bug should be fixed from a business point of view.
+Usually set by the Project Manager/Product Owner/Developer.
+Types of Priority:
+High – Needs to be fixed immediately.
+Medium – Should be fixed in the normal development cycle.
+Low – Can be fixed later; not urgent.			Priority			Example
+
+
+Severity			Priority			Example
+High				High				Login button not working in production.
+High				Low					App crashes when a rare edge case occurs.
+Low					High				Company logo is incorrect on homepage.
+Low					Low					Typo in the "About Us" section.
+
+
+
 
