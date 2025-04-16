@@ -248,6 +248,9 @@ for (int i = 0; i < 20; i++) {
     }
 }
 
+
+
+
 ------>>>>>If an API returns paginated responses, how would you validate all the results?
 
 Iterate through all pages, accumulating the results, and validate them collectively.
@@ -454,7 +457,7 @@ What is the content type in oAuth2.0
          2. Put use as a Updating or creating a resource with a known identifier.
 		 3. Put use a post 
 		 4. PUT is idempotent. Repeating the same PUT request results in the same resource state.
-		 
+		 5.An idempotent API is one where making the same request multiple times has the same effect as making it once.
 		 
 RequestSpecification ---->
 A RequestSpecification defines the common configuration for requests, like headers, 
