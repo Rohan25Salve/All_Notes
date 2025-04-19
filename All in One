@@ -2448,7 +2448,39 @@ mvn clean test
 Use the Cucumber-JVM parallel plugin or a test runner like TestNG.
 Example with Maven Surefire plugin:
 Add the cucumber-jvm-parallel-plugin in pom.xml, then configure the parallel threads.
-  
+
+JUNIT :- 
+  import org.junit.platform.suite.api.*;
+
+	@Suite
+	@IncludeEngines("cucumber")
+	@SelectClasspathResource("features")
+	@ConfigurationParameter(key = "cucumber.glue", value = "stepdefs")
+	@ConfigurationParameter(key = "cucumber.execution.parallel.enabled", value = "true") // 💥 Enable parallel
+	public class JUnit5ParallelRunner {}
+
+TESTNG :- 
+
+import io.cucumber.testng.AbstractTestNGCucumberTests;
+import io.cucumber.testng.CucumberOptions;
+import org.testng.annotations.DataProvider;
+
+@CucumberOptions(
+    features = "src/test/resources/features",
+    glue = "stepdefs",
+    plugin = {"pretty", "html:target/cucumber-report.html"},
+    tags = "@smoke"
+)
+public class TestNGParallelRunner extends AbstractTestNGCucumberTests {
+
+    @Override
+    @DataProvider(parallel = true) // 💥 Enables parallel execution
+    public Object[][] scenarios() {
+        return super.scenarios();
+    }
+}
+
+
   
   *************************   How do you integrate Cucumber reports with a test management tool like JIRA?  ********************
 
@@ -2520,9 +2552,28 @@ Structure: Organizes test cases with Given-When-Then format.
 Traceability: Maps user requirements to test cases.
 Reusability: Allows sharing steps between scenarios.
 
+differnce between BDD vs TDD 
 
 BDD ---> emphasizes communication and collaboration, focusing on the behavior of the system.
 TDD ---> focuses on writing tests before code and improving code quality through iterative development.
+
+TDD – Test-Driven Development
+TDD is a software development approach where tests are written before writing the actual code.
+Process:
+1) Write a test for a small piece of functionality.
+2) Run the test – it fails (since the code doesn’t exist yet).
+3) Write just enough code to make the test pass.
+4) Refactor the code to improve quality.
+5) Repeat
+
+BDD – Behavior-Driven Development
+BDD is an extension of TDD that focuses on the behavior of the application from the end-user’s perspective, using natural language to describe tests.
+Process:
+1) Write scenarios in plain English using Given-When-Then format.
+2) Convert them into step definitions.
+3) Write code to make those steps pass.
+4) Test verifies system behavior.
+
 
 
 **************** What is dependency injection in cucumber ********************
@@ -3871,6 +3922,63 @@ this.resource=resource;
 public String getResource()
 {
 return resource;
+}
+********************************** Static *********************
+------> What is static 
+Static means it is at class level not at instance level, we have static method, static variable & static inner class.
+When we have any variable as static so it will remain same for all the instance of our classes, and static/Private/Final
+methods can't be over-ridden like if we have initialized any method as Static so we cannot override it in any 
+child class.
+
+Normal overriding example:
+class Animal {
+    void sound() {
+        System.out.println("Animal makes a sound");
+    }
+}
+class Dog extends Animal {
+    @Override
+    void sound() {
+        super.sound(); 
+        System.out.println("Dog barks");
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Dog d = new Dog();
+        d.sound(); // Calls overridden method in Dog class
+    }
+}
+
+-----> Why Static Methods Can’t Be Overridden
+Static methods are resolved at compile-time, not at runtime. Since overriding depends on the runtime object type, 
+and static methods don’t depend on any object instance, there's no concept of overriding.
+
+You cannot use super inside a static method to call a static method from the parent
+
+------> Can we use super keyword inside static method
+No, you cannot use the super keyword inside a static method in Java.
+super refers to the parent class of the current object.
+But static methods don't belong to any object — they belong to the class.
+Since super is used in the context of an object and inheritance hierarchy, using it in a static context 
+(which has no object) makes no sense — and the compiler will throw an error.
+
+Code:
+class Parent {
+    static void show() {
+        System.out.println("Parent static method");
+    }
+}
+class Child extends Parent {
+    static void show() {
+        System.out.println("Child static method");
+        Parent.show(); 
+    }
+}
+public class Test {
+    public static void main(String[] args) {
+        Child.show();
+    }
 }
 
  
