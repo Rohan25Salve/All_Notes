@@ -6006,6 +6006,19 @@ JSR223 Sampler --> powerful scripting sampler in JMeter that allows you to write
 ✅ Prints all JMeter variables & properties in the log for debugging → Debug Sampler
 
 
+************** Soft Assertion Hard Assertion **************************
+Hard Assertion (Stops test execution if it fails):
+	Assert.assertEquals(actual, expected);
+	Assert.assertTrue(condition);
+
+Soft Assertion (Continues execution even if assertion fails):
+	SoftAssert softAssert = new SoftAssert();
+	softAssert.assertEquals(actual, expected);
+	softAssert.assertTrue(condition);
+	softAssert.assertAll();
+
+
+
 
 
 
