@@ -1381,7 +1381,31 @@ HTTP Proxy authentication with Selenium in Chrome can be handled using the follo
 Using the AutoIT tool
 Using Alerts
 
+************* JavascriptExecutor Code *********************
+JavaScriptExecutor is an Interface that helps to execute JavaScript through Selenium Webdriver.
 
+JavaScriptExecutor provides two methods 
+JavascriptExecutor js = (JavascriptExecutor) driver;  
+js.executeScript(Script,Arguments);
+or
+js.executeAsyncScript(Script,Arguments);
+
+“executescript”  
+1.Click an Element using JavaScripExecutor 
+Code: ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);;
+
+2.Enter key using JavaScripExecutor
+Code: ((JavascriptExecutor) driver).executeScript("arguments[0].value='myValue';", inputField); 
+
+3.Scroll Down using JavaScriptExecutor
+Code: ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);	
+
+4.Refresh the page
+Code: ((JavascriptExecutor) driver).executeScript("history.go(0);");
+
+5. Handling Disabled Elements
+Code: WebElement element = driver.findElement(By.id("disabledField"));
+      ((JavascriptExecutor) driver).executeScript("arguments[0].removeAttribute('disabled');", element);
 ---->>>>>>> JavaScriptExecutor? Use
 JavaScriptExecutor is an Interface that helps to execute JavaScript through Selenium Webdriver.
 JavaScriptExecutor provides two methods 
@@ -1962,32 +1986,6 @@ Used when you expect one matching element	              Used when you expect mul
 WebElement element =                                       List<WebElement> elements = driver.findElements(By.className("button"));
 driver.findElement(By.id("elementId"));
 
-
-************* JavascriptExecutor Code *********************
-JavaScriptExecutor is an Interface that helps to execute JavaScript through Selenium Webdriver.
-
-JavaScriptExecutor provides two methods 
-JavascriptExecutor js = (JavascriptExecutor) driver;  
-js.executeScript(Script,Arguments);
-or
-js.executeAsyncScript(Script,Arguments);
-
-“executescript”  
-1.Click an Element using JavaScripExecutor 
-Code: ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);;
-
-2.Enter key using JavaScripExecutor
-Code: ((JavascriptExecutor) driver).executeScript("arguments[0].value='myValue';", inputField); 
-
-3.Scroll Down using JavaScriptExecutor
-Code: ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);	
-
-4.Refresh the page
-Code: ((JavascriptExecutor) driver).executeScript("history.go(0);");
-
-5. Handling Disabled Elements
-Code: WebElement element = driver.findElement(By.id("disabledField"));
-      ((JavascriptExecutor) driver).executeScript("arguments[0].removeAttribute('disabled');", element);
 	  	  
 *************** Window handles ******************
 Set<String> allWindowId = driver.getWindowHandles()
