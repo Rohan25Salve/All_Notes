@@ -1301,8 +1301,26 @@ for imange ------------->>>>>>>>>>>>>>>
                         System.out.println(url + " - " + "is a broken link");
                         }
 						
-						
-						
+--------------------------------------------------------------------------------------------------------------------------------------						
+
+  ----------************             find the Broken link               *************--------------- 
+
+            List<WebElement> links = driver.findElements(By.tagName("a"));
+               for (WebElement link : links) {
+                String url = link.getAttribute("href");
+            
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("HEAD");
+            connection.connect();
+            int responseCode = connection.getResponseCode();
+            if (responseCode >= 400) {
+                System.out.println(url + " is a broken link. Response Code: " + responseCode);
+            } else {
+                System.out.println(url + " is valid. Response Code: " + responseCode);
+            }
+	}
+			
+       						
 						
 ---------Explain how you can handle colors in web driver?	
 Use getCssValue(arg0) function to get the colors by sending ‘color’ string as an argument
@@ -1445,24 +1463,6 @@ return Target.the("this locater use for click on button").locatedBy(loacter);
             FileHandler.copy(srcFile, destFile);
 --------------------------------------------------------------------------------------------------------------
 
-  ----------************             find the Broken link               *************--------------- 
-
-            List<WebElement> links = driver.findElements(By.tagName("a"));
-               for (WebElement link : links) {
-                String url = link.getAttribute("href");
-            
-            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-            connection.setRequestMethod("HEAD");
-            connection.connect();
-            int responseCode = connection.getResponseCode();
-            if (responseCode >= 400) {
-                System.out.println(url + " is a broken link. Response Code: " + responseCode);
-            } else {
-                System.out.println(url + " is valid. Response Code: " + responseCode);
-            }
-	}
-			
-       
  --------------------------------------------------------------------------------------------------------------------  
  
           ******    How do you optimize Selenium tests for performance?    ******
