@@ -3993,6 +3993,22 @@ public String getResource()
 {
 return resource;
 }
+
+
+
+*************************************************************
+
+
+❌ Can we instantiate an abstract method?
+No, we cannot instantiate an abstract method directly.
+
+🤔 Why?
+Because:
+An abstract method is a method without a body.
+It only provides a declaration, not the implementation.
+So there's nothing to "run" or "instantiate" — it's just a placeholder that must be implemented in a subclass.
+
+
 ********************************** Static *********************
 ------> What is static 
 Static means it is at class level not at instance level, we have static method, static variable & static inner class.
