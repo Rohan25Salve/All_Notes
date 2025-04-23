@@ -1936,10 +1936,35 @@ Solution: Explicit Waits
 The element is present in the DOM but not interactable/clickable (e.g., hidden or disabled).
 Solution: Explicit Waits ,
 ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+				OR
+Occurs when an element you're trying to click is being covered by another element (like a popup, loader, or sticky header).
+The element is found but not clickable due to being obstructed or disabled.
+Fixes: 
+1) Wait until the covering element disappears
+new WebDriverWait(driver, Duration.ofSeconds(10))
+    .until(ExpectedConditions.invisibilityOfElementLocated(By.id("loader")));
+2) Scroll the element into view:
+((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", button);
+3) Use JavaScript click as a last resort:
+((JavascriptExecutor) driver).executeScript("arguments[0].click();", button);
 
 3) StaleElementReferenceException  
 The element reference is no longer valid, typically because the DOM has changed after the element was located.
 Solution: Explicit Wait, Retry Analayzer , Refresh the page and Try and catch method
+
+			OR
+
+The element reference is no longer valid, typically because the DOM has changed after the element was located.
+This exception occurs when you attempt to interact with an element that was previously found, but is no longer 
+in the DOM (Document Object Model) or has been removed/reloaded from the page since you first located it.
+
+For example, if you locate an element, perform some actions that change the page (like a refresh or navigation), and then try to interact with that element again, it may cause this exception because Selenium can no longer find the original reference to the element.
+Solution: Explicit Wait, Retry Analayzer , Refresh the page and Try and catch method
+Resolution:
+1. Use Explicit Waits
+2. Use a Try-Catch Block
+3. Refresh page
+
 
 4) TimeoutException  
 The wait condition did not succeed within the specified time.
@@ -1948,6 +1973,24 @@ Solution: Adjust the timeout duration as needed.
 5) ElementNotVisibleException: 
 when an element is present in the DOM but not visible on the screen.
 Solution: Explicit Wait, JavascriptExecutor
+					OR
+This exception occurs when an element is located but not visible in the viewport (it may be present in the DOM, but not displayed on the page). 
+In other words, the element exists, but you can’t interact with it because it’s not rendered or displayed on the page.
+Common Causes:
+The element is in the DOM but has display: none or visibility: hidden CSS property.
+The element is inside an iframe or hidden behind a collapsible section or modal.
+The element has been loaded but not yet fully rendered (perhaps due to JavaScript or slow loading).
+
+Example Scenario:
+The element is in the DOM but not visible (e.g., it has been hidden via CSS):
+WebElement button = driver.findElement(By.id("submit"));
+button.click();  
+Fix:
+Wait for the element to become visible using ExpectedConditions.visibilityOfElementLocated.
+Ensure the element is not hidden by checking its CSS (display and visibility).
+Scroll the element into view using .scrollIntoView() if it's off-screen or inside a hidden section.
+
+
 
 *********** Get and Navigate Method ***********
 get(): 
@@ -3010,74 +3053,6 @@ XML Libraries
 9. Reporting and Alerts --> Use reporting tools (e.g., Allure, Extent Reports).
 
 
-**************************************   Flaky Test   *********************************************************
-
-What is a Flaky Test?
-A flaky test is an automated test that:
-Fails intermittently without any changes in the codebase Passes on rerun without explanation Causes false alarms and reduces trust in automation
-
-🔍 Common Causes of Flaky Tests
-
-Poor Synchronization
-Using Thread.sleep() instead of smart waits like WebDriverWait
-Not waiting for elements to load or become clickable
-Dynamic UI Changes
-Elements that disappear/reappear or load with random delays
-Changing DOM IDs or classes
-Unstable Locators
-Relying on fragile XPath or CSS selectors
-Element indices that change with layout
-Test Dependencies
-One test relying on the result of another
-Data dependencies not reset between tests
-Environment Issues
-Network delays, slow VMs, low RAM, inconsistent test data
-Third-party Failures
-APIs returning 500 randomly
-Services going down during test run
-
-🛠 How I Fight Flakiness in My Framework
-
-✅ 1. Use Smart Waits
-WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-wait.until(ExpectedConditions.elementToBeClickable(By.id("submit")));
-
-✅ 2. Add Retry Logic
-Use IRetryAnalyzer in TestNG to rerun failed tests automatically:
-public class RetryAnalyzer implements IRetryAnalyzer {
- int count = 0, maxTry = 2;
- public boolean retry(ITestResult result) {
- if (count < maxTry) {
- count++;
- return true;
- }
- return false;
- }
-}
-
-
-Then add to your test:
-
-@Test(retryAnalyzer = RetryAnalyzer.class)
-public void flakyLoginTest() {
- // test logic here
-}
-
-✅ 3. Take Screenshots on Failure (via Listeners)
-Use ITestListener to log and screenshot when a test fails — helps with debugging!
-✅ 4. Isolate Failing Test
-Run it individually and in a clean environment (no cached state)
- Check if failure is data-specific or time-dependent
-✅ 5. Flag and Investigate
-Track flaky tests in a separate list or tag them with @Flaky annotation to monitor over time
-
-
-
-
-
-
-
-
 ***************** Key challeges in selenium automation *************
 1. Dynamic Web Elements
 	Challenge: Modern web applications frequently use dynamic elements, where IDs, class names, 
@@ -3677,7 +3652,7 @@ Performance          	Faster for random access (index-based access).	           
 Thread Safety	        Not synchronized (not thread-safe).	                                    Not synchronized (not thread-safe).	                                   
 Iteration	            Uses Iterator.	                                                        Uses Iterator.	
  
-                                                                                               Each element is stored in a Node object, which has references to both the next node and the previous node. 
+Each element is stored in a Node object, which has references to both the next node and the previous node. 
 
 
 ArrayList								           
@@ -3719,6 +3694,19 @@ One null element is accepted				Allows only one null element								Donot allow 
 Very fast for operations like add,			Slightly slower than HashSet								Slower than Linked HashSet and HashSet
 remove and contains                                                                                     if we set Heterogenous data and Callled this data throw excetipn name ==> classCastException 
 
+   
+LinkedHashSet             
+Insertion order maintained	  
+Heterogenous data is accepted
+Allows only one null element
+Slightly slower than HashSet
+                               
+  TreeSet  
+Sorted (ascending by default, or custom comparator)
+Homogenous data is accepted as it wont be able to arrange heterogeneous data
+Donot allow null element
+Slower than Linked HashSet and HashSet
+if we set Heterogenous data and Callled this data throw excetipn name ==> classCastException 
 
 
 ConcurrentHashMap	 --->  Thread-safe,Does not allow null keys or values,High performance in concurrent scenarios.
@@ -3729,6 +3717,22 @@ Order of Keys	    No guaranteed order.	                      Maintains insertion
 Null Keys/Values	Allows one null key and multiple null val	 Allows one null key and multiple null values.              Does not allow null keys but allows multiple null values.
 Thread Safety	    Not synchronized (not thread-safe).	          Not synchronized (not thread-safe).                       Not synchronized (not thread-safe).	                      
 Elements	Heterogenous data is accepted				Heterogenous data is accepted				Homogenous data is accepted as it wont be able to arrange heterogeneous data
+
+
+
+            LinkedHashMap                       
+  Maintains insertion order of keys.            
+ Allows one null key and multiple null values.  
+  Not synchronized (not thread-safe).           
+	Heterogenous data is accepted				
+
+
+        TreeMap                                             
+   Sorted order (natural or custom comparator).	          
+   Does not allow null keys but allows multiple null values.
+   Not synchronized (not thread-safe).	                      
+Homogenous data is accepted as it wont be able to arrange heterogeneous data
+
 
 
 ***************** Difference between HashTable , hashmap and ConcurrentHashMap **********************
