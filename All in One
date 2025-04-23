@@ -3010,6 +3010,74 @@ XML Libraries
 9. Reporting and Alerts --> Use reporting tools (e.g., Allure, Extent Reports).
 
 
+**************************************   Flaky Test   *********************************************************
+
+What is a Flaky Test?
+A flaky test is an automated test that:
+Fails intermittently without any changes in the codebase Passes on rerun without explanation Causes false alarms and reduces trust in automation
+
+🔍 Common Causes of Flaky Tests
+
+Poor Synchronization
+Using Thread.sleep() instead of smart waits like WebDriverWait
+Not waiting for elements to load or become clickable
+Dynamic UI Changes
+Elements that disappear/reappear or load with random delays
+Changing DOM IDs or classes
+Unstable Locators
+Relying on fragile XPath or CSS selectors
+Element indices that change with layout
+Test Dependencies
+One test relying on the result of another
+Data dependencies not reset between tests
+Environment Issues
+Network delays, slow VMs, low RAM, inconsistent test data
+Third-party Failures
+APIs returning 500 randomly
+Services going down during test run
+
+🛠 How I Fight Flakiness in My Framework
+
+✅ 1. Use Smart Waits
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+wait.until(ExpectedConditions.elementToBeClickable(By.id("submit")));
+
+✅ 2. Add Retry Logic
+Use IRetryAnalyzer in TestNG to rerun failed tests automatically:
+public class RetryAnalyzer implements IRetryAnalyzer {
+ int count = 0, maxTry = 2;
+ public boolean retry(ITestResult result) {
+ if (count < maxTry) {
+ count++;
+ return true;
+ }
+ return false;
+ }
+}
+
+
+Then add to your test:
+
+@Test(retryAnalyzer = RetryAnalyzer.class)
+public void flakyLoginTest() {
+ // test logic here
+}
+
+✅ 3. Take Screenshots on Failure (via Listeners)
+Use ITestListener to log and screenshot when a test fails — helps with debugging!
+✅ 4. Isolate Failing Test
+Run it individually and in a clean environment (no cached state)
+ Check if failure is data-specific or time-dependent
+✅ 5. Flag and Investigate
+Track flaky tests in a separate list or tag them with @Flaky annotation to monitor over time
+
+
+
+
+
+
+
+
 ***************** Key challeges in selenium automation *************
 1. Dynamic Web Elements
 	Challenge: Modern web applications frequently use dynamic elements, where IDs, class names, 
