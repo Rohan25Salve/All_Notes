@@ -3640,6 +3640,39 @@ Purpose: Used to store objects and instance variables.
 
 
 
+****************** Difference Between String, StringBuffer, and StringBuilder  *******************************
+Feature						String								StringBuffer									StringBuilder
+Mutability				Immutable							         Mutable									Mutable
+Thread-Safety			         thread-safe						    Thread-safe (synchronized methods)								Not thread-safe
+Performance				Slower (due to immutability)		                     Slower than StringBuilder 						Faster than StringBuffer (no synchronization overhead)
+												    (due to synchronization overhead)
+																
+Usage				  For operations where the string 		                  For thread-safe, mutable string operations	                   		  For non-thread-safe, mutable string operations
+					  value rarely changes
+
+Default Behavior	       Creates a new object for every		                            Modifies the same object								Modifies the same object
+                              modification (e.g., concatenation)
+
+		
+******************  Throw and Throws Keyword difference ***************
+Aspect	                                           throw	                                                                       throws
+Purpose	                         Used to explicitly throw an exception.	                                  Used to declare that a method may throw exceptions.
+Where it's used	               Inside a method or block to throw an exception.	                    In a method signature to specify which exceptions it can throw.
+Type of exception	           Can throw both checked and unchecked exceptions.	                      Used only for checked exceptions.
+Control flow	            Transfers control to the nearest catch block                       Does not transfer control directly; it only informs the calling method 
+                             that can handle the thrown exception.	                            to handle or declare the exception.
+Example	                 throw new IOException("Error reading file");	                          public void method() throws IOException { ... }
+ 
+Combined example: 
+ public void validateNumber(int num) throws IllegalArgumentException {
+    if (num < 0) {
+        throw new IllegalArgumentException("Number must be non-negative");
+    }
+}
+
+
+
+
 ------------------------**** Collection Java FrameWork  *****-----------------------------
                                 Interfaces
 List: Ordered, allows duplicate elements.
