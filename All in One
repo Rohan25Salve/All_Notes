@@ -3653,7 +3653,21 @@ Usage				  For operations where the string 		                  For thread-safe, 
 Default Behavior	       Creates a new object for every		                            Modifies the same object								Modifies the same object
                               modification (e.g., concatenation)
 
-		
+		StringBuffer							
+	Mutable										
+	Thread-safe (synchronized methods)			
+	Slower than StringBuilder 					
+   (due to synchronization overhead)	
+	For thread-safe, mutable string operations	
+	Modifies the same object
+
+		StringBuilder
+	Mutable
+	Not thread-safe
+	Faster than StringBuffer (no synchronization overhead)
+    For non-thread-safe, mutable string operations	
+
+
 ******************  Throw and Throws Keyword difference ***************
 Aspect	                                           throw	                                                                       throws
 Purpose	                         Used to explicitly throw an exception.	                                  Used to declare that a method may throw exceptions.
