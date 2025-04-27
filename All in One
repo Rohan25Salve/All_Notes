@@ -1,3 +1,4 @@
+***************************************           API           *************************************************
 Status code: -  
 1xx (Informational):
 100 Continue
@@ -393,7 +394,7 @@ Close the Connection:
 
 Test if the WebSocket connection can be gracefully closed by both the client and server.		
 												  
-												  -----------***************-------------
+			  -----------***************-------------
 												  
 What are some configurations available in RestAssured?
 Answer:
@@ -571,6 +572,21 @@ JSON Libraries
 YAML Libraries
 XML Libraries
 
+
+------>   Upstream downStream API 
+
+Upstream API:
+When your system sends a request to another system to get data or trigger an action, that external system is upstream for you.
+Downstream API:
+When other systems call your API to get data or trigger actions, you are downstream for them.
+
+
+Client --> API Gateway --> User Service
+                                |
+                                | calls upstream Authentication Service
+                                |
+                                v
+                         calls downstream Notification Service
 
 
 ---------------   *****************  postman tool ********  ---------------------------
@@ -1133,7 +1149,7 @@ Not suited for testing external systems directly.
 
 
 
-******************************************************************************************************************************************************************
+*******************************************************     SELENIUM         *************************************************************************
 
 xpath 
 
@@ -2312,7 +2328,7 @@ How to locate --> 1. use Css Selector
 			  
 
 
-********************************************************************************************************************************************************************
+***********************************************        CUCUMBER BDD           ***************************************************************
 
 
 
@@ -2629,7 +2645,7 @@ slower execution compared to other testing frameworks.
 Requires extra effort for non-technical users to understand automation scripts.
 
 
-******************************************************************************************************************************************************************
+******************************************************     JAVA          ***********************************************************************
 
 
 
@@ -3035,7 +3051,7 @@ XML Libraries
 
 
 
-*******************************************************************************************************************************************************************
+**************************************************** Real Time Question *************************************************************
 
 
 
@@ -3539,7 +3555,7 @@ Automation Framework ->
 
 
 
-*******************************************************************************************************************************************************************
+**********************************************************	GIT     ************************************************************
 
 *Git --> Local Repository                                            
 GIT is a distributed version control system and source code management (SCM) 
@@ -3682,7 +3698,7 @@ Use .gitignore for local sensitive files.
 Implement pre-commit hooks to scan for sensitive data.
 
 
-*****************************************************************************************************************************************************************
+***********************************************************		JAVA		**************************************************************************
 
 
 
@@ -3775,6 +3791,15 @@ Default Behavior	       Creates a new object for every		                        
 	Not thread-safe
 	Faster than StringBuffer (no synchronization overhead)
     For non-thread-safe, mutable string operations	
+
+Feature | String | StringBuffer | StringBuilder
+Mutability | ❌ Immutable | ✅ Mutable | ✅ Mutable
+Thread Safe | ✅ (Because immutable) | ✅ (All methods synchronized) | ❌ (Not synchronized)
+Performance | ❌ Slow (new object each time) | 🚀 Slower (because of thread safety) | ⚡ Fastest (no sync overhead)
+Usage Scenario | When data doesn't change much | When data changes across multiple threads | When data changes inside single thread
+Introduced In | JDK 1.0 | JDK 1.0 | JDK 1.5
+Memory Handling | New object on each change | Same object, synchronized | Same object, not synchronized
+Example | String s = "abc"; | StringBuffer sb = new StringBuffer("abc"); | StringBuilder sb = new StringBuilder("abc");
 
 
 ******************  Throw and Throws Keyword difference ***************
@@ -4400,7 +4425,7 @@ public class CustomUncheckedExceptionExample {
 
 
 
-********************************************************************************************************************************************************
+*********************************************************   Jenkins   ************************************************************************
 
  *What is Jenkins?
 Jenkins is an open-source automation server used for Continuous Integration/Continuous Delivery (CI/CD). 
@@ -4591,192 +4616,6 @@ to Splunk for centralized logging, monitoring, and analysis.
 ***************************************************************************************************************************************************************
 
 
- *What is Jenkins?
-Jenkins is an open-source automation server used for Continuous Integration/Continuous Delivery (CI/CD). 
-It helps automate the build, testing, and deployment process.
-Example: Jenkins can trigger automatic builds when new code is pushed to a Git repository.
-
-
-Explain the architecture of Jenkins.
-Jenkins follows a master-slave(node or Agent) architecture 
-where the master controls the build process, 
-and slaves execute jobs on different environments.
-
-What is CI and CD
-CI - Dev deploy the code on Repository , then jenkin build the Project then later test 
-CD - Deploy the Project
-
-o Build
-o Test
-o Deploy
-
- 
- 
- * Jenkinsfile is a text ---->
- A Jenkinsfile is a text file that contains the pipeline code.
-A Jenkinsfile is a text file that contains the definition of a Jenkins pipeline. 
-It is written in Groovy-based domain-specific language (DSL) and is used to automate the steps of building,
- testing, and deploying applications as part of a CI/CD pipeline.
- 
- * architecture of Jenkins.
-Jenkins follows a master-slave architecture where the master controls the build process, and slaves execute jobs on different environments.
- 
- 
- pipeline {
-    agent any // Specifies the agent to run the pipeline
-stages {
-        stage('Build') {
-            steps {
-                echo 'Building the application...'
-                sh 'mvn clean package' // Example build step
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                sh 'mvn test' // Example test step
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying the application...'
-                sh './deploy.sh' // Example deployment step
-            }
-        }
-    }
-
-    post {
-        always {
-            echo 'Pipeline execution completed.'
-        }
-        success {
-            echo 'Pipeline completed successfully.'
-        }
-        failure {
-            echo 'Pipeline failed.'
-        }
-    }
-}
-
------------*******------------
-How do you trigger Jenkins jobs automatically?
-
-a.Using webhooks from a version control system like GitHub.
-b.Poll SCM or use triggers like cron syntax.
-c.Upstream/downstream jobs in Jenkins.
-
-------***********--------
-How do you handle parallel testing in Jenkins pipelines?
-
-Use the parallel directive in declarative pipelines:
-groovy
-Copy code
-stage('Parallel Testing') {
-    parallel {
-        stage('Test1') {
-            steps {
-                sh 'mvn test -Dtest=Test1'
-            }
-        }
-        stage('Test2') {
-            steps {
-                sh 'mvn test -Dtest=Test2'
-            }
-        }
-    }
-}
-
-* Explain the different types of Jenkins jobs.
- Freestyle, Pipeline, Multibranch Pipeline, and Maven jobs.
- Example: A Maven job builds a project using the Maven tool.
-
-* How do you troubleshoot Jenkins build failures?
- Check the console output, logs, and error messages for build failures.
- Example: A failed build due to missing dependencies would show in logs.
-
-* How do you perform load balancing in Jenkins?
- Set up multiple agents(Node) and distribute jobs across them for balanced workloads.
-
-* How do you troubleshoot Jenkins build failures?
- Check the console output, logs, and error messages for build failures.
-
-
-    **************************         How to Re-run failed test Cases   **************************
-	
-	TestNG --->>
-	1.Use the testng-failed.xml file, automatically generated by TestNG, to re-run failed tests
-	2.mvn test -DsuiteXmlFile=test-output/testng-failed.xml
-	3.Add a retry logic in your test listener
-
-	
-	Junit with cucmber --->>
-	1.@CucumberOptions(
-    plugin = {"pretty", "html:target/cucumber-html-report",
-              "rerun:target/rerun.txt"},
-    features = "src/test/resources/features"
-                                                )
-												
-      mvn test -Dcucumber.options=@target/rerun.txt
-
-
-	  
-   2.Implement a custom Retry rule
- public class RetryRule implements TestRule {
-    private int retryCount;
-    public RetryRule(int retryCount) {
-        this.retryCount = retryCount;
-    }
-    @Override
-    public Statement apply(Statement base, Description description) {
-        return new RetryStatement(base, retryCount);
-    }
-	
-	
-	Jenkins  : 
-	Stage 1: Run the full suite of tests.
-    Stage 2: Re-run failed tests based on the generated rerun configuration (testng-failed.xml or rerun.txt).
-	
-	Groovy-based :        tage('Re-run Failed Tests') {
-                                                      when {
-                                                      fileExists('test-output/testng-failed.xml')
-                                                         }
-                                                      steps {
-                                                      sh 'mvn test -DsuiteXmlFile=test-output/testng-failed.xml'
-                                                         }
-                                                        }
-                                                      }   
-	Directly Use in Pipeline->
-                                       	retry(2) {
-                                           sh 'mvn test'
-                                                 }
-
-
-* How do you back up Jenkins?
-Answer:
-Back up the $JENKINS_HOME directory, including job configurations, plugins, and build history.
-
-* What are common Jenkinsfile errors and how do you troubleshoot them?
-Answer:
-Syntax errors: Validate the Jenkinsfile using the Pipeline Syntax Validator.
-Plugin compatibility issues: Ensure all required plugins are installed and updated.
-Permission issues: Verify workspace and repository access permissions.
-	
-Setup-part Jenkins -->
-Go to "New Item" > Choose "Freestyle Project" or "Pipeline."
-Configure the job by specifying:
-Source Code Management (e.g., Git repository).
-Build triggers (e.g., GitHub webhook, schedule).
-Build steps (e.g., shell scripts, Maven commands).
-	
-	
-	
-
-************   What is the Splunk Plugin for Jenkins ?  ****************************
-The Splunk Plugin for Jenkins is a tool that integrates Jenkins with Splunk, a powerful platform for searching, monitoring, 
-and analyzing machine-generated data. This plugin allows you to send Jenkins build and job-related data (such as logs, metrics, and events) 
-to Splunk for centralized logging, monitoring, and analysis.
-
-
 
 
 ****************************************************************************************************************************************************************
@@ -4916,7 +4755,7 @@ Categorize and Prioritize Bugs
 
 
 
-**************************************************************************************************************************************************************
+***************************************************************		SQL	 ***************************************************************************
 
 
 
@@ -6259,6 +6098,129 @@ Soft Assertion (Continues execution even if assertion fails):
 	softAssert.assertTrue(condition);
 	softAssert.assertAll();
 
+
+
+
+*********************************************        APPIUM ******************************************************
+
+****************    What is Appium? **************
+Appium is an open-source tool for automating mobile applications
+Native -> Andriod app only
+Hybrid -> Andriod app with mobile web page application
+Mobile application -> Mobile web page application 
+
+on Android, iOS, and Windows platforms. 
+It uses the WebDriver protocol for communication between client libraries and the server. 
+Cross-platform support: Works on Android and iOS.
+Supports multiple languages via WebDriver.
+
+****************  What are the Appium drivers for mobile testing? **************** 
+
+UIAutomator2 (for Android 5.0 and above).
+Espresso (for Android UI testing, mainly used for white-box testing).
+XCUITest (for iOS automation).
+Windows Driver (for Windows desktop applications).
+
+******* What are the main limitations of Appium? ********
+No support for image-based testing directly.
+Requires setting up emulators or real devices for testing.
+
+****************  Local path System my Computer **********************
+
+C:\Users\admin\AppData\Local\Android\Sdk
+
+____ How to install app on Application on Andriod Studio ____________
+
+go to this path C:\Users\admin\AppData\Local\Android\Sdk
+open Commond line 
+use this commond --> adb install path_of_file_\app_name.apk
+
+
+     ***************   Appium Inspector **********************
+
+Allows inspecting the application UI and identifying elements.
+UIAutomatorViewer (Android): A standalone tool for inspecting Android apps.
+Xcode Accessibility Inspector (iOS): For identifying UI elements in iOS apps.
+
+
+// Use X-path , id, name ,tagname ,linktext, partial linktext, css selector ,classname
+accessibility - > Specific to mobile apps; driver.findElement(MobileBy.AccessibilityId("loginButton")) , driver.findElement(AppiumBy.accessibilityId("Preference")).click();
+andriodUIAutomtore -> Android-specific locator to find elements  driver.findElement(MobileBy.AndroidUIAutomator("text(\"Sign In\")"))
+
+iOS Class Chain (iOS) -> iOS-specific locator for targeting elements , driver.findElement(MobileBy.iOSClassChain("**/XCUIElementTypeButton[label == 'OK']"))
+iOS Predicate String (iOS) -> Uses NSPredicate expressions to find iOS elements. , driver.findElement(MobileBy.iOSNsPredicateString("value == 'username'"))
+
+
+   ***************************   test hybrid apps using Appium? **************************
+    # switch between Native and WebView contexts
+	# Use getContextHandles() to list available contexts and context() to switch.
+	
+	           How can you handle WebView testing in Appium?
+                       Answer:
+                       Switch to the WebView context using:
+                       
+                       Set<String> contextNames = driver.getContextHandles();
+                       driver.context("WEBVIEW_com.example.app");
+                       Use standard Selenium methods to interact with WebView elements.
+                       
+Json Representation -->
+
+deviceName - can get using command   adb devices
+platformName - can get using command   appium driver list
+platformVersion -  can get using command   adb shell getprop ro.build.version.release
+If you have multiple devices connected first get the device id using adb devices then run command
+adb -s DEVICE_ID shell getprop ro.build.version.release
+
+{
+  "appium:automationName": "UiAutomator2",
+  "appium:platformName": "Android",
+  "appium:platformVersion": "14",
+  "appium:deviceName": "emulator-5554",
+  "appium:app":"/Users/admin/Downloads/APKFilestt/resources/ApiDemos-debug.apk"
+}
+
+
+
+ **  Strat Server ---> 
+  Use Commond --> Start appium appium --allow-cors 
+  
+  
+  
+ **  Android Studio --> 
+  Here We Start Our Mobile Application 
+  
+  // AndroidDriver 
+  // Appium-code --> Appium Server --> Mobile Application (Flow of how to run the application)
+  
+  
+  
+  
+  
+  
+  ************    Action perform on mobile Application ***********************
+  
+  
+  a) Long Press --->
+  b) Drag and Drop  --->
+  c) Scrolling swiping pincth
+ 
+ 
+ 
+ ************* IOS X-path find *****************************
+ 
+ 
+ 
+ 
+    ************       How do you handle gestures in Appium?  *************
+
+Appium supports gestures like swipe, scroll, pinch, and tap using the TouchAction class in Java.
+
+                          TouchAction action = new TouchAction(driver);
+                          action.press(PointOption.point(100, 500))
+                                .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(1)))
+                                .moveTo(PointOption.point(100, 200))
+                                .release()
+                                .perform();
 
 
 
