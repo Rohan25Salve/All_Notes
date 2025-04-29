@@ -5796,9 +5796,24 @@ High				Low					App crashes when a rare edge case occurs.
 Low					High				Company logo is incorrect on homepage.
 Low					Low					Typo in the "About Us" section.
 
+**************************************************************************************************************************************
+
+Smoke Testing  vs Sanity Testing
 
 
+Smoke Testing:
+Purpose: To quickly verify the build's basic functionality and stability before deeper testing. 
+Scope: Broad, covering core functionalities and the entire system. 
+Execution: Often automated and performed on every new build. 
+Goal: Ensure the build is stable enough for further testing and that major components work as expected. 
+Documentation: Typically documented and scripted. 
 
+Sanity Testing:
+Purpose: To ensure that bug fixes or code changes work as intended and haven't introduced new issues. 
+Scope: More targeted, focusing on specific changes or components. 
+Execution: Often performed manually, especially after bug fixes. 
+Goal: Verify the rationality of changes and ensure they don't introduce regressions. 
+Documentation: Generally not documented or scripted. 
 
 
 
