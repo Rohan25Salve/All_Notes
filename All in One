@@ -5594,11 +5594,6 @@ Entry Criteria ->  Stable Application Build, Automation Framework ,Automation To
 Exit  Criteria -> Script Execution Completion,Defect Verification,Test Coverage,Regression Results,Reports Generation,Framework Stability,Stakeholder Approval
 
 
-Priority vs. Severity
-
-Priority: How urgent it is to fix a bug based on project needs.
-Severity: How much the bug impacts the user or system.
-
 
 
 ****************   How do you manage and track bugs through the testing lifecycle?  *********************
@@ -5772,6 +5767,9 @@ This is the core phase where the test cases are executed, and the results are re
 Any issues or defects found during test execution are documented and reported, providing feedback to the development team. 
 7. Test Closure:
 This final phase involves evaluating the entire testing process, documenting the results, and identifying lessons learned to improve future testing efforts. 
+*************************************************************************************************
+
+
 
 ************************* Severity and Priority *************************************
 Severity (Impact of the bug): Describes how serious the bug is in terms of the application's functionality.
