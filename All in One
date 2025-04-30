@@ -5726,6 +5726,24 @@ covered by formal testing methods.
 4) Document Findings
 5)Review and Repeat
 
+
+************ agile methodology *****************
+Agile is a software development approach
+Instead of delivering everything at once (like in Waterfall), Agile delivers small, workable pieces of software frequently — with continuous feedback and improvements.
+1.Sprint Planning
+When: At the start of every sprint (e.g., every 2 weeks)
+Goal: Decide what work will be done in the sprint and how it will be accomplished
+2.Daily Stand-Up (Daily Scrum)
+3.Sprint Review
+When: End of the sprint
+Goal: Demonstrate the completed work to stakeholders and gather feedback
+4.Sprint Retrospective
+When: After the Sprint Review, end of sprint
+Goal: Reflect on the sprint and find ways to improve
+5. Sprint Grooming
+When: Mid-sprint or ongoing (not an official Scrum ceremony, but commonly used)
+Goal: Prepare the Product Backlog for upcoming sprints
+
 *******************************************************************************************************************************
 
 What is SDLC ? 
