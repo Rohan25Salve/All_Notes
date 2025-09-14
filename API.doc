@@ -1399,7 +1399,25 @@ Ans:-  ChromeOptions is a class in Selenium WebDriver used to customize and conf
 
 
 
+upstream and downstream APIs:
+
+Upstream API:
+
+When your system sends a request to another system to get data or trigger an action, that external system is upstream for you.
+
+→ You are dependent on it. (Think: you are "going up" to get something.)
+
+Downstream API:
+
+When other systems call your API to get data or trigger actions, you are downstream for them.
+
+→ They are dependent on you.
+
+(Think: the flow is coming "down" to you.)
+
+
 
 
 
 									
+
