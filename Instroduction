@@ -1,0 +1,51 @@
+Rohan --->
+Good morning, my name is Rohan Salve. I am originally from Maharashtra, India.
+
+I have a total of 9+ years of experience in Automation Testing, Manual Testing, and partially working as a Business Analyst. Currently, 
+I am working as a Test Team Lead – Automation at Abu Dhabi Commercial Bank (ADCB), UAE, since February. 
+In my role, I manage a team of 5 members and lead automation for core banking projects.
+
+In the past, I worked with:
+Autodesk (India) – Senior Performance Test Engineer on a 3-month project, heavily focusing on API performance validation.
+Credit Agricole Investment Bank (Singapore) – Senior Test Engineer for 2 years, where I worked on Core Banking and Wealth Management systems using 
+Serenity BDD and Avloge Test Master for E2E validation.
+LocationGuru (India) – Test Lead for 1 year, managing automation and manual testing projects.
+Wolfox Pvt. Ltd. (India) – Senior Test Engineer for 4.5 years, where I started my automation career and gained strong fundamentals.
+
+Tools & Technology Expertise:
+UI Automation: Selenium (Java, TestNG), Playwright, Karate
+API Testing: RestAssured, Karate, Postman (manual validation)
+Performance Testing: JMeter, Karate with Gatling, Taurus
+Mobile Automation: Appium, Karate with Appium
+Test Management: Jira,Agile methodology, SDLC & STLC best practices
+CI/CD & DevOps: GitLab, Jenkins, Docker
+Domain Expertise: Core Banking (T24, Avaloq), Financial Services, Wealth Management
+
+Project Highlights:
+
+ADCB (Current Project):
+Leading automation of Core Banking (T24) applications.
+Implemented Selenium + TestNG framework with RestAssured integration for E2E flows.
+Automated validations across UI, API, DB, Kafka, and microservices.
+Built Playwright-based framework for combined UI + API automation.
+Managing a team of 5 engineers and ensuring delivery of automation packs within CI/CD pipelines.
+
+Autodesk (India):
+Worked as Senior Performance Test Engineer.
+Used JMeter, Karate with Gatling, and Taurus for API performance testing.
+Validated third-party APIs for response time, throughput, and latency under high load.
+
+Credit Agricole Investment Bank (Singapore):
+Worked on Avaloq Core Banking and Wealth Management projects.
+Used Serenity BDD with Cucumber for UI + API automation.
+Integrated Test Master for end-to-end flow validations.
+Automated regression packs for trading, payments, and compliance modules.
+
+LocationGuru (India):
+Managed automation and manual testing team as Test Lead.
+Delivered projects in telecom and location-based services.
+
+Wolfox Pvt. Ltd. (India):
+Worked as Senior Test Engineer.
+Focused on manual + automation testing in different domains.
+Built strong foundation in SDLC, STLC, and defect management.
