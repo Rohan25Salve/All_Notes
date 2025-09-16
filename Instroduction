@@ -28,10 +28,8 @@ Leading automation of Core Banking (T24) applications.
 Implemented Selenium + TestNG framework with RestAssured integration for E2E flows.
 Automated validations across UI, API, DB, Kafka, and microservices.
 Built Playwright-based framework for combined UI + API automation.
-Managing a team of 5 engineers and ensuring delivery of automation packs within CI/CD pipelines.
 
 Autodesk (India):
-Worked as Senior Performance Test Engineer.
 Used JMeter, Karate with Gatling, and Taurus for API performance testing.
 Validated third-party APIs for response time, throughput, and latency under high load.
 
@@ -42,10 +40,7 @@ Integrated Test Master for end-to-end flow validations.
 Automated regression packs for trading, payments, and compliance modules.
 
 LocationGuru (India):
-Managed automation and manual testing team as Test Lead.
-Delivered projects in telecom and location-based services.
+
 
 Wolfox Pvt. Ltd. (India):
-Worked as Senior Test Engineer.
-Focused on manual + automation testing in different domains.
-Built strong foundation in SDLC, STLC, and defect management.
+
