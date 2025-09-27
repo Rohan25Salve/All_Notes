@@ -182,3 +182,46 @@ Build steps (e.g., shell scripts, Maven commands).
 The Splunk Plugin for Jenkins is a tool that integrates Jenkins with Splunk, a powerful platform for searching, monitoring, 
 and analyzing machine-generated data. This plugin allows you to send Jenkins build and job-related data (such as logs, metrics, and events) 
 to Splunk for centralized logging, monitoring, and analysis.
+
+
+
+******************** How do you handle secrets and credentials in Jenkins? *********************
+Store credentials in Jenkins Credentials Plugin (Username/Password, SSH, Secret Text, AWS keys).
+Access inside pipeline via:
+
+withCredentials([usernamePassword(credentialsId: 'git-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+  sh "git clone https://${USER}:${PASS}@repo-url"
+}
+
+****************** How do you integrate Jenkins with GitHub/GitLab/Bitbucket?  **************
+Configure webhooks in GitHub to trigger Jenkins jobs on commit/PR.
+pipeline {
+  agent any
+  triggers { githubPush() }
+  stages {
+    stage('Checkout') { steps { git 'https://github.com/org/repo.git' } }
+  }
+}
+
+
+******************** How do you optimize Jenkins performance? *******************
+Use Master-Agent architecture for scalability.
+Configure distributed builds with labels.
+Use pipeline parallelism for tests.
+Clean up old builds/workspaces regularly.
+Use Dockerized Jenkins agents for lightweight builds.
+
+************* How do you integrate Jenkins with SonarQube?  *************
+Install SonarQube plugin in Jenkins.
+Configure SonarQube server under “Manage Jenkins”.
+stage('Code Analysis') {
+  steps {
+    withSonarQubeEnv('sonar-server') {
+      sh 'mvn sonar:sonar'
+    }
+  }
+}
+
+
+
+
