@@ -137,3 +137,21 @@ How do you ensure that no sensitive data (like API keys) is committed in test sc
 
 Use .gitignore for local sensitive files.
 Implement pre-commit hooks to scan for sensitive data.
+
+********************* Your teammate accidentally pushed secrets/passwords into the main branch. What will you do?  ***********
+First, rotate/revoke the exposed credentials immediately (security priority).
+Remove the commit from history: 
+                               Use git filter-repo (new) or git filter-branch (old).
+Force-push cleaned history (note: dangerous, needs team coordination).
+Add the secret file path to .gitignore.
+
+******************* Your branch is 50 commits behind main, and your pull request is blocked. How will you fix this?  ***********
+Option 1: Merge main into feature branch
+git checkout feature
+git fetch origin
+git merge origin/main
+
+Option 2: Rebase feature onto main (cleaner)
+git checkout feature
+git fetch origin
+git rebase origin/main
