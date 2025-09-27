@@ -31,6 +31,61 @@ open Commond line
 use this commond --> adb install path_of_file_\app_name.apk
 
 
+
+********** Explain Appium architecture.  *************
+
+Appium has 3 layers:
+Client (Test script) → written in Java/Python/JS.
+Appium Server → acts as a middle layer (Node.js).
+Automation Engines →
+Android → UIAutomator2 / Espresso.
+iOS → XCUITest.
+
+******* What is the difference between appActivity and appPackage? **********
+appPackage → Unique identifier of Android app (e.g., com.whatsapp).
+appActivity → Entry activity (e.g., .MainActivity).  
+
+******** perform gestures (tap, swipe, drag-drop)   *****************
+Use TouchAction / W3C actions.
+TouchAction action = new TouchAction(driver);
+action.press(PointOption.point(200,500))
+      .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(1)))
+      .moveTo(PointOption.point(200,100))
+      .release()
+      .perform();
+
+
+******** What is the difference between Appium and Espresso/XCUITest?  ***********
+Appium = cross-platform, slower, black-box.
+Espresso/XCUITest = faster, platform-specific, white-box (access to app internals).
+
+
+************* handle hybrid app testing in Appium?  *******
+Switch between NATIVE_APP and WEBVIEW contexts.
+Set<String> contexts = driver.getContextHandles();
+for(String context : contexts){
+   System.out.println(context);
+}
+driver.context("WEBVIEW_com.example.app");
+
+
+
+********  What common issues do you face with Appium?  *********
+
+NoSuchElementException → locator issue.
+Session not created → wrong desired capabilities.
+Timeout → device/emulator not responding.
+Appium server crash → restart required.
+
+
+********** locators does Appium support? ***********
+id
+className
+xpath
+accessibilityId (for accessibility labels)
+AndroidUIAutomator / iOS Predicate
+
+
      ***************   Appium Inspector **********************
 
 Allows inspecting the application UI and identifying elements.
@@ -116,3 +171,27 @@ Appium supports gestures like swipe, scroll, pinch, and tap using the TouchActio
                                 .moveTo(PointOption.point(100, 200))
                                 .release()
                                 .perform();
+
+
+
+******** Appium 1.x and 2.x?   ************
+
+Appium 2.x → modular driver architecture.
+Install drivers separately (appium driver install uiautomator2).
+Fully W3C WebDriver protocol.
+More plugins (images, gestures).
+
+
+*********  How do you test push notifications in Appium?   ************
+Not directly possible (black-box).
+Workarounds:
+Use ADB commands (Android) → adb shell am broadcast.
+Simulate via Firebase / APNS mocks.
+Validate app state after notification click.
+
+
+. How do you handle biometric authentication (Face ID / Fingerprint)?
+Use platform simulators:
+Android → adb -e emu finger touch 1.
+iOS → Xcode simulator API.
+Mock biometric API in test env.
