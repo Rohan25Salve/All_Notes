@@ -2,6 +2,7 @@ Status code: -
 1xx (Informational):
 100 Continue
 101 Switching Protocols
+When uploading a large file to a server → client first sends headers → server responds 100 Continue → client proceeds with body upload.
 
 2xx Success
 200 OK
@@ -14,6 +15,10 @@ Status code: -
 207 Multi-Status
 208 Already Reported
 226 IM Used
+✅ Practical Example:
+200 OK → GET /users/123 returns user details.
+201 Created → POST /users with JSON body creates a new user.
+204 No Content → DELETE /users/123 successfully deletes but returns nothing.
 
 
 3xx (Redirection):
@@ -26,6 +31,9 @@ Status code: -
 306 Switch Proxy
 307 Temporary Redirect
 308 Permanent Redirect
+✅ Practical Example:
+User requests http://bank.com → server redirects (301) to https://bank.com.
+304 Not Modified → API says “use cached version” instead of sending full response again.
 
 
 400 Bad Request
@@ -40,6 +48,13 @@ Status code: -
 409 Conflict
 417 Expectation Failed
 429 Too Many Requests
+✅ Practical Example:
+400 → POST /users with missing required fields.
+401 → API called without a valid token.
+403 → Normal user tries to access admin API.
+404 → GET /orders/9999 when that order ID doesn’t exist.
+409 → Creating a user with an email that already exists.
+429 → Calling login API too many times in a short period.
 
 
 5XX Server Error
@@ -52,6 +67,11 @@ Status code: -
 507 Insufficient Storage
 510 Not Extended
 511 Network Authentication Required
+✅ Practical Example:
+500 → Null pointer exception in backend.
+502 → API Gateway calls microservice that crashed.
+503 → Bank system down during COB, rejecting requests.
+504 → Payment API waiting on core banking system but no response in 30s.
 
 
 
@@ -1399,25 +1419,19 @@ Ans:-  ChromeOptions is a class in Selenium WebDriver used to customize and conf
 
 
 
-upstream and downstream APIs:
-
+upstream and downstream APIs:->
 Upstream API:
-
 When your system sends a request to another system to get data or trigger an action, that external system is upstream for you.
-
 → You are dependent on it. (Think: you are "going up" to get something.)
 
 Downstream API:
-
 When other systems call your API to get data or trigger actions, you are downstream for them.
-
-→ They are dependent on you.
-
-(Think: the flow is coming "down" to you.)
+→ They are dependent on you. (Think: the flow is coming "down" to you.)
 
 
 
 
 
 									
+
 
