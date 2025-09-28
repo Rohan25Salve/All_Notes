@@ -1,1 +1,85 @@
-Test
+What is T24?
+T24 (now called Temenos Transact) is a Core Banking Software developed by Temenos.
+It’s one of the most widely used core banking systems (CBS) across the globe, deployed by retail banks, corporate banks, microfinance institutions, and Islamic banks.
+Usage: It helps banks manage customer accounts, deposits, loans, payments, treasury, trade finance, compliance, and reporting.
+
+T24 layers for testing:
+1. Presentation Layer
+What it is: User Interfaces – browser (Web), mobile app, desktop.
+Testing focus:
+- UI rendering and navigation
+- Screen field validations
+- Multi-language and localization
+- Browser/device compatibility
+- Accessibility 
+
+2. Application Layer (Business Logic Layer)
+What it is: Core banking business rules and workflows within T24 modules (e.g., Accounts, Loans, Deposits, Payments).
+Testing focus:
+- Functional validation of product configuration (e.g., account creation, interest calculation, charges).
+- End-to-end transaction flows across modules.
+- Parameter and version testing.
+- COB (Close of Business) / EOD (End of Day) testing.
+- Regression of business rules after upgrades.
+
+3. Integration Layer
+What it is: Interfaces via T24 Integration Framework (TAFJ/IRIS/TCIB), APIs, MQ, ESB, Kafka, or REST/SOAP web services.
+Testing focus:
+- API/Interface contract validation
+- Message formatting (ISO20022, SWIFT, XML, JSON)
+- Middleware queue handling (MQ/Kafka)
+- Real-time and batch integrations with external systems (CRM, Cards, Payments, AML, Reporting).
+- Error handling and retry logic.
+
+4. Database Layer
+What it is: Underlying database (Oracle, DB2, MS SQL depending on deployment).
+Testing focus:
+- Data integrity and consistency
+- Record locking and transaction management
+- COB batch updates and rollbacks
+- Performance of complex queries
+- Data migration/ETL validation
+
+5. Infrastructure Layer
+What it is: Hosting and deployment environment (On-prem / Cloud). Includes OS, app server, network, clustering, containerization.
+Testing focus:
+- High availability, DR (Disaster Recovery)
+- Failover and load balancing
+- Performance testing under peak load
+- Security (authentication, authorization, encryption)
+- Monitoring and logging
+
+Issues which may arise at different layers:
+ UI bug, integration message mismatch, database corruption, or infrastructure bottleneck
+ 
+What is MQ(Message queue):
+MQ stands for Message Queue, typically referring to IBM MQ (WebSphere MQ) in banking environments.
+It’s a middleware messaging system that lets applications exchange data asynchronously.
+MQ = Middleware for asynchronous message exchange (queue-based)
+Asynchronous (messages put on queue and processed later)
+Use Case in T24:
+- Batch file uploads
+- Payment messages (SWIFT, ISO20022)
+- ATM/Card transactions via switch
+- Large volume data transfers
+Data Format: XML, ISO8583, ISO20022, JSON (customized per integration)
+Better for bulk / high volume messaging
+Example: End of Day (EOD) batch posting to clearing house
+Best for asynchronous, bulk, guaranteed delivery (payments, ATM, card switches, batch jobs).
+
+What is IRIS (Integration and Real-time Interaction Services)
+IRIS is Temenos’ integration layer that provides APIs and services for T24.
+Think of it as Temenos’ API gateway / middleware framework.
+IRIS = Temenos integration layer for synchronous real-time API/service communication.
+Synchronous (real-time request/response API calls)
+Use Case in T24:
+- Mobile/Internet banking APIs
+- Balance enquiry, mini statement
+- Loan/Deposit product services
+- Real-time customer onboarding
+Data Format: REST (JSON), SOAP (XML)
+Better for real-time low-latency interactions
+Example:Mobile banking app fetching balance instantly
+Best for synchronous, real-time API calls (mobile banking, fintech apps, internet banking).
+
+
