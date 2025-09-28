@@ -51,7 +51,10 @@ Testing focus:
 
 Issues which may arise at different layers:
  UI bug, integration message mismatch, database corruption, or infrastructure bottleneck
- 
+
+***********************************************************************************************************************************************************
+
+
 What is MQ(Message queue):
 MQ stands for Message Queue, typically referring to IBM MQ (WebSphere MQ) in banking environments.
 It’s a middleware messaging system that lets applications exchange data asynchronously.
@@ -67,6 +70,9 @@ Better for bulk / high volume messaging
 Example: End of Day (EOD) batch posting to clearing house
 Best for asynchronous, bulk, guaranteed delivery (payments, ATM, card switches, batch jobs).
 
+***********************************************************************************************************************************************************
+
+
 What is IRIS (Integration and Real-time Interaction Services)
 IRIS is Temenos’ integration layer that provides APIs and services for T24.
 Think of it as Temenos’ API gateway / middleware framework.
@@ -81,5 +87,311 @@ Data Format: REST (JSON), SOAP (XML)
 Better for real-time low-latency interactions
 Example:Mobile banking app fetching balance instantly
 Best for synchronous, real-time API calls (mobile banking, fintech apps, internet banking).
+
+***********************************************************************************************************************************************************
+
+
+Architecture-->
+Front-end channels: Internet Banking, Mobile, ATM, Branch Teller
+Core system: T24 (jBASE, TAFJ, COB engine)
+Integration layer: OFS (Open Financial Services), IRIS (Interface), Kafka/MQ
+Reporting layer: Temenos Reporting, regulatory feeds
+
+***********************************************************************************************************************************************************
+
+
+IRIS in T24  -->
+T24 Integration & Reporting Interface. IRIS is a reporting & enquiry engine in T24 used to extract data from the core banking system and present it in a structured way
+Automates reporting, batch integrations.
+Testing: validate reports generated + data reconciled with DB.
+
+T24 Transaction (FT, ST, AA, etc.) -> Core Tables (LIVE / HISTORY) -> IRIS Extract Layer ->  Enquiry / Report Definition (e.g., ENQ.CUST.BALANCE) -> Output:
+                                                                                                                                                                 - On Screen (UI Enquiry)
+                                                                                                                                                                 - Download (Excel/CSV/PDF)
+                                                                                                                                                                 - Feed to downstream (Regulatory / MIS)
+	When testing IRIS, you should validate:
+                                            Access Control – Restricted data (like VIP customers) should not be visible.
+                                            Formats – Excel/CSV/PDF outputs must be consistent.
+                                            Data Accuracy – Matches source (e.g., FT transaction → reflected in IRIS report).											
+
+What’s the difference between IRIS and Enquiry?
+👉 Enquiry = simple search/report from a single application.
+👉 IRIS = advanced reporting, can combine multiple modules/tables + export + feed external systems.
+
+MIS(Management Information System) -->
+MIS is a system of reports and dashboards that provides management-level insights into banking operations.
+It gathers data from T24 (and other systems) → processes it → presents it in summary form for decision-making.
+
+Difference between MIS and IRIS in T24?
+👉 IRIS = Tool inside T24 to build reports & enquiries.
+👉 MIS = Final set of summarized reports/dashboards (often built using IRIS or Data Warehouse).
+
+***********************************************************************************************************************************************************
+
+
+T24 Outbox -->
+Messaging interface where transactions are queued for external systems.
+Validate message format, status (processed, pending).
+Automation can poll Outbox DB table and validate content.
+Outbox = interface layer in T24 where outgoing messages (payment instructions, advices, confirmations, SWIFT, etc.) 
+are generated and stored before being sent to external systems (SWIFT, Clearing House, Middleware, etc.).
+
+T24 Transaction (FT, LD, AA, TD…) -> OFS / Application Processing -> Message Generation (based on templates: SWIFT, XML, ISO20022, etc.) -> OUT/BOX (Outbox tables in T24) -> Interface / Middleware Pickup (e.g., MQ, Kafka, API)  -> External System (SWIFT, ACH, RTGS, Partner Banks)
+
+Types of Messages in Outbox
+SWIFT Messages (MT103, MT202, MT940, MT950).
+ISO20022 Messages (pacs.008, camt.053).
+Regulatory Messages (AML, FATCA, CRS).
+Customer Advices (payment confirmation, statement).
+
+Q: What is T24 Outbox?
+👉 It’s a staging area where outgoing messages are stored after transaction posting, before being delivered to external systems like SWIFT or ACH.
+
+Q: How do you test Outbox messages?
+👉 Validate message format, field mappings, status updates, delivery to correct channel, error handling, and reconciliation with source transaction.
+
+*********************************************************************************************************************************************************
+T24 OFS -->
+Open Financial Services → API messaging protocol.
+It allows external systems (Mobile App, Internet Banking, Payment Gateway, CRM, ATM, SWIFT, etc.) to interact with T24 in real-time.
+Messages are in flat text format, not XML/JSON
+
+Types of OFS Messages->
+INPUTT (Create transaction (FT, Loans, Deposits)), ENQUIRY.SELECT → Fetch data (balances, customer info) , AUTHORISE (Authorize a transaction)
+REVERSE → Reverse a transaction , HOLD/RELEASE → Place hold on funds
+
+External Channel (ATM / Mobile / API / CRM) -|> OFS Message Generated -|> OFS Gateway (OFSML / Browser / MQ) -|> T24 Application Server
+                                                                                                                    │
+                                                                                                                    ├─ Validation (syntax, security, product rules)
+                                                                                                                    ├─ Business Logic (e.g., Fund Transfer, Account Open)
+
+-|> Database Updated (ACCOUNT / FT / CUSTOMER)  -|> Response Message (Success / Failure) -|> External Channel (confirmation shown to user)	
+
+
+              *******OFS   vs  Web Services  ********
+																												
+1. Technology
+   ├─ OFS: Flat text-based, key=value pairs
+   └─ Web Services: XML (SOAP) or JSON (REST)
+
+2. Transport/Integration
+   ├─ OFS: Sent via OFSML, MQ, File upload, or Browser input
+   └─ Web Services: HTTP/HTTPS calls, API gateways  
+
+3. Usage
+   ├─ OFS: Internal core banking operations (FT, Customer creation, COB jobs)
+   └─ Web Services: Exposed to external systems (Mobile app, Internet banking, Fintech)
+   
+
+4. Format Example
+   ├─ OFS: 
+       OFSHEADER,INPUTT,FT.VERSION
+       ACCOUNT:DEBIT=123,ACCOUNT:CREDIT=456,AMOUNT=1000
+   └─ Web Service (REST):
+       POST /fund-transfer
+       {
+         "debitAccount": "123",
+         "creditAccount": "456",
+         "amount": "1000",
+         "currency": "AED"
+       }
+	   
+Send OFS request → capture response → validate in DB & Outbox queue.
+Automate via Rest Assured + DB verification.
+
+***********************************************************************************************************************************************************
+
+T24 COB (Close of Business) key validations -->
+Interest accrual & application.
+GL balances reconciliation.
+End-of-day posting & batch jobs.
+No pending/unbalanced transactions.
+Reports generation.
+
+How do you test T24 Interfaces (like SWIFT, Kafka, MQ)?  -->
+
+Trigger transaction in T24 (e.g., SWIFT payment).
+Validate Outbox table entry created.
+Check Kafka/MQ queue → correct ISO20022/SWIFT message generated.
+
+Automation:
+API/UI to trigger transaction.
+DB query for Outbox.
+Kafka/MQ consumer to fetch message → validate content.
+
+***********************************************************************************************************************************************************
+
+
+
+What are key challenges in T24 test automation? How do you solve them? --> 
+
+Complex DB validations → use JDBC utils.
+OFS message parsing → build reusable parsers.
+COB execution time → run smoke validations early (shift-left).
+Integration with Kafka/MQ → custom consumers.
+Huge regression suite → use tagging, parallel execution in CI/CD.
+
+
+***********************************************************************************************************************************************************
+
+COB Automaiton -->
+1.COB Trigger / Start
+Automation Tasks:
+Run shell/command/script to trigger COB (tRunCOB.sh or batch script).
+Capture start time, job ID, session details.
+Validation:
+Check DB: SELECT * FROM BNK.BOOK WHERE STATUS='STARTED';
+Verify COB process is initialized
+
+2.Pre-COB Checks
+
+Automation Tasks:
+Validate if no pending authorizations exist (unapproved transactions).
+Validate GL balances match.
+Validation:
+Check pending authorizations
+Check GL balance mismatch
+
+3.COB Initialization
+Automation Tasks:
+Validate system is locked for COB.
+Validate batch jobs are loaded.
+
+4.COB Batch Jobs Execution
+     a. Interest Accrual / Posting
+	 b. Charges & Fees Application
+	 c. Loan Maturity / Repayment
+	 d. Standing Orders & Payments
+
+5.COB Monitoring
+Automation Tasks:
+Parse COB logs (BNK.BOOK, job logs).
+Capture errors/exceptions.
+
+6.Post-COB Validations
+Automation Tasks:
+Verify end balances in ACCOUNTS table.
+Validate GL postings reconciled.
+Validate COB reports generated. 
+
+7.COB Completion
+Automation Tasks:
+Validate system unlocked.
+Ensure COB date is incremented → Ready for BOD (Begin of Day).
+
+
+
+***********************************************************************************************************************************************************
+
+
+T24 Basics  -->
+T24 (Temenos 24) is a Core Banking System (CBS)
+Retail → Savings, current accounts, loans.
+Corporate → Trade finance, treasury.
+Private Banking → Wealth products.
+Islamic Banking → Murabaha, Sukuk, Ijara.
+
+Core Modules (Functional Banking Flows)  -->
+1.Customer (CUSTOMER table)
+stores personal & corporate details.
+KYC/AML checks applied.
+Example: A new customer is onboarded, then accounts can be linked.
+Workflow: Input → KYC/AML → Maker → Checker → CIF generated.
+
+2.Accounts (ACCOUNT table)
+Types: Savings, Current, Fixed Deposit.
+Each has balance, interest rules, GL links.
+
+3.Funds Transfer (FT table)
+Used for Payments.
+Can be internal (between same bank accounts) or external (SWIFT/ACH/RTGS).
+Example: Salary credit, utility payment.
+Workflow: Input FT → Validation (Balance, AML, Limits) → Authorization → GL Posting → Outbound Message.
+
+4.Arrangement Architecture (AA)
+Manages loans, deposits, overdrafts, mortgages.
+Handles schedules (installments, repayments).
+Workflow: Product setup → Loan request → Limit check → Disbursement → Repayment schedule.
+
+5.Lending (LOANS table)
+For loan accounts → disbursement, EMI calculation, overdue checks.
+
+6.Treasury
+For bank’s internal operations: FX deals, derivatives, money markets.
+
+7.Trade Finance
+LC (Letter of Credit), Guarantees, Import/Export Bills.
+
+8.Payments Hub
+Manages SWIFT, SEPA, ACH, RTGS.
+Connects with Payment Gateway or Central Bank.
+
+***********************************************************************************************************************************************************
+
+
+
+What is the difference between Application, Version, and Enquiry?
+Application = Base module (FT).
+Version = Customized form (FT.CORP).
+Enquiry = Reporting/search (ENQ.CUST.BALANCE).
+
+
+***********************************************************************************************************************************************************
+
+
+Kafka / IBM MQ with T24   -->
+
+Kafka -->
+ Used Kafka for real-time event streaming between T24 and external systems (e.g., Payment Hub, Mobile Banking, CRM).
+ Worked on schema registry & serialization (Avro/JSON/Protobuf) for ensuring data compatibility.
+ 
+ IBM MQ (Message Queuing) -->
+ Used MQ as a middleware layer between T24 and legacy systems.
+ Configured and tested MQ channels, queues, and queue managers for OFS messages.
+ 
+ 
+          [T24 Core Banking]
+                 │
+        ┌────────┴────────┐
+   Outbox (OFS)       Enquiry/IRIS
+        │
+   Middleware Layer
+ ┌───────────────┬───────────────┐
+ │   IBM MQ       │   Kafka (Confluent)
+ │ (Legacy, Sync) │ (Real-time Streaming)
+ └───────────────┴───────────────┘
+        │
+ Downstream Systems
+   - Payment Hub
+   - CRM
+   - Mobile/Internet Banking
+   - Data Lake / MIS / BI
+Message Validation: Check that outbound T24 OFS message = inbound Kafka/MQ payload.
+ 
+
+***********************************************************************************************************************************************************
+
+
+SWIFT Gateway --->
+SWIFT = Society for Worldwide Interbank Financial Telecommunication.
+It’s a global messaging network banks use to securely exchange payment instructions.
+It doesn’t transfer money itself, but it ensures the payment instructions reach the right bank in the correct format.
+
+Example: If Bank A (UAE) sends money to Bank B (India), the instructions travel over SWIFT.
+
+ Customer (UAE) --> T24 (Payment Module)
+          |
+          v
+   T24 Outbox (OFS Message)
+          |
+          v
+     SWIFT Gateway
+          |
+     -----------------------
+     |                     |
+   SWIFT (Network)      <-- ACK (Accepted)
+                        <-- NACK (Rejected)
+
+
 
 
