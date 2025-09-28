@@ -464,3 +464,50 @@ View
 
 a view is a virtual table that is derived from the result of a SELECT query. It doesn't store data itself, but instead stores a query that generates the data when you access the view.
 
+*****************************************************************************************************************
+
+What are window functions? Give examples.
+Window functions perform calculations across a set of rows related to the current row. Unlike GROUP BY, they don’t collapse rows.
+
+
+Difference between RANK(), DENSE_RANK() and ROW_NUMBER()?
+
+ROW_NUMBER() → unique sequence (no ties).
+RANK() → gaps if duplicate values.
+DENSE_RANK() → no gaps.
+
+
+What is the difference between EXISTS and IN?
+
+IN → checks if a value exists in a list (materializes subquery).
+EXISTS → returns true if subquery returns rows (faster for large datasets).
+
+-- Using IN
+SELECT name FROM employees WHERE dept_id IN (SELECT dept_id FROM departments);
+
+-- Using EXISTS
+SELECT name FROM employees e WHERE EXISTS 
+   (SELECT 1 FROM departments d WHERE d.dept_id = e.dept_id);
+
+
+What is a deadlock in SQL? How to handle it?
+Deadlock → two transactions waiting on each other’s locks.
+
+Solution:
+Keep transactions small.
+Access objects in same order.
+Use proper indexing to avoid long locks.
+DB engine usually detects and rolls back one.
+
+What is a primary key, foreign key, unique key?
+Primary key → uniquely identifies row, not null.
+Foreign key → enforces referential integrity (link between tables).
+Unique key → ensures unique values, allows nulls.
+
+What is indexing? Clustered vs Non-clustered?
+Index → speeds up queries.
+Clustered → sorts & stores data rows (only 1 per table).
+Non-clustered → separate structure (can have many).
+
+
+
