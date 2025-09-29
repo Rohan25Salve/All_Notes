@@ -18,6 +18,7 @@ API Testing: RestAssured, Karate, Postman (manual validation)
 Performance Testing: JMeter, Karate with Gatling, Taurus
 Mobile Automation: Appium, Karate with Appium
 Test Management: Jira,Agile methodology, SDLC & STLC best practices
+Data base testing : SQL/MYSQL, plsql , PgAdmin 
 CI/CD & DevOps: GitLab, Jenkins, Docker
 Domain Expertise: Core Banking (T24, Avaloq), Financial Services, Wealth Management
 
