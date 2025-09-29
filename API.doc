@@ -1429,9 +1429,15 @@ When other systems call your API to get data or trigger actions, you are downstr
 → They are dependent on you. (Think: the flow is coming "down" to you.)
 
 
-
+****  What types of errors you may encounter in Rest Assured?  ****
+IllegalArgumentException: wrong URI/ endpoint.
+AssertionError: response doesn't match expected values.
+JsonPathException: invalid JSON path while extracting.
+SSLHandshakeException: when calling HTTPS without proper certificates.
+NullPointerException: missing headers or null response.
 
 
 									
+
 
 
