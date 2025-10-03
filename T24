@@ -199,6 +199,18 @@ External Channel (ATM / Mobile / API / CRM) -|> OFS Message Generated -|> OFS Ga
 Send OFS request → capture response → validate in DB & Outbox queue.
 Automate via Rest Assured + DB verification.
 
+How do you test OFS messages automatically?
+A:
+Create test scripts (Java/RestAssured/Python) to send OFS request.
+Validate:
+Response format (SUCCESS, FAIL, error codes).
+Database update (ACCOUNT, CUSTOMER, FT tables).
+GL postings.
+Example: Automated script sends FUNDS.TRANSFER OFS, validates debit/credit balances.
+
+
+
+
 ***********************************************************************************************************************************************************
 
 T24 COB (Close of Business) key validations -->
@@ -279,10 +291,53 @@ Automation Tasks:
 Validate system unlocked.
 Ensure COB date is incremented → Ready for BOD (Begin of Day).
 
+How do you handle COB errors in T24?
+A:
+Review COB job logs (BNK.RUN, EOD.PROCESSING).
+Check failed application (FT, STMT.ENTRY, LD, etc.).
+Identify transaction-level issue (e.g., insufficient balance, invalid GL).
+Fix data manually (authorize/correct transaction).
+Restart job in retry mode.
+Escalate if it’s a system error (jBASE/TAFJ logs).
+Example: COB failed on interest accruals due to missing holiday calendar → fixed calendar in HOLIDAY application, restarted COB.
 
+
+COB is taking longer than usual, how do you troubleshoot?
+A:
+Check long-running jobs (BNK.JOB.LIST).
+Optimize enquiries and local routines (SQL tuning, index creation).
+Verify parallelism (split jobs across multi-threading).
+Check batch size setup in JOB.DEFINE.
+Look for locking issues on heavily used applications.
+
+How can you automate COB testing?
+A:
+Use automation framework to:
+Trigger COB via BNK.RUN batch commands.
+Capture logs and job statuses automatically.
+Validate end results (balances, GL entries, interest postings).
+Example tools: Selenium + Unix scripts, Jenkins pipelines, or Temenos TestMaster.
+
+Automated checks include:
+All COB jobs completed successfully.
+Customer/account balances match expected values.
+GL balances reconciled with trial balance.
+
+
+5. Automation of COB
+Q: How can you automate COB testing?
+A:
+Use an automation framework to:
+Trigger COB via BNK.RUN batch commands.
+Capture logs and job statuses automatically.
+Validate end results (balances, GL entries, interest postings).
+Example tools include Selenium, Unix scripts, Jenkins pipelines, or Temenos TestMaster.
+Automated checks include:
+All COB jobs completed successfully.
+Customer/account balances match expected values.
+GL balances reconciled with the trial balance.
 
 ***********************************************************************************************************************************************************
-
 
 T24 Basics  -->
 T24 (Temenos 24) is a Core Banking System (CBS)
@@ -327,8 +382,6 @@ Manages SWIFT, SEPA, ACH, RTGS.
 Connects with Payment Gateway or Central Bank.
 
 ***********************************************************************************************************************************************************
-
-
 
 What is the difference between Application, Version, and Enquiry?
 Application = Base module (FT).
@@ -391,6 +444,111 @@ Example: If Bank A (UAE) sends money to Bank B (India), the instructions travel 
      |                     |
    SWIFT (Network)      <-- ACK (Accepted)
                         <-- NACK (Rejected)
+
+***********************************************************************************************************************
+
+Temenos Local Development (jBASE, TAFC/TAP, TAFJ)
+
+Q: What’s the difference between TAFC and TAFJ, and in what scenarios have you used jBASE?
+TAFC (Temenos Application Framework for C) → Runs on jBASE, used for traditional on-prem core banking systems. It’s lightweight and suitable for legacy deployments.
+TAFJ (Temenos Application Framework for Java) → Built on Java, designed for scalability, high availability, and integration with microservices/cloud.
+jBASE → I used it for writing local routines, enquiry modifications, OFS message parsing, and creating batch programs.
+Example: I built a local routine in jBASE for a custom validation in Funds Transfer (FT), ensuring debit account had sufficient balance before COB posting.
+
+*****************************************************************************************************************************
+
+Q: How does T24 handle the lifecycle of a payment transaction from initiation to settlement?
+Initiation → User/system sends request via OFS/API.
+Validation → T24 checks account balance, customer status, AML rules.
+Booking → Temporary records created in FT application.
+Authorization → Dual control or automated STP (Straight Through Processing).
+Settlement → Payment message formatted (SWIFT MT/ISO20022 XML) and sent to the clearing system.
+Accounting → GL entries generated, balances updated.
+Reconciliation → Settlement confirmation, error handling, retry if needed.
+
+*********************************************************************************************************************
+What is the difference between SWIFT MT and ISO20022 MX messages in T24 Payments?
+
+SWIFT MT → Legacy format, text-based, widely used in cross-border payments. Example: MT103 (Customer Transfer).
+ISO20022 MX → XML-based, structured, richer data, supports regulatory compliance. Example: pacs.008 (Customer Credit Transfer).
+
+**********************************************************************************************************************
+
+OFS message failure with error ACCOUNT.NO.INVALID. How do you troubleshoot?
+
+Check raw OFS message format (field separators, transaction ID).
+Validate account number in CUSTOMER/ACCOUNTS application.
+Verify local routine validations or field-level controls.
+Review jBASE logs or T24 enquiry (ENQUIRY SELECT).
+If from API Hub → check API Hub logs, TIF mappings.
+Fix root cause (e.g., wrong account, missing currency code).
+
+
+********************************************************************
+
+T24 Wealth module integrate with core banking? --->>>
+Wealth module handles investment accounts, securities, portfolio management.
+Integration with core customer data ensures a single customer view.
+Transactions in Wealth generate GL postings in T24 Core.
+
+*********************************************************************
+
+You deployed a new local routine in FT module but COB batch job fails. How do you fix it?
+A:
+Check COB job logs (BNK.RUN) for error trace.
+Run the FT transaction manually to reproduce issue.
+Debug local routine in jBASE (CALL stack trace).
+Verify routine parameters (incorrect handling of NULL values is common).
+Fix and redeploy routine → run COB in retry mode (BNK.EOD, RETRY).
+
+************************************************************************
+
+What is Temenos TestMaster and how does it help in automation?
+A:
+Temenos TestMaster is the official automation tool for T24.
+Features:
+Automates UI, API, OFS, COB testing.
+Provides data-driven testing.
+Integrates with CI/CD pipelines.
+I’ve used TestMaster for regression packs in Payments and Lending modules, reducing manual effort by 60%.
+
+*************************************************************************************************************************************
+
+How do you performance test OFS messages in T24?
+A:
+Use JMeter or Gatling to simulate high volume OFS requests.
+Example: 5000 FT requests in 10 minutes.
+Validate:
+Response times < 1 sec for each OFS.
+No COB impact.
+DB locks & memory usage stable.
+Report with percentiles (P90, P95).
+
+****************************************************************************************************
+
+5. GL Mismatch
+Q: After COB, GL balances don’t match with customer balances. How do you resolve?
+A:
+Run TRIAL.BALANCE enquiry and compare with CUSTOMER.STMT.
+Check for unauthorized FT/LD transactions.
+Look at reversal postings (sometimes auto-reversal fails).
+If issue is batch-specific → reprocess failed transactions manually.
+Automation Fix: Build a post-COB validation script to compare GL vs Account balances automatically.
+
+***********************************************************************************************************
+
+COB Performance
+
+Q: COB that usually takes 2 hours now takes 5 hours. What could be the reason?
+A:
+Check long-running jobs in BNK.JOB.LIST.
+Look for locking issues (jobs waiting for transaction unlock).
+Analyze SQL queries for slow joins/missing indexes.
+Verify if parallel jobs are queued instead of running concurrently.
+Automation Insight: Set up monitoring scripts to track average job runtime and raise alerts if threshold exceeded.
+
+*************************************************************************************************************
+
 
 
 
