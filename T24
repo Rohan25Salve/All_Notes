@@ -208,7 +208,13 @@ Database update (ACCOUNT, CUSTOMER, FT tables).
 GL postings.
 Example: Automated script sends FUNDS.TRANSFER OFS, validates debit/credit balances.
 
-
+Error Handling & Reconciliation
+Q7: How do you handle OFS errors in T24?
+A7:
+Check OFS.ERROR table for failed messages.
+Retry via OFS.PROCESS.
+Ensure field mapping & versions are correct.
+Reconcile with external system (SwiftNet, ACH) logs.
 
 
 ***********************************************************************************************************************************************************
@@ -219,6 +225,7 @@ GL balances reconciliation.
 End-of-day posting & batch jobs.
 No pending/unbalanced transactions.
 Reports generation.
+COB ensures the bank’s books are balanced and reconciled before the next business day.
 
 How do you test T24 Interfaces (like SWIFT, Kafka, MQ)?  -->
 
@@ -336,6 +343,31 @@ Automated checks include:
 All COB jobs completed successfully.
 Customer/account balances match expected values.
 GL balances reconciled with the trial balance.
+
+What are common COB errors and how do you resolve them?  --->
+Typical errors: Account locked, missing OFS messages, product setup issues, suspense account mismatch.
+
+
+Can you explain the phases of COB? --> 
+A:
+COB typically has 5 phases:
+Start of Day (SOD) – initialization, previous day closure, parameter setups.
+Intraday Batch Jobs – standing orders, payment runs, loan schedules.
+End of Day (EOD) – final postings, interest calculations, GL updates.
+Start of Next Day – move system date forward.
+Reporting/Extracts – regulatory, MIS, reconciliations.
+
+
+3. COB Errors
+Q: How do you handle COB errors in T24?
+A:
+Review COB job logs (BNK.RUN, EOD.PROCESSING).
+Check failed application (FT, STMT.ENTRY, LD, etc.).
+Identify transaction-level issue (e.g., insufficient balance, invalid GL).
+Fix data manually (authorize/correct transaction).
+Restart job in retry mode.
+Escalate if it’s a system error (jBASE/TAFJ logs).
+
 
 ***********************************************************************************************************************************************************
 
@@ -549,7 +581,97 @@ Automation Insight: Set up monitoring scripts to track average job runtime and r
 
 *************************************************************************************************************
 
+What is Arrangement Architecture in T24?
+A3:
+AA provides a flexible contract management framework for products like Lending, Deposits, Overdrafts.
+Instead of hardcoding, products are configured via rules & conditions (interest, fees, repayment schedules).
+Supports reusability, rapid product launch, and parameter-driven design.
+
+AA Contract use case?
+For a loan product, I configured:
+Interest = Base + Spread
+Repayment = EMI monthly
+Penalty = % of overdue amount
+The AA Contract automatically calculated schedules and posted accounting entries during COB.
+
+
+How do you improve performance in T24 (TAFJ)?
+A5:
+Use multi-threading and batch splitting for COB.
+Optimize jBASE routines / Java code for loops and DB calls.
+Use Temenos Batch Performance Monitor (BPM) to analyze bottlenecks.
+Tune Oracle/DB2 queries for indexing.
+
+Q6: Difference between performance in TAFC vs TAFJ?
+A6:
+TAFC (jBASE): Faster for smaller banks, limited scalability.
+TAFJ (Java-based): Supports high concurrency, APIs, microservices, but requires more tuning (JVM heap, GC).
+
+
+Q7: How do you handle OFS errors in T24?
+A7:
+Check OFS.ERROR table for failed messages.
+Retry via OFS.PROCESS.
+Ensure field mapping & versions are correct.
+Reconcile with external system (SwiftNet, ACH) logs.
+
+Q8: How do you reconcile settlement mismatches?
+A8:
+Use RECON module for automated reconciliation.
+Compare incoming/outgoing messages with GL entries.
+Investigate suspense accounts and adjust via manual journal if required.
 
 
 
+Q9 You deployed a new local routine in FT module, but the COB batch job fails. How do you fix it?
+A:
+Check COB job logs (BNK.RUN) for error trace.
+Run the FT transaction manually to reproduce the issue.
+Debug local routine in jBASE (CALL stack trace).
+Verify routine parameters (incorrect handling of NULL values is common).
+Fix and redeploy routine → run COB in retry mode (BNK.EOD, RETRY).
+
+
+
+Q: How do you design an automation strategy for T24?
+A:
+UI Automation → For T24 Browser/Classic screens (Selenium, Playwright).
+API Automation → OFS messages, Temenos API Hub (RestAssured, Postman, Karate).
+COB Automation → Batch scripts, Jenkins jobs, T24 TestMaster.
+Database Validation → SQL queries against Oracle/DB2 for GL and account checks.
+Performance Testing → JMeter, Gatling for OFS/API load.
+
+
+GL Mismatch
+Q: After COB, GL balances don’t match with customer balances. How do you resolve?
+A:
+Run TRIAL.BALANCE enquiry and compare with CUSTOMER.STMT.
+Check for unauthorized FT/LD transactions.
+Look at reversal postings (sometimes auto-reversal fails).
+If issue is batch-specific → reprocess failed transactions manually.
+Automation Fix: Build a post-COB validation script to compare GL vs Account balances automatically.
+
+
+
+What is ISO20022, and why is it important in T24 payments?
+A12:
+ISO20022: A universal standard for financial messages in XML.
+Used for cross-border payments, enabling rich remittance data.
+T24 maps ISO20022 fields into internal OFS structures for processing.
+
+WIFT: Cross-border, uses MT/MX formats. T24 integrates via SWIFTNet.
+ACH/FPS: Domestic clearing (batch/real-time). ACH uses NACHA standards, FPS is real-time settlement.
+
+
+
+security managed in T24?  ---> User Profiles & Roles – access based on job function. ,, Maker-Checker Control – dual authorization for sensitive transactions.
+
+
+
+Important Note -------->
+Work Experince ---> 
+I have worked on Core, Accounts, Payments, Lending, Treasury, and Wealth modules. 
+My role involved writing OFS-based interfaces, developing local routines, parameterization, SIT/UAT support, and automating regression packs.
+For example, in Lending, I implemented loan disbursement logic using T24 local routines, and in Payments, 
+I configured swift message validation and settlement workflows.
 
