@@ -41,7 +41,10 @@ Integrated Test Master for end-to-end flow validations.
 Automated regression packs for trading, payments, and compliance modules.
 
 LocationGuru (India):
-
+I have worked on Core, Accounts, Payments, Lending, Treasury, and Wealth modules. 
+My role involved writing OFS-based interfaces, developing local routines, parameterization, SIT/UAT support, and automating regression packs.
+For example, in Lending, I implemented loan disbursement logic using T24 local routines, and in Payments, 
+I configured swift message validation and settlement workflows.
 
 Wolfox Pvt. Ltd. (India):
 
