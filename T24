@@ -675,3 +675,56 @@ My role involved writing OFS-based interfaces, developing local routines, parame
 For example, in Lending, I implemented loan disbursement logic using T24 local routines, and in Payments, 
 I configured swift message validation and settlement workflows.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+JOB DESCRIPTION:
+
+SKILLS REQUIREMENTS OF THE POSITION
+
+Responsibilities:
+
+The candidate will be the Test Automation Expert for Core banking projects and responsible for designing, creating and implementing Test Automation architectures and Solutions.
+
+KEY FEATURES OF THE POSITION
+
+Functional / Technical Define automation architecture and solutions for standalone as well as integrated testing for T24 across all modules for cloud and On-prem architecture
+Design solution to test microservice applications and streaming platform like Kafka.
+Review and analyse Business requirements and system specifications to define test automation approach, scope and implement it.
+Design solutions for API testing, mocks, stubs, and simulators needed for test automation.
+Define and implement the CICD integration and DevOps solutions to ensure continuous testing and execution
+Drive the overall DevOps and test strategy to ensure shift left, optimize test cycles while maintaining high standards of quality
+Design and implement test data management solutions for large and complex application landscapes and their testing cycles
+Work collaboratively with various team to achieve goals.
+Proactively raise issues, risks and recommend optimal solutions.
+Requirements/Skillsets              
+
+Technical
+
+Expertise in Core Java and related concepts.
+Expertise in Test Automation tool chain Cucumber, TestNG, Selenium, Rest Assured etc.
+Experience in implementing test automation for large T24 implementations and hands on knowledge of T24 across modules and concepts like COB testing, OFS,IRIS, T24 Outbox.
+Need to have solid understanding on API automation.
+Good understanding of CI CD pipelines and tools like Gitlab (preferred), Jenkins etc.
+Good understanding of containerized env and techs like Docker, Kubernetes
+Development experience with hands on exp on Spring boot or similar is preferred.
+Very good understanding of best practices, clean code policies, branching strategies and security scans.
+Experience with cloud platforms like Azure(preferred)
+Experience on Kafka streaming platforms like Confluent Kafka, IBM MQ etc. Personal and Social
+Excellent communication & Stakeholder management skills
+Good work ethics
+Good problem-solving abilities.
+Good team player
+Systematic and meticulous
