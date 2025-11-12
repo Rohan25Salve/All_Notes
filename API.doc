@@ -1437,7 +1437,50 @@ SSLHandshakeException: when calling HTTPS without proper certificates.
 NullPointerException: missing headers or null response.
 
 
-									
+
+
+**************************     passing header() multiple times on Api **********************************
+
+1. given()
+    .baseUri("https://api.example.com")
+    .header("Content-Type", "application/json")
+    .header("Authorization", "Bearer token_value")
+    .header("Accept", "application/json")
+.when()
+    .get("/users")
+.then()
+    .statusCode(200);
+
+2. 
+Map<String, String> headers = new HashMap<>();
+headers.put("Content-Type", "application/json");
+headers.put("Authorization", "Bearer token_value");
+
+given()
+    .baseUri("https://api.example.com")
+    .headers(headers)
+.when()
+    .get("/users")
+.then()
+    .statusCode(200);
+
+3. 
+Header h1 = new Header("Content-Type", "application/json");
+Header h2 = new Header("Authorization", "Bearer token_value");
+Header h3 = new Header("Accept", "application/json");
+
+Headers allHeaders = new Headers(h1, h2, h3);
+
+given()
+    .baseUri("https://api.example.com")
+    .headers(allHeaders)
+.when()
+    .get("/users")
+.then()
+    .statusCode(200);
+
+
+
 
 
 
