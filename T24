@@ -728,3 +728,46 @@ Good work ethics
 Good problem-solving abilities.
 Good team player
 Systematic and meticulous
+************************************************
+Every Maintenance and Contarct should be authorized else clear this via pending items first.
+
+🔹 1️⃣ MARKEOTI
+- After this stage, users cannot post entries, but the system can.
+Key Activities:
+ - Tanking starts.
+ - Trial Balance checks.
+ - Updates Internal and Customer GL [ED-12001].
+ - Validates DR-CR entries for balance [AC-FINBL].
+
+🔹 2️⃣ POSTEOTI
+Executes various batches such as CLBATCH and ICEOD Etc.
+
+🔹 3️⃣ MARKEOFI
+- At this point, neither users nor the system can post entries.
+Key Activities:
+ - Updates Internal and Customer GL (if any) based on batch processes in PEOTI.
+ - Possible updates to ED-12001 and AC-FINBL.
+
+🔹 4️⃣ POSTEOFI
+- Executes remaining batches.
+Key Activities:
+ - Generates advice, statements, and reports.
+
+🔹 5️⃣ MARKEOD (Mark End of Day)
+Key Activities:
+ - Purges tables (e.g., actb-daily-log to actb-history).
+ - To Archive tables
+
+🔹 6️⃣ MARKBOD (Mark Beginning of Day)
+Key Activities:
+ - Date change occurs here.
+ - Untanks all previously tanked transactions.
+
+🔹 7️⃣ POSTBOD (Post Beginning of Day)
+- Executes various batches like CL, IC, PT, DE, BC based on segments maintained in EITM_MODULES_INSTALLED
+- Insight: Some batches may resemble PEOTI.
+
+🟢 MARKTI
+The branch becomes online and transactions resume.
+
+The EOD cycle ensures data integrity, financial accuracy, and system readiness for the next business day.
