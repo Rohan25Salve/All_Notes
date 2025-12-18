@@ -1,1 +1,63 @@
-OpenAPI
+*******       OpenAPI   ************
+
+OpenAPI (formerly Swagger) is a standard specification used to describe REST APIs.
+Key Points
+
+Defines endpoints, request/response formats, parameters, headers, security, etc.
+Written in YAML or JSON.
+Helps automate:
+API documentation
+Client SDK generation
+Server stub generation
+API testing (Postman, Rest Assured, Karate, etc.)
+Temenos exposes its services through the Interaction Framework (IF) or REST services, and each service has an OpenAPI (Swagger) specification that describes:
+API endpoint
+Request/response structure
+Parameters
+Authentication
+Error codes
+Field validation rules
+T24 function to trigger (e.g., enrichment, commit, COB, etc.)
+* This is a blueprint for QA to understand the T24 service without reading COB tables or internal code.
+
+Step 1: Read the OpenAPI Spec  --> Understand all fields, constraints, and sample payloads.
+Step 2: Prepare Test Payload --> Create valid/invalid payloads based on OpenAPI.
+Step 3: Trigger T24 API --> Call the REST API using Postman/automation scripts.
+Step 4: Validate API Response
+Check: HTTP code, Error messages, T24 transaction ID, Business rule execution
+Step 5: Validate T24 Database --> In AA/AC/FT tables after commit.
+Step 6: Validate End-to-End Flow  --> T24 → Middleware → Channels → Notifications → Accounting entries.
+
+T24 Component Testing
+Temenos T24 has modules:
+AA (Arrangement Architecture)
+CB (Core Banking)
+COB (Close of Business)
+FT (Funds Transfer)
+PM (Payments)
+LC (Lending)
+
+
+**************   AVRO  **********************
+It is used in the integration layer when T24 communicates with:
+Kafka
+Enterprise Service Bus (ESB)
+Data Lake / Analytics
+Downstream systems (Cards, AML, CRM, Notifications)
+👉 T24 → Middleware → Kafka (Avro messages)
+
+Flow  --->
+API call hits T24 (OpenAPI)
+T24 validates & commits data
+Event generated
+Event serialized in Avro
+Published to Kafka topic
+Consumers read Avro event
+
+Where AVRO is used in T24  -->
+📌 1. Customer Events -> Customer Created , KYC Updated , CIF Modified
+📌 2. Account Events --> Account Opened , Balance Updated , Account Closed
+📌 3. Transaction Events --> Funds Transfer , Card transaction , Loan disbursement
+📌 4. Loan & AA Events --> Loan approved , Installment posted , Loan closed
+
+
