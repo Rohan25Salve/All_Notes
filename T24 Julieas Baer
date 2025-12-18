@@ -61,3 +61,15 @@ Where AVRO is used in T24  -->
 📌 4. Loan & AA Events --> Loan approved , Installment posted , Loan closed
 
 
+JUnit Test
+  ↓
+OpenAPI Generated Client
+  ↓
+T24 API
+  ↓ (on success)
+Kafka Topic (Avro event)
+
+
+
+
+
