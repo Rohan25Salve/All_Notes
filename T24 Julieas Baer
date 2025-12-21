@@ -240,11 +240,83 @@ OFS → Message Service → Trade Input → FX Engine → Accounting → Validat
 | FX.CASH.PROCESS      | Posts accounting         |
 
 
+ ************************* TIS (Temenos Integration Service) **************************
+
+TIS = Message bridge between T24 and other systems
+Think of TIS like a post office 📮: Systems send messages to T24, T24 sends messages out
+TIS handles format, routing, retry, and reliability
+
+👉 T24 never communicates directly with Kafka / upstream applications.
+👉 Everything goes through TIS.
+
+Upstream System → Kafka → TIS → T24 -> T24 → TIS → Kafka → Downstream System
+Responsibilities of TIS : 1. Message Intake  , 2. Validation ,  3. Transformation ,  4. Routing ,  5. Outbound Publishing 
+| Test Type         | Purpose                                    |
+| ----------------- | ------------------------------------------ |
+| Inbound TIS test  | Validate T24 can process upstream messages |
+| Outbound TIS test | Validate messages sent to downstream       |
+
+Inbound Validation --> Message accepted, Trade created, Correct mapping,No error topics
+Outbound Validation --> Correct topic published , Correct schema version ,Business fields correct , Correlation ID matches
+
+👉 OFS = unit-level testing
+👉 TIS = integration-level testing
 
 
+| Topic Type     | Purpose          |
+| -------------- | ---------------- |
+| Inbound topic  | Upstream → T24   |
+| Outbound topic | T24 → Downstream |
+| Error topic    | Failed messages  |
+| Retry topic    | Retried messages |
+
+| Issue                             | Meaning                   |
+| --------------------------------- | ------------------------- |
+| Message in error topic            | Schema / mapping issue    |
+| Trade not created                 | TIS → T24 mapping failure |
+| Kafka consumed but nothing in T24 | OFS rejected              |
+| Duplicate messages                | Retry logic               |
 
 
+How You Automate TIS (Practically)
+Inbound Automation --> 
+Create Kafka producer
+Build AVRO payload
+Publish to topic
+Wait / poll
+Validate trade in T24
+Check error topic = empty
+
+Outbound Automation --> 
+Trigger trade in T24
+Start Kafka consumer
+Capture message
+Validate schema + payload
 
 
+| Environment | Implementation |
+| ----------- | -------------- |
+| AT          | OFS            |
+| SIT         | Kafka → TIS    |
+| E2E         | UI → TIS       |
+
+| OFS           | TIS               |
+| ------------- | ----------------- |
+| Direct T24    | Integration layer |
+| Very fast     | Slower (Kafka)    |
+| AT testing    | SIT / Integration |
+| No dependency | Kafka dependency  |
+
+Common TIS Failures
+Error topic → schema/mapping issue
+Kafka consumed but no trade → OFS rejected
+Trade exists but no outbound → event config issue
+Duplicate messages → retry triggered
+
+Golden Debug Order :
+1. Kafka topic
+2. TIS logs
+3. OFS logs
+4. T24 enquiry
 
 
