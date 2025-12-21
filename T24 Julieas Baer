@@ -73,3 +73,94 @@ Kafka Topic (Avro event)
 
 
 
+
+*******************          T24 service configuration records.   **************
+
+
+TSA.SERVICE,
+AUTO/I/PROCESS,
+AUTOMATION01/******/SG0020001,
+HKD^JBWW.B.DX.FXOPTIONS.PROCESS,
+SERVICE.CONTROL::=AUTO
+
+
+Note --> “This background process is allowed to run automatically (AUTO) without manual intervention.”
+Without this:
+Your OFS automation will fail
+Trades will be created but not processed
+Accounting / lifecycle will not move forward
+
+| Part                        | Meaning                                     |
+| --------------------------- | ------------------------------------------- |
+| TSA.SERVICE                 | T24 table that controls background services |
+| AUTO/I/PROCESS              | Type of service (Automatic Input / Process) |
+| AUTOMATION01                | User used to run automation                 |
+| SG0020001                   | Company/booking entity                    |
+| HKD                         | Currency                                    |
+| JBWW.B.DX.FXOPTIONS.PROCESS | Actual business engine                      |
+| SERVICE.CONTROL::=AUTO      | Enable auto execution                       |
+
+
+T24 is strict about: Currency, Product, Process type, Company
+
+FX OPTIONS Processing -->   JBWW.B.DX.FXOPTIONS.PROCESS    ---> 
+👉 Handles:
+FX Option trade processing
+Lifecycle events
+Valuation triggers
+
+FX STRUCTURES Processing  --> FX STRUCTURES Processing  ---> 
+👉 Handles:
+Structured FX products
+Combination instruments
+Strategy-level processing
+
+FX CASH Processing -->  JBWW.D.FX.CASH.PROCESS --> 
+👉 Handles:
+Cash leg settlements
+Debit/credit postings
+Nostro movements
+
+OFS Message Service -->  BNK^OFS.MESSAGE.SERVICE -->
+It allows:
+OFS messages to be accepted
+Requests to be processed
+Responses to be returned
+
+SERVICE.CONTROL::=AUTO -->  “Run this service automatically in background when needed.”
+MANUAL → someone must trigger it
+STOPPED → nothing happens
+AUTO → perfect for automation
+
+SERVER.NAME=NULL --> 
+Simple meaning:
+Service can run on any available T24 server
+No server pinning
+Better for automation & load
+
+automation user AUTOMATION01  ---> 
+Because:
+Automation should not use real users
+Easier auditing
+Controlled permissions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
