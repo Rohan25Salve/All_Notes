@@ -149,11 +149,95 @@ Controlled permissions
 
 
 
+STEP 0️⃣ Preconditions (Before Automation Runs)
+These must already be true, otherwise nothing works:
+TSA.SERVICE records = AUTO ✅
+Automation user = AUTOMATION01 ✅
+Reference data exists (Customer, Portfolio, Currency) ✅
+STEP 1️⃣ Automation Sends OFS Message
+Your automation sends an OFS message like:
+OFS.MESSAGE:
+APPLICATION=FXOPTION
+FUNCTION=I
+FIELDS=...
+* FXOPTION → Product
+  I → Input (create trade)
 
+STEP 2️⃣ OFS MESSAGE SERVICE PICKS IT UP
+Service involved:
+BNK^OFS.MESSAGE.SERVICE
+What it does:
+Accepts the OFS message
+Authenticates AUTOMATION01
+Routes request to correct the T24 application
 
+STEP 3️⃣ Trade Record Is Created (Input Stage)
+Now T24:
+Creates FX Option record
+Assigns contract ID
+Saves basic trade data
 
+STEP 4️⃣ FX OPTION PROCESS ENGINE STARTS
+Service triggered: JBWW.B.DX.FXOPTIONS.PROCESS
+This is where real work starts:
+Validations
+Lifecycle setup
+Internal status updates
+If this service is not AUTO: Trade stays in limbo, Status looks incomplete
 
+STEP5️⃣ FX STRUCTURE PROCESS (If Applicable)
+Service:JBWW.B.SY.FXSTRUCTURES.PROCESS
+Triggered when:
+Structured FX product
+Strategy / multi-leg trades
 
+What it does: Breaks trade into components
+Links structure hierarchy👉 Even plain FX options may touch this internally.
+
+STEP 6️⃣ FX CASH PROCESS (Accounting)
+Service: JBWW.D.FX.CASH.PROCESS
+This is an accounting engine 🧾
+It:
+Post debit/credit entries
+Updates accounts
+Creates settlement legs
+💡 This is what automation later validates via enquiries.
+
+STEP 7️⃣ Internal Status = COMPLETED
+At this point: Trade status = Active
+Accounting posted
+Lifecycle ready
+👉 From an automation perspective: Business flow is completed
+
+STEP 8️⃣ Outbound Events (Optional – TIS / Kafka)
+If TIS is enabled:
+T24 publishes outbound messages
+Kafka topics get populated
+Your automation may:
+Consume Kafka
+Validate payload
+Match trade IDs
+
+STEP 9️⃣ Automation Validates Results
+Now your validators run:
+Examples:
+OFS Enquiry:
+Trade exists
+Correct status
+Accounting enquiry:
+Debit / Credit posted
+Message validation: Kafka payload correct
+👉 Same scenario, different validator implementations.
+
+🔁 Whole Flow in One Line
+OFS → Message Service → Trade Input → FX Engine → Accounting → Validation
+
+| Service              | Why Needed               |
+| -------------------- | ------------------------ |
+| OFS.MESSAGE.SERVICE  | Accepts automation input |
+| FXOPTIONS.PROCESS    | Processes trade          |
+| FXSTRUCTURES.PROCESS | Handles structure        |
+| FX.CASH.PROCESS      | Posts accounting         |
 
 
 
