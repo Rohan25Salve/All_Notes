@@ -1,1 +1,79 @@
+🔹 FX OPTION (Business Product)
+What it is
+Gives right (not obligation) to exchange currency at fixed rate
+Customer decides whether to use it
 
+Key Points
+Premium paid upfront
+Maximum loss = premium
+Settlement only if exercised
+Used for hedging FX risk
+
+Lifecycle
+Booked → Active → Waiting → Exercised / Expired → Closed
+
+Money Flow
+Booking → Premium posted
+Exercise → Currency exchange
+Expiry (no exercise) → No settlement
+One-Line Rule
+
+FX Option = Choice + Premium + Limited Risk
+
+🔹 ETD (Exchange-Traded Derivative)
+What it is
+Standardized contract traded on exchange
+Mandatory settlement
+
+Key Points
+No premium
+Margin required
+Daily MTM (Mark-to-Market)
+Loss can be unlimited
+
+Lifecycle
+Trade → Daily MTM → Margin Calls → Settlement → Close
+
+Money Flow
+Daily profit/loss settled
+Margin adjusted every day
+Final settlement is compulsory
+
+One-Line Rule
+ETD = Obligation + Daily P&L + Mandatory Settlement
+
+🔹 FXPM (FX Product Management)
+What it is
+NOT a product
+Core processing engine for FX products
+
+Handles
+Validation
+Lifecycle management
+Accounting
+Settlement
+Reporting & events
+
+Used For
+FX Option
+ETD
+FX Forward
+FX Cash
+
+Key Points
+Same engine, different product rules
+Independent of input (OFS / TIS / UI)
+Central focus for automation
+
+One-Line Rule
+FXPM = Engine that processes FX trades
+
+| Aspect     | FX Option | ETD       | FXPM        |
+| ---------- | --------- | --------- | ----------- |
+| Type       | Product   | Product   | Engine      |
+| Choice     | Yes       | No        | N/A         |
+| Premium    | Yes       | No        | N/A         |
+| Margin     | No        | Yes       | Manages     |
+| Daily MTM  | No        | Yes       | Executes    |
+| Settlement | Optional  | Mandatory | Enforces    |
+| Risk       | Limited   | High      | Operational |
