@@ -1,0 +1,350 @@
+Install Nodejs
+Set Nodejs path in env variable "NODE_HOME" with path as C:\Program Files\nodejs
+Install Visual Studio
+Click on File -> Open folder ->Create one folder anywhere on system
+Open terminal in VS and run "% npm init playwright" or "npm init playwright"
+
+
+Open windows power shell in run by administrator mode and run this command 
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Check by running npm -v it comes then it's confirmed that access is received to current user
+
+Once installed then it will create folders inside the playwright folder
+--> playwright.config.js --- this is like runner file for playwright framework
+--> Package.json --this is default file which gets created with every node project whether you create project with cypress, playwright, protractor you will find this file created.
+This will give us information about playwright dependencies
+--> Tests - example.spec.js --> this has sample tests which shows how we can create test they gave some examples in this showing how UI automation with playwright we can perform
+--> node_modules -- all playwright related jars are inside this folder if we delete this folder then playwright will not run
+
+When we create test that time create file with .spec.js extension as .js indicates that it is javascript file and spec we write because in java terminology we call test files as spec files
+
+We start with require('@playwright/test') --> require command means we want to use playwright/test jar
+
+Test pattern for writing each test
+test('first Playwright test', function()
+{
+//playwright code
+});
+
+NPM: Node Package Manager
+NPX: Node Package Executor
+
+Await: Java script is asynchronous in nature hence we require this await keyword this we write after each line of code wherein we need to wait for previous step to be completely executed
+ for writing wait we need to async with function Without async, we cannot use await
+
+Anonymous function -> we write keyword function() which is given below
+test('first Playwright test', function()
+{
+//playwright code
+});
+
+instead of writing function explicitly we can write 
+test('first Playwright test', async () =>
+{
+//playwright code
+});
+
+***********
+Fixture: Fixture are globally defined and this fixture is brought by playwright which we can use anywhere in framework
+There are 4 types of fixtures in playwright.
+Fixture needs to be written with Curly braces {} because if we don't wrap fixture in {} then it will be treated as normal parameter and playwright will not come to know that we are using fixture.
+
+1)Browser - this fixture gives fresh instance opening new fresh browser
+We can pass browser in test on which we can run this playwright test
+
+If we pass only browser without {} then it will be considered as normal string
+But if we pass it with {} then it will be considered as playwright fixture means globally declared keyword for playwright
+test('Browser context Playwright test', async ({browser}) =>
+{
+const context= await browser.newContext(); 
+Const page=await context.newPage();
+await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
+//with this new context method we can inject cookies, proxy, plugins for opening browser with this specified context
+});
+
+Now here we are not passing any context content specific to open browser with that capabilities so playwright gives us alternative to just pass page with browser as fixture so that he will do our work of opening browser and new page without specified context. Here we don't need to write browser also explicitly
+
+Test('first Playwright test', async({page}) =>
+{
+await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
+}
+
+*************
+Config file 
+We can set timeout which will be applicable globally. Timeout also comes with "Expect" which is for assertion timeout time
+
+Timeout which is written outside expect is global timeout applicable to all steps but timeout written inside expect is applicable only for assertion cases wherein assertion fails due to timeout
+
+export default defineconfig
+({testDir: './tests',
+timeout: 40*1000,
+expect : {
+timeout : 40*1000,
+},
+reporter : 'html',
+use:
+{
+browserName : 'chromium'
+}
+
+We can store this configurations in one variable 
+const config  =
+({testDir: './tests',
+timeout: 40*1000,
+expect : {
+timeout : 40*1000,
+},
+reporter : 'html',
+use:
+{
+browserName : 'chromium'
+}
+});
+module.exports = config
+
+*********** how to run test in playwright
+we have command % npx  playwright test
+Here "test" is the test name which we need to run 
+
+Playwright runs test in headless mode by default
+We can run in headed mode by provided below path 
+% npx  playwright test  --headed
+
+If we want to run only specific test then we can write Test.only command when defining any test
+test.only('first Playwright test', async () =>
+{
+//playwright code
+});
+
+We don’t need to give browser.close command as playwright closes it automatically it uses auto close mechanism
+
+*************** Locators***************
+We use mostly CSS locator Xpath method is not recommended in playwright
+Way of writing locator: page.locator("#username").fill("learning");
+For sending keys we write Type or fill keyword and pass the content, both type and fill do the same work but now with the latest version Type is deprecated and only fill is getting used
+
+page.locator('#username').fill("rahulshetty");
+page.locator("[type='password']").type("learning");
+await page.locator("#signInBtn").click();
+console.log(await page.locator("[style*='block']").textContent());
+ 
+When we want to extract text from locator then we use "textContent()" method 
+When we want to print all elements from page then we can use "allTextContents()" method
+
+************* Waits
+When we want playwright to wait untill all contents on the page are loaded then we use "waitForLoadState('networkidle')" method.
+await page.waitForLoadState('networkidle');
+
+************ Test file to run
+If we want to run any specific file only of tests then we need to give path of that file with run command
+npx playwright test tests/ClientApp.spec.js
+
+********** dropdown
+Await dropdown=page.locator("select.form-control");
+Await dropdown.selectOption("consult");
+Await page.locator (".radiotextsty").last();
+
+**************to check radio button is selected or not
+Expect(page.locator(".radiotextsty").last()).toBeChecked();
+
+For uncheck we have uncheck() method
+await page.locator(".radiotextsty").last()).uncheck();
+await page.locator(".radiotextsty").last()).isChecked().toBeFalsy();   ---> in case if we are expecting false results
+await page.locator(".radiotextsty").last()).isChecked().toBeTruthy();   ---> in case if we are expecting true results
+
+
+****************** New page opened through hyper link
+If we have hyperlink which is opening new page then we need to wait for new page to open also we need to perform action simultaneously of clicking on current page and opening new page as well so we won't be applying wait
+test.only('Child window handl', async({browser}) =>
+{
+const context =await browser.newContext();
+const page=await context.newPage();
+await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
+const documentLink=page.locator("[href*='documents-request']");
+const [ newPage ] =await Promise.all   ///we are writing newPage with array brace bcoz we don’t know how may child
+							windows it will open 2-3 so we wrote with array brace        
+([
+Context.waitForEvent('page'),
+documentLink.click(),
+])
+const text= await newPage.locator(".red").textContent();
+const arraytext=text.split("@");
+const domain=arrayText[1].split(" ")[0] 
+console.log(domain); 
+page.locator("#username").fill(domain) 
+}
+)
+
+************** textContent() and inputValue()
+textContent() method - this method will return text only if text is attached to dom in case if are typing something and that we are excepting to print in output then we would have to use inputvalue()
+
+*********** Playwright Inspector - helps to debug 
+We can write command % npx playwright test tests/UIBasicstest.spec.js --debug
+
+************ Record and playback
+Using command npx playwright codegen http://google.com
+Once we execute this command and land on next page then what all actions will do that will be recorded and playwright will write script for us for all locators actions which we write manually
+
+**************screenshot, trace and html report
+If we write screenshot : 'on', trace: 'on' or 'off' inside "use" in playwright.config.js then we will get screenshot and Trace means detailed reporting
+reporter: 'html'
+
+If we want traces to be stored only on failure case then we can write trace:'retain-on-failure'
+
+From the playwright reports we can open index.html and paste link we can see report screenshots 
+How to open traces
+1st method:
+-> From this report we have traces we can open traces link, download file then go to trace.playwright.dev drop this file there and then traces will get open with screenshots and detailed reporting step by step
+Traces we can see action, before and after tab for each step
+2nd method:
+We can visit playwright-automation ->test-results(as per the test cases folder gets generated in test results)-> UIBasicstest controls-> traces.zip folder 
+Copy this folder and drop it in traces,playwright.dev link 
+From here also we can open traces 
+
+********** We can do search with text in playwright no need to write locator 
+	1) First method:
+	page.locator("text= Add To Cart");
+	2) Second method: 
+	page.locator("h3:has-text('Zara Coat 4')")       //here it will search for locator with text 'Zara Coat 4' only which has tag h3
+************** isVisible()
+This method will let us know if text or any other thing is visible or not on page and it returns boolean value
+const bool=await page.locator("h3:has-text('Zara Coat 4')").isVisible();
+expect(bool).toBeTruthy();
+
+************ pressSequentially("") 
+This method helps to enter each character one by one
+await page.locator("").pressSequentially("ind", {delay: 150});
+
+************* getBylabel()
+This method will locate the element using text and whatever action is available near to this text it will perform that for example if check box is there then it will click on that check box and perform action.
+await.page.getByLabel("Check me out if you love icecreams").click();
+Or await.page.getByLabel("Check me out if you love icecreams").check();
+
+***************** check() 
+Check() method we can use instead of click option to select the checkbox or radio button
+
+********************* UI test runner terminal
+We can open test runner directly and run test in terminal step by step by using below command
+npx playwright test --ui
+
+************  getByPlaceholder() getByRole()
+
+await page.getByPlaceholder("Password").fill("adc123");
+await page.getByRole("button", {name: 'Submit' }).click();
+
+************** code
+
+ import { test, expect } from '@playwright/test';
+  
+ test('Playwright Special locators', async ({ page }) => {
+   
+     await page.goto("https://rahulshettyacademy.com/angularpractice/");
+     await page.getByLabel("Check me out if you Love IceCreams!").click();
+     await page.getByLabel("Employed").check();
+     await page.getByLabel("Gender").selectOption("Female");
+     await page.getByPlaceholder("Password").fill("abc123");
+     await page.getByRole("button", {name: 'Submit'}).click();
+     await page.getByText("Success! The Form has been submitted successfully!.").isVisible();
+     await page.getByRole("link",{name : "Shop"}).click();
+     await page.locator("app-card").filter({hasText: 'Nokia Edge'}).getByRole("button").click();
+  
+     //locator(css)
+  
+ });
+
+***************calendar code
+
+ const {test,expect} = require("@playwright/test");
+  
+  
+ test("Calendar validations",async({page})=>
+ {
+  
+     const monthNumber = "6";
+     const date = "15";
+     const year = "2027";
+     const expectedList = [monthNumber,date,year];
+    
+     await page.goto("https://rahulshettyacademy.com/seleniumPractise/#/offers");
+     await page.locator(".react-date-picker__inputGroup").click();
+     await page.locator(".react-calendar_navigation_label").click();
+     await page.locator(".react-calendar_navigation_label").click();
+     await page.getByText(year).click();
+     await page.locator(".react-calendar_year-viewmonths_month").nth(Number(monthNumber)-1).click();
+     await page.locator("//abbr[text()='"+date+"']").click();
+  
+     const inputs =  page.locator('.react-date-picker_inputGroup_input')
+  
+     for(let i =0; i<expectedList.length;i++)
+     {
+        const value = await inputs.nth(i).inputValue();
+        expect(value).toEqual(expectedList[i]);
+ 
+     }
+
+*************** To verify that element is not present in DOM
+expect(page.locator("selector")).not_to_have_count(1)
+
+*****************To verify that element is present in DOM but is hidden
+expect(page.locator("selector")).toBeHidden()
+
+************* To hover on any element we can use hover() method
+await page.locator("#mousehover").hover(); 
+
+*************** how to go back and forward from one webpage to previous one
+await page.goto("https://rahulshettyacademy.com/AutomationPractice");
+await page.goto("https://google.com");
+await page.goback();
+await page.goForward(); 
+
+************* switching to iframe 
+Using page.frameLocator("#courses-iframe"); we can wsitch to iframe and then we can locate elements in frame we can give locator by id or classname
+Store this in const framesPage=page.frameLocator("#courses-iframe");
+Using this framesPage object we can locate elements in frame
+framesPage.locator
+
+************** when we locate elements and if we get 2 elements matching with hidden element then we can use :visible while writing locator
+framesPage.locator("li a [href*='lifetime-access']: visible").click()
+
+*************** API testing in playwright 
+We can skip login steps by using API testing in playwright which playwright supports in UI testing
+
+Motive is to grab token which gets created when we login with the help if that token we can login without entering creds on login page
+
+We use request fixture when we need to perform API testing
+
+const {test,expect,request} = require ('@playwright/test);
+const loginPayload = {userEmail:"anshika@gmail.com",userPassword:""};
+let token;
+
+test.beforeAll(aysnc()=>
+{
+const apiContext = await request.newContext();
+const loginResponse= await apiContext.post("https://rahulshettyacademy.com/client",
+{
+data:loginPayload 
+})
+expect(loginResponse.ok()).toBeTruthy();
+const loginResponseJson =await loginResponse.json();
+token=loginResponseJson.token;
+console.log(token);
+});
+
+We can extract response using .json() method
+
+test('Client app login', async ({page})=>
+{
+page.addInitScript(value=>
+{window.localStorage.setItem('token', value); },token);
+const email="";
+const productname='Zara Coat 4';
+await page.goto("https://rahulshettyacademy.com/client");
+// await page.locator("#userEmail").fill("ashwinithorat156@gmail.com");
+// await page.locator("#userPassword").fill("Ashwini@120264");
+// await page.locator("[value='Login']").click();
+// await page.waitForLoadState('networkidle');
+await page.locator(".card-body b").first().waitFor(); // alternate method for waitForLoadState('networkidle')
+const titles=await page.locator(".card-body b").allTextContents();
+console.log(titles);
+
+)}
