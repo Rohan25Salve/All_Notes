@@ -146,9 +146,6 @@ Controlled permissions
 
 
 
-
-
-
 STEP 0️⃣ Preconditions (Before Automation Runs)
 These must already be true, otherwise nothing works:
 TSA.SERVICE records = AUTO ✅
@@ -318,5 +315,41 @@ Golden Debug Order :
 2. TIS logs
 3. OFS logs
 4. T24 enquiry
+
+*************************************            OFS ***************************
+
+OFS = A command language to talk directly to T24 and tell it to do business actions.
+An OFS message is a structured text command sent to T24 to perform a business action
+
+
+
+Core Structure ->
+APPLICATION
+FUNCTION
+DATA (FIELDS)
+
+| Function | Meaning   | Used for                    |
+| -------- | --------- | --------------------------- |
+| I        | Input     | Create a record             |
+| A        | Authorise | Approve record              |
+| E        | Enquiry   | Fetch data                  |
+| R        | Reverse   | Reverse transaction         |
+| D        | Delete    | Delete un-authorised record |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
