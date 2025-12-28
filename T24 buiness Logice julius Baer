@@ -80,4 +80,72 @@ FXPM = Engine that processes FX trades
 
 
 
+******************                         ETD (Exchange-Traded Derivatives)                *************************
+
+ETD are derivative contracts (their value comes from an underlying like stocks, indices, FX, commodities) that are traded on a regulated exchange with standardized terms.
+Common ETD types
+
+Futures – obligation to buy/sell at a future date & price
+Options – right (not obligation) to buy/sell
+Index derivatives – Nifty, S&P 500, FTSE, etc.
+Commodity derivatives – Gold, Oil, Agri products
+
+You expect ABC stock to rise next month.
+Today price: ₹1,000
+You buy ABC Futures @ ₹1,020 (1-month expiry)
+After 1 month:
+Price = ₹1,080 → Profit = ₹60
+Price = ₹980 → Loss = ₹40
+You didn’t buy the stock directly; you traded its future price.
+
+ETD trade lifecycle (high level)
+Trade placed on exchange
+Margin blocked
+Trade matched
+Clearing house novates (becomes buyer to seller & vice-versa)
+Daily MTM (Mark-to-Market)
+Expiry / square-off / physical or cash settlement
+
+
+ETD in banking & trading systems (like T24)
+Used for hedging (FX, interest rate, equity risk)
+Automated margin, MTM, expiry, settlement
+Strong controls & validations → good for STP
+
+ETD = standardized derivative contracts traded on exchanges, cleared by a clearing house, offering transparency, liquidity, and reduced counterparty risk.
+
+
+🟢 Inbound (➡️ coming IN to T24)
+Inbound = data / message / request that comes INTO Temenos T24 from outside systems
+
+Think like this 👇  -->  Inbound = someone tells T24 to do something
+
+ETD examples (Inbound)
+Trade sent from Trading System / Exchange
+File or API message asking T24 to book a trade
+Message to update trade details
+
+
+🔵 Outbound (⬅️ going OUT from T24)
+
+Outbound = data / message / notification that goes FROM T24 to other systems
+
+Think like this 👇 --> Outbound = T24 tells others what happened
+
+ETD examples (Outbound)
+Margin posting sent to Accounting / GL
+MTM result sent to Risk system
+Settlement confirmation sent to Exchange / Back office
+
+
+Exchange / Trading App
+        |
+        | (Inbound: Trade request)
+        v
+     T24 ETD Module
+        |
+        | (Outbound: Margin / MTM / Settlement)
+        v
+ Accounting / GL / Risk / Reports
+
 
