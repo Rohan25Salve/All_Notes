@@ -193,17 +193,61 @@ Exchange / Trading App
    FX
    Commodity
    
-   Premium Style -->
+   Premium Style --> Premium style = WHEN money is charged
    
-   Option Style:
+   Option Style (Pay first)):
    Premium exchanged at inception
    Real cash movement immediately
 
+   Real-life example
+   You book a movie ticket:
+                           You pay first
+                           Then you watch movie
+In T24 terms : Premium is paid at trade booking (inception) , Happens before expiry / exercise / assignment , Money moves immediately
+
+If Premium Style = OPTION
+✔ Check premium at DX.TRADE creation
+✔ Do NOT expect premium later
+
    Future Style:
    NO premium at inception
-   Settlement happens at: Assignment , Exercise , Expiry ,Maturity
-   
+   Settlement happens at: 
+Assignment (Seller is forced) : SELL to Open option
+Exercise (Buyer chooses): BUY to Open option
+Expiry (No one acts): Both BUY and SELL sides
+Real-life example : Option expires , No one exercised or assigned.
+Maturity (Futures only): FUTURES, not options   , Future contract reaches end date.
+
+
+| Premium Style | Settlement timing                        |
+| ------------- | ---------------------------------------- |
+| Option Style  | Premium at booking + settlement at event |
+| Future Style  | Settlement only at event                 |
+
+Buy → Exercise
+Sell → Assignment
+Do nothing → Expiry
+Future → Maturity
+
+
+
+In T24 terms
+No premium at inception
+Money moves during lifecycle event
+Settlement happens at: Exercise , Assignment , Expiry ,Maturity
+
+Real-life example
+You go to restaurant:
+Eat first
+Pay after eating
+
+👉 This is FUTURE premium style
+
    Future Style = “Accounting is deferred”
+
+If Premium Style = FUTURE
+✔ No premium at booking
+✔ Expect payout during event
    
    Buy to Open / Sell to Open  -->
    🧠 Accounting rule
@@ -342,6 +386,46 @@ Positions = 0
 Accounting Posted
    ↓
 Resultant Trade (Event 101) [if applicable]
+
+
+
+“Settlement Method” --> how the trade is finished at the end
+CASH settlement ((Money only)) ->
+You bet on NIFTY index:
+                      You cannot buy NIFTY
+                      You only get profit / loss money
+In T24 terms
+No share / no bond / no commodity
+Only accounting entries
+
+ What you SEE in T24
+
+✅ DX Trade → CLOSED
+✅ Accounting entry
+❌ NO SEC.TRADE
+
+Typical instruments = CASH
+Equity Index
+FX Cash
+Volatility
+OFU (Future into cash)
+
+PHYSICAL settlement (Asset + money) -> 
+You buy TCS share option:
+                       If exercised → you receive shares
+                       You also pay money
+
+In T24 terms
+Security must be delivered
+New SEC.TRADE is created
+Then trade closes
+
+What you SEE in T24
+
+✅ DX Trade → CLOSED
+✅ SEC.TRADE created
+✅ SEC.TRADE status = IHLD / AUTH
+✅ Accounting entries
 
 
 
