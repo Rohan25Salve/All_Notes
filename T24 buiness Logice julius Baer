@@ -149,3 +149,201 @@ Exchange / Trading App
  Accounting / GL / Risk / Reports
 
 
+
+    **************    EDT  **************
+	Asset Type × Instrument Type × Settlement × Premium Style × Actor × Event
+
+	DX Trade (DX.TRADE) -->
+	A derivative contract booked in T24 ETD module
+	
+	
+	Used for:
+           Options
+           Futures
+           Options on Futures (OFU)
+		   
+		   
+		   SAT (Sub Asset Type) --> SAT tells T24 WHAT instrument family this is.
+		   
+| SAT | Meaning                  |
+| --- | ------------------------ |
+| 401 | Equity Option (Physical) |
+| 407 | Equity Option (Cash)     |
+| 416 | Equity Index Option      |
+| 446 | Equity Index OFU         |
+| 447 | Corporate Bond Index OFU |
+| 449 | Precious Metal OFU       |
+| 413 | Interest Rate OFU        |
+| 445 | FX OFU                   |
+                                    Note --> SAT decides → settlement logic + accounting formula + lifecycle path
+									
+									
+									
+| Type       | Meaning                             |
+| ---------- | ----------------------------------- |
+| **Option** | Right, not obligation               |
+| **Future** | Obligation                          |
+| **OFU**    | Option whose underlying is a Future |
+
+
+   OFU = Option on Futures
+   Used heavily in:
+   Equity Index
+   IR
+   FX
+   Commodity
+   
+   Premium Style -->
+   
+   Option Style:
+   Premium exchanged at inception
+   Real cash movement immediately
+
+   Future Style:
+   NO premium at inception
+   Settlement happens at: Assignment , Exercise , Expiry ,Maturity
+   
+   Future Style = “Accounting is deferred”
+   
+   Buy to Open / Sell to Open  -->
+   🧠 Accounting rule
+   Sell to Open → payout risk
+   Buy to Open → payout benefit
+   
+| Action       | Meaning                               |
+| ------------ | ------------------------------------- |
+| Buy to Open  | You buy the option                    |
+| Sell to Open | You sell the option (take obligation) |
+
+
+      Own Book vs Client -->
+	  
+| Type     | Meaning                          |
+| -------- | -------------------------------- |
+| Client   | Bank acts as intermediary        |
+| Own Book | Bank takes risk on its own books |
+
+
+  Own Book indicators
+  Sector = 9002
+  PL accounts involved (PL52001, PL53421)
+     
+   
+   Broker / Eurex / A1   -->
+| Term   | Meaning                     |
+| ------ | --------------------------- |
+| Broker | OTC / external counterparty |
+| Eurex  | Exchange traded             |
+| A1     | Clearing broker             |
+
+   🧠 Eurex
+Requires: Suppress Underlying = YES
+          Sec Trade creation
+		  Clearing settlement
+		  
+		  
+		  1. Assignment -->
+		  Used when:
+        Option holder exercises
+        Seller must deliver
+		
+		Results:
+          Trade → CLOSED
+          PRI LOTS = 0
+          SEC LOTS = 0
+		  DX CLOSEOUT ID generated
+		  
+		  2. Exercise
+          Used when:Option buyer chooses to exercise
+		  Results:
+          Sec trade created (IHLD)
+		  Settlement posted
+		  Resultant trade (101) may be created
+		  
+		 3. Expiry
+         Used when: Option expires worthless or ITM/OTM logic applies
+		 Results:
+         No new risk
+         Positions closed
+         Accounting depends on ITM/OTM
+		 
+		 4. Maturity (Futures)
+            Used only for:
+                     Futures
+                     OFU underlying settlement
+					 
+					 
+		5. Rectification (Event 300)
+             When: Wrong trade booked ,Reversal needed		
+
+                Original Trade
+                   ↓ Reverse
+                New Trade (Event 300)
+				
+		Used heavily in:
+                Eurex
+                OFU
+                FutureStyle
+				
+		6. Resultant Trade (Event 101)
+            Purpose: Accounting , Reporting ,Regulatory trace
+            Created after: Assignment ,Exercise ,Expiry (sometimes)
+
+          Cash Settlement : Notional = Lots × Contract Size
+          Physical Settlement : Notional = Lots × Contract Size × Strike Price
+
+        Typical Accounting Entries
+        Sell to Open (Own Book)
+               Debit/Credit:
+                            PL53421
+                            Broker Nostro
+               Buy to Open :
+			   Opposite flow	
+
+
+          🔹 DX Closeout ID
+                    Generated when:
+                                Trade lifecycle ends
+      Used to:
+         Link PRI & SEC settlements
+         Tie accounting entries
+
+ | Side | Meaning                       |
+| ---- | ----------------------------- |
+| PRI  | Primary (client / own book)   |
+| SEC  | Secondary (broker / exchange) |
+
+Note --> Both must go to zero for closure.
+
+
+Cash settlement -->  Lots × Contract Size
+Physical settlement --> Lots × Contract Size × Strike Price
+
+												  
+SAT defines WHAT
+Premium Style defines WHEN money moves
+An event defines HOW trade closes
+Own Book defines WHO takes the risk
+Resultant trade defines WHERE accounting lives
+
+
+Instrument (DCM)
+   ↓
+DX.TRADE (Inception)
+   ↓
+ETD Event (Assignment / Exercise / Expiry / Maturity)
+   ↓
+DX Closeout ID generated
+   ↓
+Trade Status = CLOSED
+   ↓
+Positions = 0
+   ↓
+Accounting Posted
+   ↓
+Resultant Trade (Event 101) [if applicable]
+
+
+
+
+
