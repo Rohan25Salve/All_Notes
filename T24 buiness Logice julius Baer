@@ -430,4 +430,72 @@ What you SEE in T24
 
 
 
+Contract Type
+   |
+   |-- OPTION ---------------------+
+   |                               |
+   |                         Premium Style
+   |                               |
+   |             OPTION_STYLE      FUTURE_STYLE
+   |             (pay premium)     (margin-based)
+   |
+   |-- FUTURE ------------------ FUTURE_STYLE only
+
+
+Example: Gold price = $2,000 per ounce 
+OPTION × OPTION_STYLE
+“Pay now, decide later.”
+Real life
+You pay $100 today to get the right to buy gold at $2,000 after 1 month.
+If gold → $2,200 → you exercise
+If gold → $1,800 → you walk away
+Your maximum loss = $100
+
+
+Contract Type  : OPTION
+Premium Style  : OPTION_STYLE
+Option Type    : CALL
+Strike Price   : 2000
+Premium        : 100 (paid today)
+
+ OPTION × FUTURE_STYLE
+“No premium today, settle later” ← 🔥 IMPORTANT
+Real life
+
+You do not pay $100 today.
+
+Instead:
+You agree on $2,000
+Profit/Loss is settled later
+You still have a right, not obligation
+
+You MUST still agree on:
+BUY or SELL
+PRICE
+Otherwise the contract is meaningless.
+
+Contract Type  : OPTION
+Premium Style  : FUTURE_STYLE
+Option Type    : CALL
+Strike Price   : 2000
+Premium        : NONE upfront
+Settlement     : At maturity
+
+
+FUTURE × FUTURE_STYLE
+“No choice, compulsory trade”
+Real life
+You must buy gold at $2,000 after 1 month.
+No right to walk away
+No premium
+Both sides obligated
+
+Contract Type  : FUTURE
+Premium Style  : FUTURE_STYLE
+Option Type    : ❌
+Strike Price   : ❌
+
+
+
+
 
