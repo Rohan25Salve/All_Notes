@@ -497,5 +497,43 @@ Strike Price   : ❌
 
 
 
+RESULTANT_TRADE   ----> 
+
+RESULTANT_TRADE} - Event type for resultant trade ("101") --> a new trade generated as a result of a previous trade lifecycle action (exercise / assignment / closeout).
+Your flow simplified:
+Buy to Open option trade
+Trade goes to HILD
+Trade corrected → LIVE
+Exercise / Assignment
+Original trade → CLOSED
+System allows new trade creation
+🔑 That new trade is created with Event Type = 101
+
+A resultant trade is:
+A trade created because something happened to another trade
+Not created independently by a dealer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
