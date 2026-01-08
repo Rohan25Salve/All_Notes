@@ -516,9 +516,26 @@ Not created independently by a dealer
 
 
 
+Reverse Trade  --> 
+In real banking systems:
+You cannot delete a trade
+You cannot overwrite history
 
+👉 You must reverse it
 
+🏦 Real-World Analogy (Non-Banking)
+Wrong train ticket example 🚆
+You buy a ticket to Delhi
+Realize you needed Mumbai
 
+Ticket system:
+Does NOT delete Delhi ticket
+Issues refund (reversal)
+You buy new Mumbai ticket
+
+You travel correctly
+👉 Refund = Reverse trade
+👉 New ticket = Rectified trade (Event 300)
 
 
 
