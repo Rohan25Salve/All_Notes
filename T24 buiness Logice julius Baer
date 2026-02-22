@@ -545,9 +545,246 @@ You travel correctly
 
 
 
+ *****************************************************************************************************************************************************
+
+Traditional equity trade
+* Buy shares once
+* Sell shares once
+* Profit/loss depends only on entry & exit
+
+Problem for banks & clients
+Clients want regular accumulation
+Want discounted buying
+Want structured risk
+Want automation over time
+
+➡️ Result: Structured Products
+
+STRUCTURED PRODUCT (SP) -->
+A contract that combines derivatives + rules + lifecycle events
+It is:
+Long-running (weeks/months)
+Event-driven
+Rule-based
+Heavy on valuation, accrual, fixing, maturity
+* Accumulator / Decumulator is one type of SP.
+
+
+Accumulator = agreement to buy shares every working day at a fixed price
+Not optional
+Not one-time
+Obligatory & repeated
+
+Real-life analogy
+Imagine:
+You promise to buy 10 apples daily
+Price fixed at ₹50
+Market price keeps changing
+You must buy anyway
+That’s an Accumulator.
+
+Decumulator --> Agreement to sell shares every working day at a fixed price
+
+| Term         | Meaning                    |
+| ------------ | -------------------------- |
+| Underlying   | The share (e.g. Apple)     |
+| Strike Price | Fixed agreed price         |
+| Market Price | Today’s live price         |
+| Daily Units  | Units per day              |
+| Accrual      | Daily obligation recording |
+| Fixing       | Settlement checkpoint      |
+| Knock-out    | Early termination trigger  |
+| Maturity     | Natural end of contract    |
+
+Every working day (COB):
+System reads market price
+Compares with strike
+Calculates accrued units
+Updates:ACCRUED.UNITS1
+
+
+Example
+Strike = 50
+Market = 45
+Daily Units = 100
+The customer must buy 100 shares at 50, even though the market is 45
+➡️ Customer is at a loss
+
+GEARING (RISK MULTIPLIER) --> “If market goes against you, buy MORE shares”
+This is Gearing Factor
+Example
+Daily Units = 100
+Gearing = 2
+Market < Strike
+➡️ Accrued Units = 200
+
+KNOCK-IN & KNOCK-OUT -->
+Knock-In
+Accrual starts only after price touches a level
+
+Knock-Out
+Contract terminates early
+No more accrual
+Final settlement triggered
+
+Example
+Knock-out = 60
+Market hits 60
+➡️ Contract ends
+
+Example (Knock-In)
+Product setup
+Underlying: ABC Stock
+Strike: 50
+Knock-In level: 55
+Accrual: 1 unit per day
+Tenor: 10 days
+
+| Day   | Market Price | Accrual               |
+| ----- | ------------ | --------------------- |
+| Day 1 | 52           | ❌ No (not knocked-in) |
+| Day 2 | 54           | ❌ No                  |
+| Day 3 | **55**       | ✅ Knock-In triggered  |
+| Day 4 | 56           | ✅ 1 unit              |
+| Day 5 | 57           | ✅ 1 unit              |
+
+2️⃣ Knock-Out (KO)
+Meaning:
+👉 If price hits the KO level, the contract ends immediately.
+
+No more accrual.
+Settlement happens early.
+
+Example (Knock-Out)
+Product setup
+Knock-Out level: 60
+Accrual per day: 1 unit
+
+| Day   | Market Price | Accrual      |
+| ----- | ------------ | ------------ |
+| Day 1 | 56           | +1           |
+| Day 2 | 58           | +1           |
+| Day 3 | **60**       | 🚨 Knock-Out |
 
 
 
+
+FIXING -->
+Fixing = periodic settlement checkpoint
+“Okay, enough accrual — now settle”
+
+What happens in Fixing?
+Accrued units are:
+Exercised
+Settled (cash / shares)
+Residual option expires
+
+Status updated:
+FIXED = YES
+Each fixing period:
+Stored as multi-value set
+Cannot be edited after fixing
+
+Why fixing exists?
+Avoid waiting till maturity
+Reduce risk
+Allow partial settlement
+
+Example — Accrual Product WITH Fixing
+Product setup
+Accrual: 1 unit per valid day
+Fixing frequency: Monthly
+Tenor: 3 months
+| Day      | Accrual  |
+| -------- | -------- |
+| Day 1–20 | 20 units |
+
+
+📍 Fixing Date (End of Month 1)
+✔ 20 units are:
+Exercised
+Settled (cash/shares)
+
+Month 2
+| Day      | Accrual  |
+| -------- | -------- |
+| Day 1–18 | 18 units |
+
+
+Month 3
+Same logic again.
+
+Fixing 1 → 20 units → FIXED = YES
+Fixing 2 → 18 units → FIXED = YES
+Fixing 3 → 22 units → FIXED = YES
+
+With fixing:
+✅ Partial settlement
+✅ Risk reduced over time
+✅ Cash flows earlier
+
+
+🔰 LEVEL 9 — UNWIND (EARLY EXIT)
+Client can exit:
+Fully
+Partially
+
+Full Unwind
+Contract closed
+No future accrual
+
+Partial Unwind
+Daily units reduced
+Accrual continues on reduced quantity
+
+📌 Important:
+Unwind effective date matters
+Back-dated unwind needs manual corrections
+
+NOVATION (TRANSFER OF CONTRACT)
+What is novation?
+Moving the contract from one party to another
+
+Types:
+Internal: Client A → Client B (same bank)
+External: Client → outside entity
+Optional fees apply.
+
+
+ACCOUNTING VIEW (High level)
+Accumulator creates:
+Off-balance sheet exposure
+Daily MTM (Mark-to-Market)
+
+PL entries
+Contingent liabilities
+
+📌 For automation:
+Accounting entries are derived, not input
+
+
+T24 APPLICATION MAP
+| Area      | Application     |
+| --------- | --------------- |
+| Contract  | SY.ACCU.DECU    |
+| Events    | SY.EVENT        |
+| Trades    | DX.TRADE        |
+| Valuation | SYDX.MARKET.VAL |
+| Mapping   | EB.FORMAT       |
+
+
+
+EVENT-DRIVEN MODEL (VERY IMPORTANT FOR QA)
+The accumulator is not screen-driven
+It is event-driven
+
+Key events:
+AUTHORISE
+ACCRUAL (daily)
+FIXING
+KNOCK-OUT
+UNWIND
+MATURITY
 
 
 
