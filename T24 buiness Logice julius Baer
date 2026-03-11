@@ -1,3 +1,68 @@
+                   Account Flow Diagram 
+                                                                                   
+1. Instrument Setup
+   SECURITY.MASTER
+   │
+   │ Defines the underlying instrument
+   │ (ISIN, Asset Type, Currency)
+   ▼
+
+2. Contract Configuration
+   DX.CONTRACT.MASTER
+   │
+   │ Defines derivative contract details
+   │ (Exchange, Contract Size, Settlement Type)
+   ▼
+
+3. Customer Setup
+   CUSTOMER
+   │
+   │ Client and OwnBook customer records
+   ▼
+
+4. Market Trading Enablement
+   DX.CUSTOMER
+   │
+   │ Enables customer for Markets / Derivatives trading
+   ▼
+
+5. Portfolio Setup
+   CUSTOMER.SECURITY
+   │
+   │ Links customer with portfolio
+   │ Portfolio stores positions
+   ▼
+
+6. Security Settlement Account
+   SEC.ACC.MASTER
+   │
+   │ Security account used for settlement
+   ▼
+
+7. Trade Execution
+   TRADE
+   │
+   │ Customer buys or sells derivative contract
+   ▼
+
+8. Position Creation
+   POSITION BOOKING
+   │
+   │ System calculates net position
+   ▼
+
+9. Settlement
+   SECURITIES / CASH SETTLEMENT
+
+SECURITY.MASTER → Defines the instrument
+DX.CONTRACT.MASTER → Defines derivative contract configuration
+CUSTOMER → Customer master record
+DX.CUSTOMER → Enables customer for markets trading
+CUSTOMER.SECURITY → Maps customer portfolio with securities
+SEC.ACC.MASTER → Security settlement account
+
+
+
 🔹 FX OPTION (Business Product)
 What it is
 Gives right (not obligation) to exchange currency at fixed rate
